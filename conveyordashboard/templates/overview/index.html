@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+{% block title %}{% trans "Overview" %}{% endblock %}
+
+{% block main %}
+  <div id="instances">
+      {{ instances_table.render }}
+  </div>
+
+  <div id="volumes">
+      {{ volumes_table.render }}
+  </div>
+  <div id="networks">
+      {{ networks_table.render }}
+  </div>
+  <div id="subnets">
+      {{ subnets_table.render }}
+  </div>
+  <div id="routers">
+      {{ routers_table.render }}
+  </div>
+{% endblock %}
+{% block js %}
+  {% include "horizon/_scripts.html" %}
+  <script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.selector.js' %}"></script>
+{% endblock %}

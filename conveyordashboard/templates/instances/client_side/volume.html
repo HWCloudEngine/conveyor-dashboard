@@ -1,0 +1,9 @@
+{% load i18n %}
+<div class="contentBody detailInfoCon" resource_id="{{ resource_id }}" resource_type="{{ resource_type }}">
+	{% if data.name %}<div class="form-group header">{{ data.name }}</div>{% endif %}
+	<div class="form-group"><label class="control-label">{% trans "Availability Zone" %}</label><div class=" ">{{ data.availability_zone }}</div></div>
+	<div class="form-group"><label class="control-label">{% trans "Volume Type" %}</label><div class=" ">{{ data.volume_type }}</div></div>
+	<div class="form-group"><label class="control-label">{% trans "Size" %}</label><div class=" ">{{ data.size }} GB</div></div>
+	{% if data.description %}<div class="form-group"><label class="control-label">{% trans "Description" %}</label><div class=" ">{{ data.description }}</div></div>{% endif %}
+</div>
+

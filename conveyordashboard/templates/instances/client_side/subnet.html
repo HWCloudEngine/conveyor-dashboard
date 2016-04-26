@@ -1,0 +1,21 @@
+{% load i18n %}
+<div class="contentBody detailInfoCon" resource_id="{{ resource_id }}" resource_type="{{ resource_type }}">
+	{%if data.name%}<div class="form-group header">{{ data.name }}</div>{%endif%}
+	<div class="form-group">
+	    <label class="control-label">{% trans "Subnets"%}</label>
+		<div class=" ">
+		<select class="form-control" name="subnets" data-ori="{{ id }}">
+		{% for subnet in data.subnets %}
+			<option name="subenet" value="{{ subnet.id }}" {%ifequal id subnet.id %}selected="selected"{%endifequal%}>{{ subnet.name }} ({{ subnet.id }})</option> 
+		{% endfor %}
+		</select>
+		</div>
+	</div>
+</div>
+<div class="footer">
+	<div class="cell delete">
+		<button class="cancel btn btn-danger btn-xs">{% trans "Cancel" %}</button>
+		<button class="save-info btn btn-danger btn-xs">{% trans "Save" %}</button>
+	</div>
+</div>
+

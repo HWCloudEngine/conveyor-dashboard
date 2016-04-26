@@ -1,0 +1,7 @@
+{% extends 'base.html' %} {% load i18n %} {% block title %}{% trans "Volumes" %}{% endblock %} {% block main %}
+<span data-instances="{% url 'horizon:project:volumes:volumes:json' %}"
+	id="volumes"></span>
+<div class="row">
+	<div class="col-sm-12">{{ tab_group.render }}</div>
+</div>
+{% endblock %}

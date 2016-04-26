@@ -1,0 +1,28 @@
+{% load i18n %} {% load static %}
+<dt>{% trans "Name" %}</dt>
+<dd>{{ propers.name }}</dd>
+<dt>{% trans "Rules" %}</dt>
+<dd>
+	<table>
+		<tbody>
+			<tr>
+				<th class="device">{% trans "Direction" %}</th>
+				<th class="device">{% trans "Ether Type" %}</th>
+				<th class="device">{% trans "IP Protocal" %}</th>
+				<th class="device">{%trans "Port Range" %}</th>
+				<th class="device">{% trans "Remote IP Prefix" %}</th>
+				<th class="device">{% trans "Remote Security Group" %}</th>
+			</tr>
+			{% for rule in propers.rules %}
+			<tr>
+				<td>{{ rule.direction }}</td>
+				<td>{{ rule.ethertype }}</td>
+				<td>{{ rule.protocol }}</td>
+				<td>{{ rule.port_range_max }}</td>
+				<td>{{ rule.remote_ip_prefix }}</td>
+				<td>{{ rule.remote_group_id }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</dd>

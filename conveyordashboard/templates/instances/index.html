@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+{% block title %}{% trans "Instances" %}{% endblock %}
+{% block main %}
+{{ table.render }}
+{% endblock %}
+{% block js %}
+{% include "horizon/_scripts.html" %}
+<script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.selector.js' %}"></script>
+<script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.actions.plugin.js' %}"></script>
+{% endblock %}
+

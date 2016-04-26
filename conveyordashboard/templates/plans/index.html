@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+{% block title %}{% trans "Plans" %}{% endblock %}
+{% block main %}
+{{ table.render }}
+<script type="text/javascript" charset="utf-8">
+    var plans = null;
+    $(document).ready(function() {
+    	plans = $("input[type=checkbox].table-row-multi-select")
+    	if($("a.btn-export").length){
+    		$("a.btn-export").click(function(){
+    			if($(this).attr("id")=="plans__action_export") {
+    				plans.each(function(){
+    					if($(this).attr("checked") == "checked") {document.location = "/conveyor/plans/" + $(this).val() + "/export/";}
+    				});
+    			} else {
+    				document.location = $(this).attr("href");
+    			}
+    			return false;
+    		});
+    	}
+    });
+</script>
+{% endblock %}
+{% block js %}
+{% include "horizon/_scripts.html" %}
+<script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.field.js' %}"></script>
+{% endblock %}
+

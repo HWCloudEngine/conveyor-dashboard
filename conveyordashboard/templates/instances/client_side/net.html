@@ -1,0 +1,18 @@
+{% load i18n %}
+<div class="contentBody detailInfoCon" resource_id="{{ resource_id }}" resource_type="{{ resource_type }}"  data-id="{{id}}">
+	<div class="form-group header">{{ data.name }}</div>
+	<div class="form-group">  
+  		<label class="control-label">{% trans "Networks" %}</label>
+   		<div class=" ">
+		<select class="form-control" name="networks" ori_net_id="{{ data.id }}">
+		{% for network in data.networks %}<option name="network" value="{{ network.id }}" {%ifequal id network.id %}selected="selected"{%endifequal%}>{{ network.name }} {{ network.id }}</option>{% endfor %}
+		</select>
+	</div>
+	</div>
+</div>
+<div class="footer">
+	<div class="cell delete">
+		<button class="cancel btn btn-danger btn-xs">{% trans "Cancel" %}</button>
+		<button class="save-info btn btn-danger btn-xs">{% trans "Save" %}</button>
+	</div>
+</div>

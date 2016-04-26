@@ -1,0 +1,12 @@
+recursive-include conveyordashboard/static *
+recursive-include conveyordashboard/templates *
+include tools/pip-requires
+include run_tests.sh
+include ChangeLog
+include MANIFEST.in
+include AUTHORS
+include LICENSE
+include ChangeLog
+include tox.ini
+recursive-include build_addons/rpm *.sh
+global-exclude *.pyc
