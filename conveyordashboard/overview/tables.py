@@ -38,7 +38,6 @@ class CreateClonePlan(tables.LinkAction):
     help_text = _("Execute clone plan")
 
     def get_link_url(self, datum):
-        #LOG.info("full_url={}".format(self.table.get_full_url()))
         base_url = reverse(self.url)
         if self.table.kwargs.get("next_url", None):
             next_url = self.table.kwargs["next_url"]
@@ -60,7 +59,6 @@ class CreateMigratePlan(tables.LinkAction):
     help_text = _("Execute migrate plan")
 
     def get_link_url(self, datum):
-        #LOG.info("full_url={}".format(self.table.get_full_url()))
         base_url = reverse(self.url)
         if self.table.kwargs.get("next_url", None):
             next_url = self.table.kwargs["next_url"]
@@ -78,7 +76,7 @@ class CreatePlanWithMulRes(tables.LinkAction):
     name = "create_plan_with_mul_res"
     verbose_name = _("Create Clone Plan")
     url = "horizon:conveyor:overview:create_plan"
-    classes = ("ajax-modal", "btn-default", 
+    classes = ("ajax-modal", "btn-default",
                "create-plan-for-mul-sel", "disabled")
     help_text = _("Create clone plan with selecting multi-resources")
     icon = "plus"
@@ -88,11 +86,11 @@ class CreateMigratePlanWithMulRes(tables.LinkAction):
     name = "create_migrate_plan_with_mul_res"
     verbose_name = _("Create Migrate Plan")
     url = "horizon:conveyor:overview:create_plan"
-    classes = ("ajax-modal", "btn-default", 
+    classes = ("ajax-modal", "btn-default",
                "create-migrate-plan-for-mul-sel", "disabled")
     help_text = _("Create migrate plan with selecting multi-resources")
     icon = "plus"
-    
+
 
 class InstanceFilterAction(tables.FilterAction):
     def filter(self, table, instances, filter_string):
@@ -183,7 +181,7 @@ class RoutersTable(RoutersTable):
         css_classes = "table-res OS::Neutron::Router"
         table_actions = (NetworksFilterAction,)
 
- 
+
 class ActionsTable(tables.DataTable):
     class Meta(object):
         name = "actions"

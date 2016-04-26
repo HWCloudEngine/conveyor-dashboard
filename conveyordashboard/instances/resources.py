@@ -34,7 +34,7 @@ class ResourceDetailFromPlan(object):
         self.resource_id = resource_id
         self.update_data = update_data
         if not updated_res:
-            updated_res = {} 
+            updated_res = {}
         self.updated_res=updated_res
         self.is_original = is_original
         self.type = self.resource_type.split("::")[-1].lower()
@@ -116,7 +116,7 @@ class ResourceDetailFromPlan(object):
             context["sg_table"] = sg_table.render()
 
         return loader.render_to_string(self.container, context)
-    
+
     def _render_router(self, context):
         routers = api.resource_list(self.request, self.resource_type)
         context["data"]["routers"] = routers
@@ -126,7 +126,7 @@ class ResourceDetailFromPlan(object):
         plan = api.plan_get(self.request, self.plan_id)
         fip_id = plan.original_resources[self.resource_id]["id"]
         fips = api.resource_list(self.request, self.resource_type)
-        fips = [fip for fip in fips 
+        fips = [fip for fip in fips
                 if fip.status == "DOWN" or fip.id == fip_id]
         context["data"]["fips"] = fips
         return loader.render_to_string(self.container, context)
@@ -184,7 +184,7 @@ class PlanUpdate(object):
 
         for key, value in self.dependencies.items():
             if value["type"] in dependent_type \
-                and (self.resource_id in value["dependencies"] 
+                and (self.resource_id in value["dependencies"]
                      or key in this_resource["dependencies"])\
                 and key not in excepts:
                 dependent_items[key] = value
@@ -294,7 +294,7 @@ class PlanUpdate(object):
             if update_from == "net":
                 from_id = data[TAG_FROM_ID]
                 network_id = data["network_id"]
-                subnet_id = api.resource_detail(self.request, 
+                subnet_id = api.resource_detail(self.request,
                                                 "OS::Neutron::Net",
                                                 network_id)["subnets"][0]
                 subnet = api.resource_detail(self.request,
@@ -390,7 +390,7 @@ class PlanUpdate(object):
         resource_type = data[TAG_RES_TYPE]
         this_resource = self.updated_resources[resource_id]
         if this_resource.get(TAG_UPDATED, False):
-            return 
+            return
 
         update_from = data.get(TAG_FROM, None)
         if update_from:
@@ -412,9 +412,9 @@ class PlanUpdate(object):
                             "router:external": network["router:external"],
                             "provider:network_type":
                                     network["provider:network_type"],
-                            "provider:physical_network": 
+                            "provider:physical_network":
                                     network["provider:physical_network"],
-                            "provider:segmentation_id": 
+                            "provider:segmentation_id":
                                     network["provider:segmentation_id"]
                         },
                         "name": network["name"]
@@ -483,7 +483,7 @@ class PlanUpdate(object):
                 if value["type"] == "OS::Neutron::Subnet":
                     data["network_id"] = network_id
                 self.execute(data)
-    
+
             self._modify_subnet_src(resource_id, network_id)
 
     def _update_securitygroup(self):
@@ -493,7 +493,7 @@ class PlanUpdate(object):
         resource_type = data[TAG_RES_TYPE]
         this_resource = self.updated_resources[resource_id]
         if this_resource.get(TAG_UPDATED, False):
-            return 
+            return
 
         update_from = data.get(TAG_FROM, None)
         if update_from:

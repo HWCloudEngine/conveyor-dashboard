@@ -14,7 +14,7 @@ from conveyordashboard.api import models
 LOG = logging.getLogger(__name__)
 
 from conveyordashboard.constant import (IMAGE_DIR,
-                                      RESOURCE_TYPE_IMAGE_MAPPINGS) 
+                                      RESOURCE_TYPE_IMAGE_MAPPINGS)
 
 
 def get_resource_image(res_type, color="green"):
@@ -93,7 +93,7 @@ def server_list(request, search_opts=None, all_tenants=False):
         search_opts['all_tenants'] = True
     else:
         search_opts['project_id'] = request.user.tenant_id
-    servers = [s for s in resource_list(request, 
+    servers = [s for s in resource_list(request,
                                         "OS::Nova::Server",
                                         search_opts)]
 
@@ -130,7 +130,7 @@ def net_list(request, search_opts=None):
     subnets = resource_list(request, "OS::Neutron::Subnet")
     subnet_dict = dict([(s.id, s) for s in subnets])
     for n in networks:
-        setattr(n, 'subnets', [subnet_dict[s] for s in getattr(n, 
+        setattr(n, 'subnets', [subnet_dict[s] for s in getattr(n,
                                                                'subnets', [])
                                if s in subnet_dict])
     return networks
@@ -138,14 +138,14 @@ def net_list(request, search_opts=None):
 
 def net_list_for_tenant(request, tenant_id, search_opts=None):
     nets = net_list(request, search_opts)
-    return [os_api.neutron.Network(n.__dict__) for n in nets 
+    return [os_api.neutron.Network(n.__dict__) for n in nets
             if n.tenant_id == tenant_id]
 
 
 def subnet_list_for_tenant(request, tenant_id, search_opts=None):
     subnets = resource_list(request, "OS::Neutron::Subnet",
                             search_opts=search_opts)
-    return [os_api.neutron.Subnet(sn.__dict__) for sn in subnets 
+    return [os_api.neutron.Subnet(sn.__dict__) for sn in subnets
             if sn.tenant_id == tenant_id]
 
 
@@ -161,7 +161,7 @@ def subnet_list_for_network(request, tenant_id=None, is_external=False):
                 subnets.append(sn)
     return subnets
 
-   
+
 def sg_list(request, tenant_id, search_opts=None):
     secgroups = resource_list(request, "OS::Neutron::SecurityGroup",
                               search_opts=search_opts)
@@ -170,7 +170,7 @@ def sg_list(request, tenant_id, search_opts=None):
 
 
 def sg_get(request, sg_id):
-    secgroup = resource_detail(request, "OS::Neutron::SecurityGroup", sg_id) 
+    secgroup = resource_detail(request, "OS::Neutron::SecurityGroup", sg_id)
     return os_api.neutron.SecurityGroup(secgroup)
 
 

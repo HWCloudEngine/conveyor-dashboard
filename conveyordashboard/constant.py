@@ -22,9 +22,9 @@ DEPENDENCY_UPDATE_MAPPING = {
 
 RESOURCE_TYPE_IMAGE_MAPPINGS = {
     #nova
-    'OS::Nova::Server':     {'green': 'server-green.svg', 
+    'OS::Nova::Server':     {'green': 'server-green.svg',
                              'red': 'server-red.svg'},
-    'OS::Nova::KeyPair':    {'green': 'keypair-green.svg', 
+    'OS::Nova::KeyPair':    {'green': 'keypair-green.svg',
                              'red':'keypair-red.svg'},
     'OS::Nova::Flavor':     {'green': 'flavor-green.svg',
                              'red': 'flavor-red.svg'},

@@ -148,7 +148,7 @@ def get_property(obj, key, default=None):
     try:
         return getattr(obj, key, default)
     except AttributeError:
-        return obj.get(key, default) 
+        return obj.get(key, default)
     raise TypeError
 
 
@@ -172,7 +172,7 @@ def get_size(instance):
         return template.loader.render_to_string(template_name, context)
     return _("Not available")
 
-  
+
 class CreateInstancePlan(overview_tables.CreateClonePlan):
     def allowed(self, request, instance=None):
         """Allow terminate action if instance not currently being deleted."""

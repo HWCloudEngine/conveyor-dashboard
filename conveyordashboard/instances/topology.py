@@ -92,7 +92,7 @@ def render_d3_data(request, plan_id, resource_dependencies, **kwargs):
     #resource_dependencies = plan.resource_dependencies
     for service in resource_dependencies.values():
         in_progress, status_message = True, 'Node Topology'
-        
+
         service_node = _create_empty_node()
         service_image = api.get_resource_image(service['type'])
         node_id = service['name_in_template']
@@ -116,7 +116,7 @@ def render_d3_data(request, plan_id, resource_dependencies, **kwargs):
 
 
 def load_plan_d3_data(request, plan, is_original=True):
-    if (not hasattr(plan, "updated_dependencies") 
+    if (not hasattr(plan, "updated_dependencies")
         or not plan.updated_dependencies):
         return render_d3_data(request, plan.plan_id,
                                        plan.original_dependencies)

@@ -96,7 +96,7 @@ class IndexView(tables.MultiTableView):
         try:
             nets = api.net_list_for_tenant(self.request,
                                            self.request.user.tenant_id)
-        except Exception: 
+        except Exception:
             exceptions.handle(self.request,
                               _("Unable to retrieve network list."))
         return nets

@@ -127,7 +127,7 @@ class ExportPlan(policy.PolicyTargetMixin, tables.LinkAction):
     verbose_name = _("Export")
     url = "horizon:conveyor:plans:export"
     icon = "download"
-    classes = ("ajax-modal", "btn-default", "btn-export")    
+    classes = ("ajax-modal", "btn-default", "btn-export")
     help_text = _("Export clone plan.")
 
     def allowed(self, request, plan):
@@ -139,7 +139,7 @@ class CreateTrigger(policy.PolicyTargetMixin, tables.LinkAction):
     verbose_name = _("Create Trigger")
     url = "horizon:conveyor:plans:create_trigger"
     icon = "download"
-    classes = ("ajax-modal", "btn-default", "btn-trigger")    
+    classes = ("ajax-modal", "btn-default", "btn-trigger")
     help_text = _("Creating trigger for clone plan.")
 
     def allowed(self, request, plan):
@@ -213,7 +213,7 @@ class PlanTable(tables.DataTable):
                                 empty_value=TASK_DISPLAY_NONE,
                                 status_choices=TASK_STATUS_CHOICES,
                                 display_choices=TASK_DISPLAY_CHOICES)
-    
+
     def get_object_id(self, obj):
         return obj.plan_id
 

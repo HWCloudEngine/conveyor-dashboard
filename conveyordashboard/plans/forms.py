@@ -71,7 +71,7 @@ class CloneDestination(forms.SelfHandlingForm):
             zones = []
             exceptions.handle(request, _('Unable to retrieve availability '
                                          'zones.'))
-        
+
         zone_list = [(forms.fields.get_dc(zone.zoneName),
                       forms.fields.get_dcname(zone.zoneName))
                       for zone in zones if zone.zoneState['available']]

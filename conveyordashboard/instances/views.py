@@ -146,7 +146,7 @@ class CancelCloneJsonView(generic.View):
             msg = {"msg": "success"}
         except Exception as e:
             msg = {"msg": "err"}
-        return http.HttpResponse(json.dumps(msg), 
+        return http.HttpResponse(json.dumps(msg),
                                  content_type='application/json')
 
 class ResourceDetailJsonView(generic.View):
@@ -176,8 +176,8 @@ class ResourceDetailJsonView(generic.View):
                                                 update_data,
                                                 updated_res,
                                                 is_original).render()
-        resp = {"msg": "success", 
-                "data": data, 
+        resp = {"msg": "success",
+                "data": data,
                 "image": api.get_resource_image(resource_type, 'red')}
         return http.HttpResponse(json.dumps(resp),
                                  content_type='application/json')
@@ -204,11 +204,11 @@ class JSONView(generic.View):
                                           updated_resources,
                                           dependencies)
         planupdate.execute(data)
-        (updated_resources, 
-         dependencies, 
+        (updated_resources,
+         dependencies,
          update_resource) = planupdate.execute_return()
-     
-        (i_updated_resources, 
+
+        (i_updated_resources,
          i_dependencies) = resources.update_return_resource(
                                         i_updated_resources,
                                         updated_resources,

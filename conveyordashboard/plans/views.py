@@ -40,12 +40,6 @@ from conveyordashboard.plans import forms as plan_forms
 from conveyordashboard.plans import tables as plan_tables
 from conveyordashboard.plans import tabs as plan_tabs
 
-logging.basicConfig(level=logging.DEBUG,  
-                    format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',  
-                    datefmt='%a, %d %b %Y %H:%M:%S',  
-                    filename='/tmp/clone.log',  
-                    filemode='w')
-
 LOG = logging.getLogger(__name__)
 
 

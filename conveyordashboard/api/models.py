@@ -12,7 +12,7 @@ class Server(base.APIDictWrapper):
 
 
 class Flavor(base.APIDictWrapper):
-    _attrs = [ 'ram', 'vcpus', 'disk', 'swap', 'ephemeral','rxtx_factor', 
+    _attrs = [ 'ram', 'vcpus', 'disk', 'swap', 'ephemeral','rxtx_factor',
               'extra_specs', 'is_public']
 
 
