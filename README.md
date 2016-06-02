@@ -1,2 +1,2 @@
-# birdie-dashboard
-UI for birdie
+# conveyor-dashboard
+UI for conveyor

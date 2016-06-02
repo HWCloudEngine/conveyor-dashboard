@@ -4,18 +4,17 @@
 	<div class="form-group">
   		<label class="control-label">{% trans "Security Groups" %}</label>
     	<div class=" ">
-    		<select class="form-control" name="sgs" ori_net_id="{{ data.id }}">
+    		<select class="form-control" name="sgs" data-ori="{{ id }}">
 			{% for sg in data.secgroups %}
-			{{sg.id}}{{id}}
 			<option name="sg" value="{{ sg.id }}" {%ifequal id sg.id %}selected="selected"{%endifequal%}>{{ sg.name }} {{ sg.id }}</option>
 			{% endfor %}
 			</select>
 		</div>
 	</div>
-	{%if sg_table %}
-	<div class="form-group">
+	{%if rules_table %}
+	<div class="form-group rules">
   		<label class="control-label">{% trans "Rules" %}</label>
-  		{{sg_table}}
+  		{{rules_table}}
 	</div>
 	{% endif %}
 </div>
@@ -27,12 +26,11 @@
 </div>
 <script>
 $(function(){
-	if($("#rules__action_add_rule").length){
-		$("#rules__action_add_rule").click(function(){
-			return false;
-		})
-	}
-	if($("#rules__action_delete_rule").length){$("#rules__action_delete_rule").click(function(){remove_sg_rules("rules");return false;});}
-	allow_sg_oper();
+	table = "#resource_info_box table#rules"
+	add_action = "#rules__action_add_rule";
+	rm_action = "#rules__action_delete_rule";
+	//open_add_operation(table, "rules", add_action);
+	//open_delete_operation(table, rm_action);
+	$("#resource_info_box select[name=sgs]").change(function(){update_sg_rules($(this).val(), "#resource_info_box div.rules");return false;})
 })
 </script>

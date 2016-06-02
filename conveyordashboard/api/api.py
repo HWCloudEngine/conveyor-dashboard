@@ -1,8 +1,21 @@
+# Copyright 2012 Nebula, Inc.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License"); you may
+#    not use this file except in compliance with the License. You may obtain
+#    a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#    License for the specific language governing permissions and limitations
+#    under the License.
+
 import logging
 
 from django.conf import settings
 from django.contrib.staticfiles.templatetags.staticfiles import static
-from django.template import loader
 
 from horizon.utils import functions as utils
 
@@ -11,10 +24,10 @@ from openstack_dashboard import api as os_api
 from conveyordashboard import api
 from conveyordashboard.api import models
 
-LOG = logging.getLogger(__name__)
-
 from conveyordashboard.constant import (IMAGE_DIR,
                                       RESOURCE_TYPE_IMAGE_MAPPINGS)
+
+LOG = logging.getLogger(__name__)
 
 
 def get_resource_image(res_type, color="green"):
@@ -39,6 +52,11 @@ def plan_delete(request, plan_id):
 
 def plan_get(request, plan_id):
     return api.conveyorclient(request).plans.get(plan_id)
+
+
+def download_template(request, plan_id):
+    LOG.info("download_template %s" % plan_id)
+    return api.conveyorclient(request).plans.download_template(plan_id)
 
 
 def create_plan_by_template(request, template):
@@ -78,7 +96,16 @@ def clone(request, plan_id, destination, update_resources):
                                                     update_resources)
 
 
-#nova
+def export_migrate_template(request, plan_id):
+    return api.conveyorclient(request).migrates.export_migrate_template(
+                                                        plan_id)
+
+
+def migrate(request, plan_id, destination):
+    return api.conveyorclient(request).migrates.migrate(plan_id,
+                                                    destination)
+
+
 def server_list(request, search_opts=None, all_tenants=False):
     page_size = utils.get_page_size(request)
     paginate = False
@@ -123,7 +150,11 @@ def flavor_get(request, id):
     return models.Flavor(resource_detail(request, "OS::Nova::Flavor", id))
 
 
-#neutron
+def net_get(request, id):
+    network = resource_detail(request, "OS::Neutron::Net", id)
+    return os_api.neutron.Network(network)
+
+
 def net_list(request, search_opts=None):
     networks = resource_list(request, "OS::Neutron::Net",
                              search_opts=search_opts)
@@ -151,7 +182,7 @@ def subnet_list_for_tenant(request, tenant_id, search_opts=None):
 
 def subnet_list_for_network(request, tenant_id=None, is_external=False):
     nets = net_list(request) if not tenant_id else net_list_for_tenant(request,
-                                                                    tenant_id)
+        tenant_id)
     nets = [n for n in nets if getattr(n, "router:external") == is_external]
 
     subnets = []

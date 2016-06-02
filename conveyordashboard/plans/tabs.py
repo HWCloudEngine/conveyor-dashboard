@@ -1,5 +1,19 @@
-import uuid
+# Copyright 2012 Nebula, Inc.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License"); you may
+#    not use this file except in compliance with the License. You may obtain
+#    a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#    License for the specific language governing permissions and limitations
+#    under the License.
+
 import logging
+import uuid
 
 from django.template import loader
 from django.utils.translation import ugettext_lazy as _
@@ -7,8 +21,8 @@ from django.utils.translation import ugettext_lazy as _
 from horizon import tabs
 
 from conveyordashboard.api import api
-from conveyordashboard.constant import (RESOURCE_TYPE)
-from conveyordashboard.instances import topology
+from conveyordashboard.constant import RESOURCE_TYPE
+from conveyordashboard.topology import topology
 
 OVERVIEW_ITEMS_DIR = 'plans/overview_items/'
 OVERVIEW_ITEMTEMPL_PATH = 'plans/overview_items/itemtmpl.html'
@@ -64,7 +78,9 @@ class TopologyTab(tabs.Tab):
         plan_id = self.tab_group.kwargs['plan_id']
         context['plan_id'] = plan_id
         plan = self.tab_group.kwargs['plan']
-        context['d3_data'] = topology.load_plan_d3_data(self.request, plan)
+        context['d3_data'] = topology.load_plan_d3_data(self.request,
+                                                        plan,
+                                                        plan.plan_type)
         return context
 
 

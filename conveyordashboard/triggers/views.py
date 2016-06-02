@@ -15,6 +15,7 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+
 from django.utils.translation import ugettext_lazy as _
 
 from horizon import exceptions
@@ -27,9 +28,6 @@ class IndexView(tables.DataTableView):
     table_class = triggers_tables.TriggersTable
     template_name = 'triggers/index.html'
     page_title = _("Triggers")
-
-#     def has_more_data(self, table):
-#         return self._more
 
     def get_data(self):
         marker = self.request.GET.get(

@@ -260,7 +260,7 @@ if ($(conveyor_container).length){
   var width = $(conveyor_container).width()
   if (width === 0) { width = 700;}
   var height = $(window).height() - 200,
-    ajax_url = 'clone/get_d3_data',
+    //ajax_url = 'clone/get_d3_data',
     graph = $("#d3_data").data("d3_data"),
     force = d3.layout.force()
       .nodes(graph.nodes)

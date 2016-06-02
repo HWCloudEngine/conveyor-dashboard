@@ -1,4 +1,4 @@
-Murano Dashboard Style Commandments
+Conveyor Dashboard Style Commandments
 ===================================
 
 *- Step 1: Read the OpenStack Style Commandments

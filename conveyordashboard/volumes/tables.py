@@ -14,18 +14,16 @@
 
 from django.utils.translation import ugettext_lazy as _
 
-from horizon import tabs
+from horizon import tables
 
 
-class OverviewTab(tabs.Tab):
-    name = _("Overview")
-    slug = "overview"
-    template_name = ("clone/volumes/volumes/_detail_overview.html")
-
-    def get_context_data(self, request):
-        return {"volume": self.tab_group.kwargs['volume']}
-
-
-class VolumeDetailTabs(tabs.TabGroup):
-    slug = "volume_details"
-    tabs = (OverviewTab,)
+class VolumesTable(tables.DataTable):
+    # NOTE(gabriel): Commenting out the user column because all we have
+    # is an ID, and correlating that at production scale using our current
+    # techniques isn't practical. It can be added back in when we have names
+    # returned in a practical manner by the API.
+    class Meta(object):
+        name = "volumes"
+        verbose_name = _("Volumes")
+        table_actions = ()
+        row_actions = ()

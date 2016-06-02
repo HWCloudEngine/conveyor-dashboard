@@ -1,0 +1,94 @@
+{% extends "horizon/common/_modal_form.html" %}
+{% load i18n %}
+{% load static %}
+{% load url from future %}
+
+{% block modal-body-right %}
+  <h3>{% trans "Description:" %}</h3>
+  <p>{% trans "Import Plan from local plan template file." %}</p>
+{% endblock %}
+{% block modal-body %}
+<style>
+	{%ifequal type "clone"%}
+	.modal-dialog{width:1160px;}
+	#conveyor_plan_topology {float:left;}
+	#resource_info_box {width:420px;height:auto;}
+	.header{text-align:center;font-weight:bold;}
+	{%endifequal%}
+</style>
+<div>
+	<fieldset>{% include "horizon/common/_form_fields.html" %}</fieldset>
+</div>
+<div id="resource_container">
+	<script type="text/javascript" src="{% static 'conveyordashboard/js/json2.js' %}"></script>
+	<script type="text/javascript" src="{% static 'conveyordashboard/js/jbase64.js' %}"></script>
+	<script type="text/javascript" src="{% static 'conveyordashboard/js/jquery.cookie.js' %}"></script>
+	<script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.js' %}"></script>
+	<script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.action.js' %}"></script>
+	<div id="info_box"></div>
+	<div id="stack_box" style="width: 400px"></div>
+	<div id="conveyor_plan_topology"></div>
+	<input id="id_action_type" name="action_type" type="hidden" value="">
+	<input id="id_plan_type" name="plan_type" type="hidden" value="{{type}}">
+	<input id="id_plan_id" name="plan_id" type="hidden" data-plan_id="{{ plan_id }}" value="{{ plan_id }}" />
+	{%ifequal type "clone"%}
+	<input id="id_update_resource" name="update_resource" type="hidden" value="[]" />
+	<input id="id_updated_resources" name="updated_resources" type="hidden" value="{}"/>
+	<input id="id_dependencies" name="dependencies" type="hidden" value="{}"/>
+	{%endifequal%}
+	<div id="d3_data" data-d3_data="{{ d3_data }}"></div>
+	<div id="is_original" data-is_original="{{is_original}}"></div>
+</div>
+<div id="resource_info_box" class="pull-right"></div>
+<div id="tmp_hide_box" style="display:none;"></div>
+<div class="modal-dialog clone-destination-dialog" style="display: none; width: auto;">
+	<div class="modal-content ui-draggable">
+		<div class="modal-header ui-draggable-handle">
+			<a class="close" id="close_save_plan_dialog">&times;</a>
+			<h3 class="modal-title">
+			{{type|title}}
+			</h3>
+		</div>
+		<div class="modal-body clearfix">
+			<div class="left">
+				<div class="form-group ">
+					<label class="control-label" for="id_availability_zone">Availability Zone</label>
+					<div class=" ">
+						<select class="form-control" id="id_availability_zone" name="availability_zone" data-original-title="" title="">
+							<option value="">Any</option>
+							{%for az in azs%}<option value="{{az.zoneName}}">{{az.zoneName}}</option>{%endfor%}
+						</select>
+					</div>
+				</div>
+				<div class="form-group ">
+					<label class="control-label" for="id_host">Host</label>
+					<div class=" ">
+						<select class="form-control" id="id_host" name="host" data-original-title="" title="">
+							<option value="">Any</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="right">
+			    <h3>Description:</h3>
+			    <p>{{type|title}} All the resources of this plan to another specific az</p>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<div class="btn btn-primary clone_plan">
+			{{type|title}}
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+{% block modal-footer %}
+<input class="btn btn-primary pull-right" name="save" type="submit" value="{% trans "Save" %}" />
+{%ifequal type "clone"%}
+<input class="btn btn-primary pull-right" name="clone" type="submit" value="{% trans "Clone" %}" style="margin-right: 8px" />
+{%endifequal%}
+{%ifequal type "migrate"%}
+<input class="btn btn-primary pull-right" name="migrate" type="submit" value="{% trans "Migrate" %}" style="margin-right: 8px"/>
+{%endifequal%}
+<a href="{% url 'horizon:conveyor:instances:index' %}" class="btn btn-default secondary cancel close" is_new={{is_original}}>{% trans "Cancel" %}</a>
+{% endblock %}

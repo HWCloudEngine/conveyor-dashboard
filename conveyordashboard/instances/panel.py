@@ -22,6 +22,7 @@ import horizon
 
 from conveyordashboard import dashboard
 
+
 class Instances(horizon.Panel):
     name = _("Instances")
     slug = 'instances'

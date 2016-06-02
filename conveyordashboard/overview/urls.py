@@ -16,7 +16,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-
 from django.conf.urls import patterns
 from django.conf.urls import url
 
@@ -26,9 +25,6 @@ from conveyordashboard.overview import views
 urlpatterns = patterns(
     'conveyordashboard.overview.views',
     url(r'^$', views.IndexView.as_view(), name='index'),
-    url(r'^create_plan$',
-        views.PlanTopologyView.as_view(),
-        name='create_plan'),
     url(r'^row_actions$', views.RowActionsView.as_view(), name='row_actions'),
     url(r'^table_actions$',
         views.TableActionsView.as_view(), name='table_actions'),

@@ -79,7 +79,7 @@ function get_query_string(){
 	url+=id_strs.join("**");
 	return url;
 }
-function get_url(){return "/conveyor/overview/create_plan";}
+function get_url(){return "/conveyor/plans/create";}
 var $create_plan_topology = function(){
 	href = get_url();
 	if(href == "") { href = $(this).attr("href")}

@@ -32,7 +32,7 @@ function conveyor_get_query_string(){
 }
 
 function conveyor_get_url(){
-	return "/conveyor/overview/create_plan";
+	return "/conveyor/plans/create";
 }
 
 var $conveyor_create_plan_topology = function(){
