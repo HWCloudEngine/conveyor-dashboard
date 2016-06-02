@@ -9,6 +9,12 @@
 		<label class="control-label">{%trans "Script Data" %}</label>
 		<div class=" "><textarea id="user_data" data-ori="{{ data.user_data }}" style="width: 340px; height: 150px">{{ data.user_data }}</textarea></div>
 	</div>
+	{%if metadata%}
+	<div class="form-group">
+		<label class="control-label">{% trans "Metadata" %}</label>
+  		{{metadata}}
+	</div>
+	{%endif%}
 </div>
 <div class="footer">
 	<div class="cell delete">
@@ -16,3 +22,12 @@
 		<button class="save-info btn btn-danger btn-xs">{% trans "Save" %}</button>
 	</div>
 </div>
+<script>
+$(function(){
+	table = "table#metadatas";
+	add_action = "#metadatas__action_add_metadata";
+	rm_action = "#metadatas__action_delete_metadata";
+	open_add_operation(table, "metadatas", add_action);
+	open_delete_operation(table, rm_action);
+})
+</script>

@@ -10,13 +10,3 @@ ADD_INSTALLED_APPS = [
     'conveyordashboard',
     'floppyforms'
 ]
-
-ADD_JS_FILES = [
-    'conveyordashboard/js/conveyor.field.js'
-]
-
-# ADD_EXCEPTIONS = {
-#     'recoverable': exceptions.RECOVERABLE,
-#     'not_found': exceptions.NOT_FOUND,
-#     'unauthorized': exceptions.UNAUTHORIZED,
-# }

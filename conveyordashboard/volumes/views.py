@@ -14,13 +14,36 @@
 
 from django.utils.translation import ugettext_lazy as _
 
-from horizon import tabs
+from horizon import exceptions
+from horizon import tables
 
-from conveyordashboard.volumes \
-    import tabs as volume_tabs
+from conveyordashboard.volumes import tables as volume_tables
 
+class IndexView(tables.DataTableView):
+    table_class = volume_tables.VolumesTable
+    template_name = 'triggers/index.html'
+    page_title = _("Triggers")
 
-class IndexView(tabs.TabbedTableView):
-    tab_group_class = volume_tabs.VolumeAndSnapshotTabs
-    template_name = 'volumes/index.html'
-    page_title = _("Volumes")
+    def get_data(self):
+        marker = self.request.GET.get(
+            volume_tables.VolumesTable._meta.pagination_param, None)
+        search_opts = self.get_filters({'marker': marker, 'paginate': True})
+        # Gather our instances
+        try:
+            pass
+        except Exception:
+            self._more = False
+            instances = []
+            exceptions.handle(self.request,
+                              _('Unable to retrieve instances.'))
+        return {}
+
+    def get_filters(self, filters):
+        filter_action = self.table._meta._filter_action
+        if filter_action:
+            filter_field = self.table.get_filter_field()
+            if filter_action.is_api_filter(filter_field):
+                filter_string = self.table.get_filter_string()
+                if filter_field and filter_string:
+                    filters[filter_field] = filter_string
+        return filters

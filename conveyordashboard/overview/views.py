@@ -15,30 +15,24 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-import json
+
 import logging
 
 from django import http
-from django.core.urlresolvers import reverse
-from django.core.urlresolvers import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 from django.utils.datastructures import SortedDict
 from django.views import generic
 
 from horizon import exceptions
-from horizon import forms
 from horizon import tables
-from horizon.utils import memoized
 
 from openstack_dashboard import api as os_api
 
 from conveyordashboard.api import api
-from conveyordashboard.instances import topology
-from conveyordashboard.overview import forms as overview_forms
 from conveyordashboard.overview import tables as overview_tables
 
 from conveyordashboard.instances.tables import InstancesTable
-from conveyordashboard.volumes.volumes.tables import VolumesTable
+from conveyordashboard.volumes.tables import VolumesTable
 
 LOG = logging.getLogger(__name__)
 
@@ -118,100 +112,9 @@ class IndexView(tables.MultiTableView):
                                _("Unable to retrieve routers list.")))
 
 
-class PlanTopologyView(forms.ModalFormView):
-    form_class = overview_forms.PlanForm
-    form_id = "plan_topology_form"
-    modal_header = _("Plan Topology")
-    template_name = 'overview/topology.html'
-    context_object_name = 'plan'
-    submit_url = reverse_lazy("horizon:conveyor:overview:create_plan")
-    success_url = reverse_lazy("horizon:conveyor:overview:index")
-    page_title = _("Plan Topology")
-
-    def get_context_data(self, **kwargs):
-        context = super(PlanTopologyView, self).get_context_data(**kwargs)
-
-        self.set_success_url()
-
-        plan, is_original = self.get_object()
-
-        context['plan'] =  plan
-        context['plan_id'] = plan.plan_id
-
-        d3_data = topology.load_plan_d3_data(self.request, plan, is_original)
-        context['d3_data'] = d3_data
-        context['is_original'] = is_original
-
-        context['azs'] = self.get_zones()
-
-        try:
-            context["type"] = self.request.GET["type"]
-        except Exception:
-            redirect = PlanTopologyView.success_url
-            msg = _("Query string does not contain parameter plan type.")
-            exceptions.handler(self.request, msg, redirect=redirect)
-
-        return context
-
-    @memoized.memoized_method
-    def get_object(self, *args, **kwargs):
-        LOG.info("request={}".format(self.request))
-        if "ids" in self.request.GET:
-            resource = []
-            id_list = {}
-            try:
-                ids = self.request.GET["ids"]
-                plan_type = self.request.GET["type"]
-                LOG.info("ids=%s, plan_type=%s" % (ids, plan_type))
-                for item in ids.split("**"):
-                    id_list[item.split("*")[0]] = item.split("*")[1].split(",")
-                for key, value in id_list.items():
-                    for id in value:
-                        resource.append({"type": key, "id": id})
-                return api.plan_create(self.request, plan_type, resource), True
-            except Exception as e:
-                redirect = PlanTopologyView.success_url
-                msg = _("Query string is not a correct format. error=%s"%str(e))
-                exceptions.handle(self.request, msg, redirect=redirect)
-                return
-        elif "plan_id" in self.request.GET:
-            try:
-                return api.plan_get(self.request, self.request.GET["plan_id"]), False
-            except Exception:
-                redirect = PlanTopologyView.success_url
-                msg = _('Unable to retrieve plan details.')
-                exceptions.handle(self.request, msg, redirect=redirect)
-                return
-
-        redirect = PlanTopologyView.success_url
-        msg = _('Query string does not contain either plan_id or res ids.')
-        exceptions.handle(self.request, msg, redirect=redirect)
-
-    def get_zones(self, *args, **kwargs):
-        try:
-            zones = api.availability_zone_list(self.request)
-            return zones
-        except Exception:
-            zones = []
-            exceptions.handle(self.request,
-                              _('Unable to retrieve availability zones.'))
-
-    def set_success_url(self):
-        try:
-            if "next_url" in self.request.GET:
-                PlanTopologyView.success_url = self.request.GET["next_url"]
-            else:
-                PlanTopologyView.success_url = self.request.HTTP_REFERER
-        except:
-            pass
-
-    def get_initial(self):
-        initial = super(PlanTopologyView, self).get_initial()
-        return initial
-
-
 TYPE_CLASS_MAPPING = {"OS::Nova::Server": InstancesTable,
                       "OS::Cinder::Volume": VolumesTable}
+
 
 class RowActionsView(generic.View):
     @staticmethod

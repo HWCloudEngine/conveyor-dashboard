@@ -1,9 +1,20 @@
+# Copyright 2012 Nebula, Inc.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License"); you may
+#    not use this file except in compliance with the License. You may obtain
+#    a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#    License for the specific language governing permissions and limitations
+#    under the License.
+
 import logging
 
-from django import template
 from django.core.urlresolvers import reverse
-from django.core.urlresolvers import reverse_lazy
-from django.template import defaultfilters as filters
 from django.utils.http import urlencode
 from django.utils.translation import ugettext_lazy as _
 
@@ -33,7 +44,7 @@ def get_res_type(table):
 class CreateClonePlan(tables.LinkAction):
     name = "clone_plan"
     verbose_name = _("Create Clone Plan")
-    url = "horizon:conveyor:overview:create_plan"
+    url = "horizon:conveyor:plans:create"
     classes = ("ajax-modal", "btn-default", "btn-clone")
     help_text = _("Execute clone plan")
 
@@ -54,7 +65,7 @@ class CreateClonePlan(tables.LinkAction):
 class CreateMigratePlan(tables.LinkAction):
     name = "migrate_plan"
     verbose_name = _("Create Migrate Plan")
-    url = "horizon:conveyor:overview:create_plan"
+    url = "horizon:conveyor:plans:create"
     classes = ("ajax-modal", "btn-default", "btn-clone")
     help_text = _("Execute migrate plan")
 
@@ -75,7 +86,7 @@ class CreateMigratePlan(tables.LinkAction):
 class CreatePlanWithMulRes(tables.LinkAction):
     name = "create_plan_with_mul_res"
     verbose_name = _("Create Clone Plan")
-    url = "horizon:conveyor:overview:create_plan"
+    url = "horizon:conveyor:plans:create"
     classes = ("ajax-modal", "btn-default",
                "create-plan-for-mul-sel", "disabled")
     help_text = _("Create clone plan with selecting multi-resources")
@@ -85,7 +96,7 @@ class CreatePlanWithMulRes(tables.LinkAction):
 class CreateMigratePlanWithMulRes(tables.LinkAction):
     name = "create_migrate_plan_with_mul_res"
     verbose_name = _("Create Migrate Plan")
-    url = "horizon:conveyor:overview:create_plan"
+    url = "horizon:conveyor:plans:create"
     classes = ("ajax-modal", "btn-default",
                "create-migrate-plan-for-mul-sel", "disabled")
     help_text = _("Create migrate plan with selecting multi-resources")
@@ -139,7 +150,6 @@ class VolumesTable(VolumesTable):
 
 
 class NetworksFilterAction(tables.FilterAction):
-
     def filter(self, table, networks, filter_string):
         """Naive case-insensitive search."""
         query = filter_string.lower()

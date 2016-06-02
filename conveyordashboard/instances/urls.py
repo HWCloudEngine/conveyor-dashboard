@@ -26,10 +26,4 @@ INSTANCES = r'^(?P<instance_id>[^/]+)/%s$'
 urlpatterns = patterns(
     'conveyordashboard.instances.views',
     url(r'^$', views.IndexView.as_view(), name='index'),
-    url(INSTANCES % 'update', views.UpdateView.as_view(), name='update'),
-    url(r'^get_d3_data$', views.JSONView.as_view(), name='d3_data'),
-    url(r'^get_resource_detail$', views.ResourceDetailJsonView.as_view(),
-        name='resource_detail'),
-    url(r'^cancel_clone$', views.CancelCloneJsonView.as_view(),
-        name='cancel_clone'),
 )

@@ -12,25 +12,14 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from django.conf.urls import include
 from django.conf.urls import patterns
 from django.conf.urls import url
 
-from conveyordashboard.volumes.backups import urls as backups_urls
-from conveyordashboard.volumes.snapshots import urls as snapshot_urls
+
 from conveyordashboard.volumes import views
-from conveyordashboard.volumes.volumes import urls as volume_urls
+
 
 urlpatterns = patterns(
     '',
     url(r'^$', views.IndexView.as_view(), name='index'),
-    url(r'^\?tab=volumes_and_snapshots__snapshots_tab$',
-        views.IndexView.as_view(), name='snapshots_tab'),
-    url(r'^\?tab=volumes_and_snapshots__volumes_tab$',
-        views.IndexView.as_view(), name='volumes_tab'),
-    url(r'^\?tab=volumes_and_snapshots__backups_tab$',
-        views.IndexView.as_view(), name='backups_tab'),
-    url(r'', include(volume_urls, namespace='volumes')),
-    url(r'backups/', include(backups_urls, namespace='backups')),
-    url(r'snapshots/', include(snapshot_urls, namespace='snapshots')),
 )
