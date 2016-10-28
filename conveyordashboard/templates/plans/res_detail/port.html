@@ -1,0 +1,17 @@
+{% load i18n %}
+<div class="contentBody detailInfoCon" resource_id="{{ resource_id }}" resource_type="{{ resource_type }}" data-id="{{id}}">
+	{% if data.name %}<div class="form-group header"><label class="control-label">{{ data.name }}</label></div>{% endif %}
+	{% for ip in data.fixed_ips %}
+	<div class="form-group">
+  		<label class="control-label">{% trans "Port"%}</label>
+   		<span class="help-icon" data-toggle="tooltip" data-placement="top" title="cidr: {{ip.cidr}}   alloc: {{ip.allocation_pools}}"><span class="glyphicon glyphicon-question-sign"></span></span>
+   		<div class=" "><input class="form-control ip" maxlength="255" name="ip" type="text" data-subnet-id="{{ip.subnet_id.get_resource}}" data-cidr="{{ip.cidr}}" data-alloc="{{ip.allocation_pools}}" data-ori="{{ip.ip_address}}" {%if ip.ip_address%}value="{{ ip.ip_address }}"{%else%}placeholder="cidr: {{ip.cidr}}"{%endif%}></div>
+   		</div>
+	{% endfor %}
+</div>
+<div class="footer">
+	<div class="cell delete">
+		<button class="cancel btn btn-danger btn-xs">{% trans "Cancel" %}</button>
+		<button class="save-info btn btn-danger btn-xs">{% trans "Save" %}</button>
+	</div>
+</div>

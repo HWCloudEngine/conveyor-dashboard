@@ -1,0 +1,40 @@
+{% load i18n %}
+<div class="contentBody detailInfoCon" resource_id="{{ resource_id }}" resource_type="{{ resource_type }}">
+	{% if data.name %}<div class="form-group header">{{ data.name }}</div>{% endif %}
+	<div class="form-group"><label class="control-label">{% trans "Name" %}</label><div class=" "><input class="form-control" id="id_name" name="name" type="text" data-ori="{{ data.name }}" value="{{ data.name }}"></div></div>
+	<div class="form-group"><label class="control-label">{% trans "Size" %}</label><div class=" "><input class="form-control" id="id_size" name="size" type="text" data-ori="{{ data.size }}" value="{{ data.size }}"></div></div>
+	<div class="form-group">
+		<label class="control-label">{%trans "Description" %}</label>
+		<div class=" "><input class="form-control" id="id_description" name="description" type="text" data-ori="{{ data.description }}" value="{{ data.description }}"></div></div>
+	</div>
+	<div class="form-group">
+		<label class="control-label">{% trans "Metadata" %}</label>
+  		{{metadata}}
+	</div>
+	{%if data.volumes %}
+	<div class="form-group "><div class=""><div class="checkbox"><label><input {% if data.from_other%}checked="checked"{%endif%} id="id_from_other" name="from_other" type="checkbox"><span>Select from Other Volumes</span></label></div></div></div>
+	<div class="form-group ">
+  		<label class="control-label">{% trans "Volumes" %}</label>
+   		<div class=" ">
+			<select class="form-control" name="volumes" data-ori="{{ id }}">
+			{% for v in data.volumes %}<option name="volume" value="{{ v.id }}" {%ifequal id v.id %}selected="selected"{%endifequal%}>{{ v.display_name }} {{ v.id }}</option>{% endfor %}
+			</select>
+		</div>
+	</div>
+	{%endif%}
+</div>
+<div class="footer">
+	<div class="cell delete">
+		<button class="cancel btn btn-danger btn-xs">{% trans "Cancel" %}</button>
+		<button class="save-info btn btn-danger btn-xs">{% trans "Save" %}</button>
+	</div>
+</div>
+<script>
+$(function(){
+	table = "table#metadatas";
+	add_action = "#metadatas__action_add_metadata";
+	rm_action = "#metadatas__action_delete_metadata";
+	open_add_operation(table, "metadatas", add_action);
+	open_delete_operation(table, rm_action);
+})
+</script>
