@@ -1,0 +1,37 @@
+{% load i18n %}
+<div class="contentBody detailInfoCon" resource_id="{{ resource_id }}" resource_type="{{ resource_type }}" data-id="{{id}}">
+	<div class="form-group header">{{ data.name }}</div>
+	<div class="form-group">
+		<label class="control-label">{% trans "Availability Zone" %}</label>
+		<div class=" ">{{ data.availability_zone }}</div>
+	</div>
+	<div class="form-group">
+		<label class="control-label">{%trans "Script Data" %}</label>
+		<div class=" "><textarea id="id_user_data" class="form-control" data-ori="{{ data.user_data }}"  cols="40" rows="5">{{ data.user_data }}</textarea></div>
+	</div>
+	<div class="form-group">
+		<label class="control-label">{%trans "Description" %}</label>
+		<div class=" "><input class="form-control" id="id_description" name="description" type="text" data-ori="{{ data.description }}" value="{{ data.description }}"></div></div>
+	</div>
+	{%if metadata%}
+	<div class="form-group">
+		<label class="control-label">{% trans "Metadata" %}</label>
+  		{{metadata}}
+	</div>
+	{%endif%}
+</div>
+<div class="footer">
+	<div class="cell delete">
+		<button class="cancel btn btn-danger btn-xs">{% trans "Cancel" %}</button>
+		<button class="save-info btn btn-danger btn-xs">{% trans "Save" %}</button>
+	</div>
+</div>
+<script>
+$(function(){
+	table = "table#metadatas";
+	add_action = "#metadatas__action_add_metadata";
+	rm_action = "#metadatas__action_delete_metadata";
+	open_add_operation(table, "metadatas", add_action);
+	open_delete_operation(table, rm_action);
+})
+</script>

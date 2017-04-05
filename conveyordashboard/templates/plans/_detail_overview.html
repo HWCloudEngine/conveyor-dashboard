@@ -1,0 +1,51 @@
+{% load i18n sizeformat %} {% load url from future %} {% load static %}
+<link rel="stylesheet" href="{% static 'conveyordashboard/css/conveyordashboard.css' %}"/>
+<h3>{% trans "Plan Overview" %}</h3>
+<div class="status detail">
+	<h4>{% trans "Information" %}</h4>
+	<hr class="header_rule">
+	<dl class="dl-horizontal">
+		<dt>{% trans "ID" %}</dt>
+		<dd>{{ plan.plan_id }}</dd>
+		<dt>{% trans "Plan Type" %}</dt>
+		<dd>{{ plan.plan_type }}</dd>
+		<dt>{% trans "Create Time" %}</dt>
+		<dd>{{ plan.created_at|parse_isotime }}</dd>
+		<dt>{% trans "Expire Time" %}</dt>
+		<dd>{{ plan.expire_at|parse_isotime }}</dd>
+		<dt>{% trans "Plan Status"%}</dt>
+		<dd>{{ plan.plan_status }}
+	</dl>
+</div>
+
+<div class="status detail">
+	<h4>
+		{% trans "Original Resources" %}
+		<div class="close_open_item" item_id="original_resources_container" open_text="{% trans " open" %}" close_text="{% trans "Close" %}">{%	trans "Close" %}</div>
+	</h4>
+	<hr class="header_rule">
+	<div id="original_resources_container">
+		{% for key, value in plan.original_resources.items %} 
+		{{ value }} 
+		{% endfor %}
+	</div>
+</div>
+
+<div class="status detail">
+	<h4>
+		{% trans "Updated Resources" %}
+		<div class="close_open_item" item_id="updated_resources_container" open_text="{% trans " open" %}" close_text="{% trans "Close" %}">{% trans "Close" %}</div>
+	</h4>
+	<hr class="header_rule" />
+	<div id="updated_resources_container">
+		{% for key, value in plan.updated_resources.items %} 
+		{{ value }} 
+		{% endfor %}
+	</div>
+</div>
+
+<script type="text/javascript">
+$(function(){
+	$("div.close_open_item").click(function(){if($(this).text() === $(this).attr("close_text")) { $("#"+$(this).attr("item_id")).slideUp(); $(this).text($(this).attr("open_text")); } else{ $("#"+$(this).attr("item_id")).slideDown(); $(this).text($(this).attr("close_text"));}});
+})
+</script>

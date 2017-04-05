@@ -1,0 +1,33 @@
+{% load i18n %}
+<div class="contentBody detailInfoCon" resource_id="{{ resource_id }}" resource_type="{{ resource_type }}">
+	{%if data.name%}<div class="form-group header">{{ data.name }}</div>{%endif%}
+	<div class="form-group"><label class="control-label">{% trans "Delay" %}</label><div class=" "><input class="form-control" id="id_delay" name="delay" type="number" data-ori="{{ data.delay }}" value="{{ data.delay }}"></div></div>
+	<div class="form-group"><label class="control-label">{% trans "Max Retries" %}</label><div class=" "><input class="form-control" id="id_max_retries" name="max_retries" type="number" data-ori="{{ data.max_retries }}" value="{{ data.max_retries }}"></div></div>
+	<div class="form-group">
+		<label class="control-label">{% trans "Type" %}</label>
+		<div class=" ">
+			<select class="form-control" name="types" data-ori="{{ data.type }}">
+				<option name="type" value="PING" {%ifequal data.type "PING" %}selected="selected"{%endifequal%}>PING</option>
+				<option name="type" value="TCP" {%ifequal data.type "TCP" %}selected="selected"{%endifequal%}>TCP</option>
+				<option name="type" value="HTTP" {%ifequal data.type "HTTP" %}selected="selected"{%endifequal%}>HTTP</option>
+				<option name="type" value="HTTPS" {%ifequal data.type "HTTPS" %}selected="selected"{%endifequal%}>HTTPS</option>
+			</select>
+		</div>
+	</div>
+	<div class="form-group"><label class="control-label">{% trans "Timeout" %}</label><div class=" "><input class="form-control" id="id_timeout" name="timeout" type="number" data-ori="{{ data.timeout }}" value="{{ data.timeout }}"></div></div>
+	<div class="form-group">
+		<label class="control-label">{% trans "Admin State" %}</label>
+		<div class=" ">
+			<select class="form-control" name="admin_state_ups" data-ori="{{data.admin_state_up}}">
+				<option name="admin_state_up" value="True" {%ifequal data.admin_state_up "True" %} selected="selected"{%endifequal%}>Up</option>
+				<option name="admin_state_up" value="False" {%ifequal data.admin_state_up "False" %} selected="selected"{%endifequal%}>Down</option>
+			</select>
+		</div>
+	</div>
+</div>
+<div class="footer">
+	<div class="cell delete">
+		<button class="cancel btn btn-danger btn-xs">{% trans "Cancel" %}</button>
+		<button class="save-info btn btn-danger btn-xs">{% trans "Save" %}</button>
+	</div>
+</div>

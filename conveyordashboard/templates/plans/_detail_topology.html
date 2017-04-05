@@ -1,0 +1,10 @@
+{% load i18n sizeformat %} {% load static %}
+<div id="resource_container">
+	<div id="info_box"></div>
+	<div id="stack_box" style="width: 400px"></div>
+	<div id="conveyor_plan_topology"></div>
+	<div id="plan_id" data-plan_id="{{ plan_id }}"></div>
+	<div id="d3_data" data-d3_data="{{ d3_data }}"></div>
+</div>
+<script type="text/javascript" src="{% static 'conveyordashboard/js/d3.v3.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.js' %}"></script>

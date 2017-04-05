@@ -1,0 +1,19 @@
+{% load i18n %}
+<div class="contentBody detailInfoCon" resource_id="{{ resource_id }}" resource_type="{{ resource_type }}"  data-id="{{id}}">
+    {% if data.name %}<div class="form-group header">{{ data.name }}</div>{% endif %}
+	<div class="form-group "><div class=""><div class="checkbox"><label><input {% if data.from_other%}checked="checked"{%endif%} id="id_from_other" name="from_other" type="checkbox"><span>Select from Other VolumeTypes</span></label></div></div></div>
+	<div class="form-group ">
+  		<label class="control-label">{% trans "Volume Types" %}</label>
+   		<div class=" ">
+			<select class="form-control" name="volumetypes" data-ori="{{ id }}">
+			{% for vt in data.volumetypes %}<option name="volumetype" value="{{ vt.id }}" {%ifequal id vt.id %}selected="selected"{%endifequal%}>{{ vt.name }} {{ vt.id }}</option>{% endfor %}
+			</select>
+		</div>
+	</div>
+</div>
+<div class="footer">
+	<div class="cell delete">
+		<button class="cancel btn btn-danger btn-xs">{% trans "Cancel" %}</button>
+		<button class="save-info btn btn-danger btn-xs">{% trans "Save" %}</button>
+	</div>
+</div>

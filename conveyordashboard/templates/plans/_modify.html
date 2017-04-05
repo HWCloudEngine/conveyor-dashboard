@@ -1,0 +1,48 @@
+{% extends "horizon/common/_modal_form.html" %}
+{% load i18n %}
+{% load static %}
+{% load url from future %}
+{% block form_action %}{% url 'horizon:conveyor:plans:modify' plan_id %}{% endblock %}
+{% block modal-body %}
+<style>
+	#plan_deps_table .table > thead > tr > th{padding:4px 8px!important;}
+	#plan_deps_table .table > tbody > tr > td{padding:0 8px!important;}
+	#plan_deps_table {height:200px;overflow-x: hidden;overflow-y:auto}
+	#plan_deps_table .table > tbody > tr > td span{margin-left: 0!important;}
+	.parent td{line-height: 30px!important;}
+	#resource_info_box {width:400px;height:auto;margin: 70px auto 0;}
+	.header{text-align:center;font-weight:bold;}
+	#info_box{top:310px;}
+	#stack_box{top:250px;width:400px;}
+</style>
+<link rel="stylesheet" href="{% static 'conveyordashboard/css/jquery.treeTable.css' %}"/>
+<script type="text/javascript" src="{% static 'conveyordashboard/js/json2.js' %}"></script>
+<script type="text/javascript" src="{% static 'conveyordashboard/js/jbase64.js' %}"></script>
+<script type="text/javascript" src="{% static 'conveyordashboard/js/jquery.cookie.js' %}"></script>
+<script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.validate.js' %}"></script>
+<script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.utils.js' %}"></script>
+<script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.js' %}"></script>
+<script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.res.action.js' %}"></script>
+<script type="text/javascript" src="{% static 'conveyordashboard/js/jquery.treeTable.js' %}"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+		$("#plan_deps").treeTable();
+	});
+</script>
+<fieldset>
+{% include "horizon/common/_form_fields.html" %}
+</fieldset>
+<div id="info_box"></div>
+<div id="stack_box"></div>
+<div id="plan_deps_table">{{plan_deps_table}}</div>
+<div id="conveyor_plan_topology"></div>
+<div id="d3_data" data-d3_data="{{ d3_data }}"></div>
+<div id="resource_info_box"></div>
+<script>$(function(){
+	$("g.node").click($node_click);
+	$("input[type=submit]").click(function () {
+		$("form#modify_form").submit();
+	})
+});
+</script>
+{% endblock %}

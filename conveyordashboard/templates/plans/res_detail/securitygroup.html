@@ -1,0 +1,39 @@
+{% load i18n %}
+<div class="contentBody detailInfoCon" resource_id="{{ resource_id }}" resource_type="{{ resource_type }}" id="secgroup_wrap" os_id="{{id}}">
+	<div class="form-group header">{{ data.name }}</div>
+	{%if rules_table %}
+	<div class="form-group rules">
+  		<label class="control-label" id="id_sgrs" changed="false" data-ori="{{data.rules}}">{% trans "Rules" %}</label>
+  		{{rules_table}}
+	</div>
+	{% endif %}
+	{%if data.secgroups %}
+	<div class="form-group "><div class=""><div class="checkbox"><label><input {% if data.from_other%}checked="checked"{%endif%} id="id_from_other" name="from_other" type="checkbox"><span>Select from Other Security Groups</span></label></div></div></div>
+	<div class="form-group">
+  		<label class="control-label">{% trans "Security Groups" %}</label>
+    	<div class=" ">
+    		<select class="form-control" name="sgs" data-ori="{{ id }}">
+			{% for sg in data.secgroups %}
+			<option name="sg" value="{{ sg.id }}" {%ifequal id sg.id %}selected="selected"{%endifequal%}>{{ sg.name }} {{ sg.id }}</option>
+			{% endfor %}
+			</select>
+		</div>
+	</div>
+	{% endif %}
+</div>
+<div class="footer">
+	<div class="cell delete">
+		<button class="cancel btn btn-danger btn-xs">{% trans "Cancel" %}</button>
+		<button class="save-info btn btn-danger btn-xs" del_rule_ids="">{% trans "Save" %}</button>
+	</div>
+</div>
+<script>
+$(function(){
+	table = "#resource_info_box table#rules";
+	add_action = "#rules__action_add_rule";
+	rm_action = "#rules__action_delete_rule";
+	open_add_operation(table, "rules", add_action);
+	open_delete_operation(table, rm_action);
+	// $("#resource_info_box select[name=sgs]").change(function(){update_sg_rules($(this).val(), "#resource_info_box div.rules");return false;})
+})
+</script>
