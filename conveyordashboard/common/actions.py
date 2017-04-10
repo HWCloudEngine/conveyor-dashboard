@@ -71,7 +71,7 @@ class CreateClonePlanWithMulRes(tables.LinkAction):
     verbose_name = _("Create Clone Plan")
     url = 'horizon:conveyor:plans:clone'
     classes = ("ajax-modal", "btn-default",
-               "create-plan-for-mul-sel", "disabled")
+               "create-clone-plan-for-mul-sel", "disabled")
     help_text = _("Create clone plan with selecting multi-resources")
     icon = 'plus'
 
