@@ -17,6 +17,33 @@ from django.utils.translation import ugettext_lazy as _
 from horizon import tables
 
 from conveyordashboard.common import actions as common_actions
+from conveyordashboard.common import constants as consts
+
+
+class Clone(common_actions.CreateClonePlan):
+    def allowed(self, request, datnum=None):
+        if not datnum:
+            return False
+        obj = getattr(datnum, 'obj', None)
+        if obj is None:
+            return False
+        if datnum.res_type == consts.NOVA_SERVER:
+            return obj.status in ("SHUTOFF",)
+        else:
+            return True
+
+
+class Migrate(common_actions.CreateMigratePlan):
+    def allowed(self, request, datnum=None):
+        if not datnum:
+            return False
+        obj = getattr(datnum, 'obj', None)
+        if obj is None:
+            return False
+        if datnum.res_type == consts.NOVA_SERVER:
+            return obj.status in ("SHUTOFF",)
+        else:
+            return True
 
 
 class ActionsTable(tables.DataTable):
@@ -38,5 +65,4 @@ class ResTable(tables.DataTable):
         verbose_name = _("Resource")
         table_actions = (common_actions.CreateClonePlanWithMulRes,
                          common_actions.CreateMigratePlanWithMulRes)
-        row_actions = (common_actions.CreateClonePlan,
-                       common_actions.CreateMigratePlan)
+        row_actions = (Clone, Migrate)
