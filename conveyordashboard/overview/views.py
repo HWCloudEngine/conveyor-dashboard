@@ -36,11 +36,13 @@ LOG = logging.getLogger(__name__)
 
 
 class Res(object):
-    def __init__(self, project_id, res_id, res_type, name):
+    def __init__(self, project_id, res_id, res_type, name, obj, **kwargs):
         self.project_id = project_id
         self.id = res_id
         self.res_type = res_type
         self.name = name
+        self.obj = obj
+        self.kwargs = kwargs
 
 
 class IndexView(views.HorizonTemplateView):
@@ -64,29 +66,11 @@ class IndexView(views.HorizonTemplateView):
                 continue
             else:
                 for entry in v:
-                    data.append(Res(tenant_name, entry.id, k, entry.name))
+                    data.append(Res(tenant_name, entry.id, k,
+                                    entry.name, entry))
         context['table'] = overview_tables.ResTable(self.request,
                                                     data=data).render()
         return context
-
-    def get_data(self):
-        res = dict()
-        res[consts.NOVA_SERVER] = self.get_instances_data()
-        res[consts.CINDER_VOLUME] = self.get_volumes_data()
-        res[consts.NEUTRON_NET] = self.get_networks_data()
-        res[consts.NEUTRON_SECGROUP] = self.get_security_groups_data()
-        res[consts.NEUTRON_POOL] = self.get_pools_data()
-
-        data = []
-        tenant_id = self.request.user.tenant_id
-        for k, v in res.items():
-            if not len(v):
-                continue
-            else:
-                for entry in v:
-                    data.append(Res(tenant_id, entry.id, k, entry.name))
-        LOG.info('Res: %s', data)
-        return data
 
     def get_instances_data(self):
         instances = []
