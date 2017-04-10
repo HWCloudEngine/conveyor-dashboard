@@ -519,7 +519,7 @@ function open_add_operation(t_selector, t_type, add_action_selector){
 				}
 			}else if(t_type == "rules"){
 				if($("#resource_info_box form#create_security_group_rule_form").length){return;}
-				$.get("/conveyor/plans/"+$('#secgroup_wrap').attr('os_id')+"/add_rule/", function(rsp){
+				$.get(getPrefixUrl()+"conveyor/plans/"+$('#secgroup_wrap').attr('os_id')+"/add_rule/", function(rsp){
 					form = $(rsp).find("form#create_security_group_rule_form");
 					$(form).append($(form).find("div.col-sm-6:first").html()).find("div.modal-body").remove();
 					$(form).find("div.modal-footer").remove();
