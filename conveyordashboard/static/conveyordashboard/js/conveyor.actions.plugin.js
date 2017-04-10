@@ -19,7 +19,7 @@ var table_res_type_mappings = {
 	"poolstable":"OS::Neutron::Pool"
 };
 
-var conveyor_clone_plan_topology = "a.create-plan-for-mul-sel";
+var conveyor_clone_plan_topology = "a.create-clone-plan-for-mul-sel";
 var conveyor_migrate_plan_topology = "a.create-migrate-plan-for-mul-sel";
 var conveyor_multi_sel_action = [conveyor_clone_plan_topology, conveyor_migrate_plan_topology];
 var conveyor_ids = {};
