@@ -18,9 +18,10 @@ from horizon import tables
 
 from conveyordashboard.common import actions as common_actions
 from conveyordashboard.common import constants as consts
+from conveyordashboard.common import resource_state
 
 
-class Clone(common_actions.CreateClonePlan):
+class CloneRes(common_actions.CreateClonePlan):
     def allowed(self, request, datnum=None):
         if not datnum:
             return False
@@ -28,12 +29,14 @@ class Clone(common_actions.CreateClonePlan):
         if obj is None:
             return False
         if datnum.res_type == consts.NOVA_SERVER:
-            return obj.status in ("SHUTOFF",)
+            return obj.status in resource_state.INSTANCE_CLONE_STATE
+        elif datnum.res_type == consts.CINDER_VOLUME:
+            return obj.status in resource_state.VOLUME_CLONE_STATE
         else:
             return True
 
 
-class Migrate(common_actions.CreateMigratePlan):
+class MigrateRes(common_actions.CreateMigratePlan):
     def allowed(self, request, datnum=None):
         if not datnum:
             return False
@@ -41,7 +44,9 @@ class Migrate(common_actions.CreateMigratePlan):
         if obj is None:
             return False
         if datnum.res_type == consts.NOVA_SERVER:
-            return obj.status in ("SHUTOFF",)
+            return obj.status in resource_state.INSTANCE_MIGRATE_STATE
+        elif datnum.res_type == consts.CINDER_VOLUME:
+            return obj.status in resource_state.VOLUME_MIGRATE_STATE
         else:
             return True
 
@@ -65,4 +70,4 @@ class ResTable(tables.DataTable):
         verbose_name = _("Resource")
         table_actions = (common_actions.CreateClonePlanWithMulRes,
                          common_actions.CreateMigratePlanWithMulRes)
-        row_actions = (Clone, Migrate)
+        row_actions = (CloneRes, MigrateRes)

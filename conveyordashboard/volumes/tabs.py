@@ -12,8 +12,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from collections import OrderedDict
-
 from django.utils.translation import ugettext_lazy as _
 
 from horizon import exceptions
@@ -25,81 +23,6 @@ from openstack_dashboard import policy
 from conveyordashboard.api import api
 from conveyordashboard.common import constants
 from conveyordashboard.volumes import tables as volume_tables
-
-
-class VolumeTableMixIn(object):
-    _has_more_data = False
-    _has_prev_data = False
-
-    def _get_volumes(self, search_opts=None):
-        try:
-            marker, sort_dir = self._get_marker()
-            volumes, self._has_more_data, self._has_prev_data = \
-                api.cinder.volume_list_paged(self.request, marker=marker,
-                                             search_opts=search_opts,
-                                             sort_dir=sort_dir, paginate=True)
-
-            if sort_dir == "asc":
-                volumes.reverse()
-
-            return volumes
-        except Exception:
-            exceptions.handle(self.request,
-                              _('Unable to retrieve volume list.'))
-            return []
-
-    def _get_instances(self, search_opts=None, instance_ids=None):
-        if not instance_ids:
-            return []
-        try:
-            # TODO(tsufiev): we should pass attached_instance_ids to
-            # nova.server_list as soon as Nova API allows for this
-            instances, has_more = api.nova.server_list(self.request,
-                                                       search_opts=search_opts)
-            return instances
-        except Exception:
-            exceptions.handle(self.request,
-                              _("Unable to retrieve volume/instance "
-                                "attachment information"))
-            return []
-
-    def _get_volumes_ids_with_snapshots(self, search_opts=None):
-        try:
-            volume_ids = []
-            snapshots = api.cinder.volume_snapshot_list(
-                self.request, search_opts=search_opts)
-            if snapshots:
-                # extract out the volume ids
-                volume_ids = set([(s.volume_id) for s in snapshots])
-        except Exception:
-            exceptions.handle(self.request,
-                              _("Unable to retrieve snapshot list."))
-
-        return volume_ids
-
-    def _get_attached_instance_ids(self, volumes):
-        attached_instance_ids = []
-        for volume in volumes:
-            for att in volume.attachments:
-                server_id = att.get('server_id', None)
-                if server_id is not None:
-                    attached_instance_ids.append(server_id)
-        return attached_instance_ids
-
-    # set attachment string and if volume has snapshots
-    def _set_volume_attributes(self,
-                               volumes,
-                               instances,
-                               volume_ids_with_snapshots):
-        instances = OrderedDict([(inst.id, inst) for inst in instances])
-        for volume in volumes:
-            if volume_ids_with_snapshots:
-                if volume.id in volume_ids_with_snapshots:
-                    setattr(volume, 'has_snapshot', True)
-            if instances:
-                for att in volume.attachments:
-                    server_id = att.get('server_id', None)
-                    att['instance'] = instances.get(server_id, None)
 
 
 class PagedTableMixin(object):
@@ -170,9 +93,6 @@ class CGroupsTab(tabs.TableTab):
     def get_volume_cgroups_data(self):
         try:
             return []
-            cgroups = api.cinder.volume_cgroup_list_with_vol_type_names(
-                self.request)
-
         except Exception:
             cgroups = []
             exceptions.handle(self.request, _("Unable to retrieve "

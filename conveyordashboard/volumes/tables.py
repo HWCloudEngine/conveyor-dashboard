@@ -21,6 +21,25 @@ from openstack_dashboard.dashboards.project.volumes.volumes.tables \
 
 from conveyordashboard.common import actions as common_actions
 from conveyordashboard.common import constants as consts
+from conveyordashboard.common import resource_state
+
+
+class CloneVolume(common_actions.CreateClonePlan):
+    def allowed(self, request, volume=None):
+        if not volume:
+            return False
+        if volume.status not in resource_state.VOLUME_CLONE_STATE:
+            return False
+        return True
+
+
+class MigrateVolume(common_actions.CreateMigratePlan):
+    def allowed(self, request, volume=None):
+        if not volume:
+            return False
+        if volume.status not in resource_state.VOLUME_MIGRATE_STATE:
+            return False
+        return True
 
 
 class VolumeFilterAction(tables.FilterAction):
@@ -47,8 +66,8 @@ class VolumesTable(VolumesTable):
         table_actions = (common_actions.CreateClonePlanWithMulRes,
                          common_actions.CreateMigratePlanWithMulRes,
                          VolumeFilterAction)
-        row_actions = (common_actions.CreateClonePlan,
-                       common_actions.CreateMigratePlan,)
+        row_actions = (CloneVolume,
+                       MigrateVolume,)
 
 
 class VolumeCGroupsFilterAction(tables.FilterAction):
