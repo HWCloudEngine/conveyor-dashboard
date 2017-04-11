@@ -16,9 +16,10 @@ from django.utils.translation import ugettext_lazy as _
 
 from horizon import tables
 
-from openstack_dashboard.dashboards.project.volumes.volumes.tables \
-    import VolumesTable
+from openstack_dashboard.dashboards.project.volumes.volumes import tables \
+    as vol_tables
 
+from conveyordashboard.api import api
 from conveyordashboard.common import actions as common_actions
 from conveyordashboard.common import constants as consts
 from conveyordashboard.common import resource_state
@@ -52,17 +53,22 @@ class VolumeFilterAction(tables.FilterAction):
         return filter(comp, volumes)
 
 
-class VolumesTable(VolumesTable):
-    def __init__(self, request, data=None, needs_form_wrapper=None, **kwargs):
-        super(VolumesTable, self)\
-            .__init__(request, data=data,
-                      needs_form_wrapper=needs_form_wrapper,
-                      **kwargs)
+class UpdateVolumeRow(tables.Row):
+    ajax = True
 
+    def get_data(self, request, volume_id):
+        volume = api.ResourceDetail(request,
+                                    consts.CINDER_VOLUME, volume_id).get()
+        return volume
+
+
+class VolumesTable(vol_tables.VolumesTable):
     class Meta(object):
         name = 'volumes'
         verbose_name = _("Volumes")
         css_classes = "table-res %s" % consts.CINDER_VOLUME
+        status_columns = ["status"]
+        row_class = UpdateVolumeRow
         table_actions = (common_actions.CreateClonePlanWithMulRes,
                          common_actions.CreateMigratePlanWithMulRes,
                          VolumeFilterAction)

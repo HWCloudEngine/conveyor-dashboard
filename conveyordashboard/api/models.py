@@ -15,6 +15,10 @@
 from openstack_dashboard.api import base
 
 
+class Resource(base.APIDictWrapper):
+    """Resource wrap for dict resources."""
+
+
 class Server(base.APIDictWrapper):
     _attrs = ['addresses', 'attrs', 'id', 'image', 'links', 'metadata', 'name',
               'private_ip', 'public_ip', 'status', 'uuid', 'image_name',
@@ -38,5 +42,23 @@ class Metadata(base.APIDictWrapper):
         return self.key
 
 
-class Resource(base.APIDictWrapper):
-    """Resource wrap for dict resources."""
+class Volume(base.APIDictWrapper):
+
+    _attrs = ['id', 'name', 'description', 'size', 'status', 'created_at',
+              'volume_type', 'availability_zone', 'imageRef', 'bootable',
+              'snapshot_id', 'source_volid', 'attachments', 'tenant_name',
+              'consistencygroup_id', 'os-vol-host-attr:host',
+              'os-vol-tenant-attr:tenant_id', 'metadata',
+              'volume_image_metadata', 'encrypted', 'transfer']
+
+    @property
+    def is_bootable(self):
+        return self.bootable == 'true'
+
+    @property
+    def name(self):
+        return self.display_name
+
+    @property
+    def description(self):
+        return self.display_description
