@@ -62,8 +62,9 @@ class ActionsTable(tables.DataTable):
 class ResTable(tables.DataTable):
     project_id = tables.Column('project_id', verbose_name=_("Project ID"),
                                hidden=True)
-    name = tables.Column("name", verbose_name=_("Name"))
-    res_type = tables.Column("res_type", verbose_name=_("Resource Type"))
+    name = tables.Column("name", verbose_name=_("Name"), sortable=False)
+    res_type = tables.Column("res_type", verbose_name=_("Resource Type"),
+                             sortable=False)
 
     class Meta(object):
         name = 'resource'
