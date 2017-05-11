@@ -217,6 +217,15 @@ def pool_list(request, **kwargs):
     return [os_api.lbaas.Pool(p) for p in pools]
 
 
+def stack_list(request, **kwargs):
+    stacks = resource_list(request, consts.HEAT_STACK)
+    return [models.StackRes(s) for s in stacks]
+
+
+def stack_get(request, stack_id):
+    return models.Stack(resource_detail(request, consts.HEAT_STACK, stack_id))
+
+
 class ResourceDetail(object):
     """Wrap dict response to class."""
 
@@ -231,6 +240,9 @@ class ResourceDetail(object):
 
     def _get_volume(self):
         return volume_get(self.request, self.res_id)
+
+    def _get_stack(self):
+        return stack_get(self.request, self.res_id)
 
     def get(self):
         method = ''.join(('_get_', self.res_type.split('::')[-1].lower()))

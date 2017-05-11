@@ -62,3 +62,26 @@ class Volume(base.APIDictWrapper):
     @property
     def description(self):
         return self.display_description
+
+
+class Stack(base.APIDictWrapper):
+
+    _attrs = ['id', 'stack_name', 'creation_time', 'updated_time',
+              'stack_status']
+
+    @property
+    def status(self):
+        s = self.stack_status
+        # Return everything after the first underscore
+        return s[s.index('_') + 1:]
+
+
+class StackRes(base.APIResourceWrapper):
+    _attrs = ['id', 'stack_name', 'creation_time', 'updated_time',
+              'stack_status']
+
+    @property
+    def status(self):
+        # If a volume doesn't have a name, use its id.
+        s = getattr(self._apiresource, 'task_status')
+        return s[s.index('_') + 1:]

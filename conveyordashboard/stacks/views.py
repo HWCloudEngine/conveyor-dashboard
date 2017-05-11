@@ -19,7 +19,6 @@ from horizon import tables
 from horizon.utils import memoized
 
 from conveyordashboard.api import api
-from conveyordashboard.common import constants as consts
 from conveyordashboard.stacks import tables as stacks_tables
 
 
@@ -34,7 +33,7 @@ class IndexView(tables.DataTableView):
         marker = self.request.GET.get(
             stacks_tables.StacksTable._meta.pagination_param, None)
         try:
-            stacks = api.resource_list(self.request, consts.HEAT_STACK)
+            stacks = api.stack_list(self.request)
         except Exception:
             exceptions.handle(self.request,
                               _("Unable to retrieve stacks."))
