@@ -13,11 +13,28 @@
     under the License.
 */
 
-/* Click one resource of plan, then redraw the local topology.*/
+var table_info = "div#resource_info_box";
+var detailinfo_div = "div.detailInfoCon";
+var update_resources_input = "input#id_update_resource";
+var updated_resources_input = "input#id_updated_resources";
+var dependencies_input = "input#id_dependencies";
+
 $(function(){
 	var plan_deps_table = $('#plan_deps_table');
+	/* Redraw the global topology.*/
+	$(plan_deps_table).find('#plan_deps__action_global_topology').click(function () {
+		try{
+			showTopology();
+			redraw($(this).attr('href'));
+			return false
+		} catch(e) {
+			console.error("Redraw failed: " + e);
+			return false;
+		}
+	});
 	var resource_type=[];
 	$(plan_deps_table).find('tbody tr').each(function () {
+		/* Click one resource of plan, then redraw the local topology.*/
 		$(this).find('td:last a').click(function () {
 			if($(table_info).length){$(table_info).hide();}
 			showTopology();
@@ -25,6 +42,7 @@ $(function(){
 				redraw($(this).attr('href'));
 				return false
 			} catch(e) {
+				console.error("Redraw failed: " + e);
 				return false;
 			}
 		});
@@ -42,19 +60,10 @@ $(function(){
 			}
 		});
 	}
-
-	$(plan_deps_table).find('thead a').click(function () {
-		showTopology();
-		try{
-			redraw($(this).attr('href'));
-			return false
-		} catch(e) {
-			return false;
-		}
-	});
 });
 
 function redraw(url){
+	console.log("url: " + url);
 	var deps = '{}';
 	if($(dependencies_input).length){deps=$(dependencies_input).val();}
 	var arr = url.split('?');
@@ -123,12 +132,6 @@ function dict_merge(src, update){
 	});
 	return src;
 }
-
-var table_info = "div#resource_info_box";
-var detailinfo_div = "div.detailInfoCon";
-var update_resources_input = "input#id_update_resource";
-var updated_resources_input = "input#id_updated_resources";
-var dependencies_input = "input#id_dependencies";
 
 function get_update_resource(resource_type, resource_id){
 	var data_from = $(update_resources_input).val();
