@@ -104,6 +104,9 @@ RESOURCE_TYPE_IMAGE_MAPPINGS = {
         {'green': 'poolmember-green.svg', 'red': 'poolmember-red.svg'},
     NEUTRON_HEALTHMONITOR:
         {'green': 'healthmonitor-green.svg', 'red': 'healthmonitor-red.svg'},
+    # Stack
+    HEAT_STACK:
+        {'green': 'stack-green.svg', 'red': 'stack-red.svg'},
     # Unknown type
     'UNKNOWN':
         {'green': 'unknown.svg', 'red': 'unknown-red.svg'},
