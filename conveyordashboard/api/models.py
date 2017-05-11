@@ -62,3 +62,25 @@ class Volume(base.APIDictWrapper):
     @property
     def description(self):
         return self.display_description
+
+
+class Stack(base.APIDictWrapper):
+
+    _attrs = ['id', 'stack_name', 'creation_time', 'updated_time',
+              'stack_status']
+
+    @property
+    def action(self):
+        s = self.stack_status
+        # Return everything before the first underscore
+        return s[:s.index('_')]
+
+    @property
+    def status(self):
+        s = self.stack_status
+        # Return everything after the first underscore
+        return s[s.index('_') + 1:]
+
+    @property
+    def identifier(self):
+        return '%s/%s' % (self.stack_name, self.id)
