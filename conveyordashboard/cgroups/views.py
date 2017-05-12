@@ -18,30 +18,21 @@ from horizon import exceptions
 from horizon import tables
 
 from conveyordashboard.api import api
-from conveyordashboard.volumes import tables as volume_tables
+from conveyordashboard.common import constants as consts
+from conveyordashboard.cgroups import tables as cgroup_tables
 
 
 class IndexView(tables.DataTableView):
-    table_class = volume_tables.VolumesTable
-    template_name = 'volumes/index.html'
-    page_title = _("Volumes")
+    table_class = cgroup_tables.VolumeCGroupsTable
+    template_name = 'cgroups/index.html'
+    page_title = _("Consistency Groups")
 
     def get_data(self):
-        volumes = []
+        cgroups = []
         try:
-            volumes = api.volume_list(self.request)
+            cgroups = api.resource_list(self.request,
+                                        consts.CINDER_CONSISGROUP)
         except Exception:
-            exceptions.handle(self.request,
-                              _("Unable to retrieve volumes list."))
-        return volumes
-
-    def get_filters(self, filters):
-        filter_action = self.table._meta._filter_action
-        if filter_action:
-            filter_field = self.table.get_filter_field()
-            if filter_action.is_api_filter(filter_field):
-                filter_string = self.table.get_filter_string()
-                if filter_field and filter_string:
-                    filters[filter_field] = filter_string
-        return filters
-
+            exceptions.handle(self.request, _("Unable to retrieve "
+                                              "volume consistency groups."))
+        return cgroups

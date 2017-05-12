@@ -11,37 +11,25 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-
 from django.utils.translation import ugettext_lazy as _
 
 from horizon import exceptions
 from horizon import tables
 
 from conveyordashboard.api import api
-from conveyordashboard.volumes import tables as volume_tables
+from conveyordashboard.security_groups import tables as secgroup_tables
 
 
 class IndexView(tables.DataTableView):
-    table_class = volume_tables.VolumesTable
-    template_name = 'volumes/index.html'
-    page_title = _("Volumes")
+    table_class = secgroup_tables.SecurityGroupsTable
+    template_name = 'security_groups/index.html'
+    page_title = _("Security Groups")
 
     def get_data(self):
-        volumes = []
         try:
-            volumes = api.volume_list(self.request)
+            secgroups = api.sg_list(self.request, self.request.user.tenant_id)
         except Exception:
+            secgroups = []
             exceptions.handle(self.request,
-                              _("Unable to retrieve volumes list."))
-        return volumes
-
-    def get_filters(self, filters):
-        filter_action = self.table._meta._filter_action
-        if filter_action:
-            filter_field = self.table.get_filter_field()
-            if filter_action.is_api_filter(filter_field):
-                filter_string = self.table.get_filter_string()
-                if filter_field and filter_string:
-                    filters[filter_field] = filter_string
-        return filters
-
+                              _('Unable to retrieve security groups.'))
+        return sorted(secgroups, key=lambda group: group.name)
