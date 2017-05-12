@@ -151,6 +151,12 @@ def flavor_get(request, id):
     return models.Flavor(resource_detail(request, consts.NOVA_FLAVOR, id))
 
 
+def volume_list(request, search_opts=None):
+    volumes = resource_list(request, consts.CINDER_VOLUME,
+                            search_opts=search_opts)
+    return [os_api.cinder.Volume(v) for v in volumes]
+
+
 def volume_get(request, id):
     volume = resource_detail(request, consts.CINDER_VOLUME, id)
     return models.Volume(volume)

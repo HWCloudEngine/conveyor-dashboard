@@ -11,40 +11,26 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-
 from django.utils.translation import ugettext_lazy as _
 
 from horizon import exceptions
 from horizon import tables
 
 from conveyordashboard.api import api
-from conveyordashboard.volumes import tables as volume_tables
+from conveyordashboard.common import constants as consts
+from conveyordashboard.floating_ips import tables as fip_tables
 
 
 class IndexView(tables.DataTableView):
-    table_class = volume_tables.VolumesTable
-    template_name = 'volumes/index.html'
-    page_title = _("Volumes")
-
-    def has_more_data(self, table):
-        return self._more
+    table_class = fip_tables.FloatingIPsTable
+    template_name = 'floating_ips/index.html'
+    page_title = _("Floating IPs")
 
     def get_data(self):
-        volumes = []
+        fips = []
         try:
-            volumes = api.volume_list(self.request)
+            fips = api.resource_list(self.request, consts.NEUTRON_FLOATINGIP)
         except Exception:
             exceptions.handle(self.request,
-                              _("Unable to retrieve volumes list."))
-        return volumes
-
-    def get_filters(self, filters):
-        filter_action = self.table._meta._filter_action
-        if filter_action:
-            filter_field = self.table.get_filter_field()
-            if filter_action.is_api_filter(filter_field):
-                filter_string = self.table.get_filter_string()
-                if filter_field and filter_string:
-                    filters[filter_field] = filter_string
-        return filters
-
+                              _("Unable to retrieve floating IP addresses."))
+        return fips
