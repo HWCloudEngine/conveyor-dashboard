@@ -25,11 +25,11 @@ from conveyordashboard.api import api
 from conveyordashboard.common import constants as consts
 from conveyordashboard.overview import tables as overview_tables
 
-from conveyordashboard.access_and_security.tables import FloatingIPsTable
-from conveyordashboard.access_and_security.tables import SecurityGroupsTable
+from conveyordashboard.floating_ips.tables import FloatingIPsTable
 from conveyordashboard.instances.tables import InstancesTable
 from conveyordashboard.loadbalancers.tables import PoolsTable
 from conveyordashboard.networks.tables import NetworksTable
+from conveyordashboard.security_groups.tables import SecurityGroupsTable
 from conveyordashboard.volumes.tables import VolumesTable
 
 LOG = logging.getLogger(__name__)
