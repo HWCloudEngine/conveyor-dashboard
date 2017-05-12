@@ -107,6 +107,23 @@ def migrate(request, plan_id, destination):
     return api.conveyorclient(request).migrates.migrate(plan_id, destination)
 
 
+def update_pagination(entities, page_size, marker, sort_dir):
+    has_more_data, has_prev_data = False, False
+    if len(entities) > page_size:
+        has_more_data = True
+        entities.pop()
+        if marker is not None:
+            has_prev_data = True
+    # first page condition when reached via prev back
+    elif sort_dir == 'asc' and marker is not None:
+        has_more_data = True
+    # last page condition
+    elif marker is not None:
+        has_prev_data = True
+
+    return entities, has_more_data, has_prev_data
+
+
 def server_list(request, search_opts=None, all_tenants=False):
     page_size = utils.get_page_size(request)
     paginate = False
@@ -151,10 +168,34 @@ def flavor_get(request, id):
     return models.Flavor(resource_detail(request, consts.NOVA_FLAVOR, id))
 
 
-def volume_list(request, search_opts=None):
-    volumes = resource_list(request, consts.CINDER_VOLUME,
-                            search_opts=search_opts)
-    return [os_api.cinder.Volume(v) for v in volumes]
+def volume_list(request, search_opts=None, all_tenants=False):
+    paginate = False
+    marker = sort_dir = None
+    if search_opts is None:
+        search_opts = {}
+    else:
+        paginate = search_opts.get('paginate', False)
+        marker = search_opts.get('marker', None)
+        sort_dir = search_opts.get('sort_dir', None)
+
+    if all_tenants:
+        search_opts['all_tenant'] = True
+
+    if paginate:
+        page_size = utils.get_page_size(request)
+        search_opts['limit'] = page_size + 1
+
+        volumes = resource_list(request, consts.CINDER_VOLUME,
+                                search_opts=search_opts)
+
+        volumes, has_more_data, has_prev_data = \
+            update_pagination(volumes, page_size, marker, sort_dir)
+        return [os_api.cinder.Volume(v) for v in volumes], \
+               has_more_data, has_prev_data
+    else:
+        volumes = resource_list(request, consts.CINDER_VOLUME,
+                                search_opts=search_opts)
+        return [os_api.cinder.Volume(v) for v in volumes]
 
 
 def volume_get(request, id):

@@ -18,10 +18,11 @@ from horizon import exceptions
 from horizon import tables
 
 from conveyordashboard.api import api
+from conveyordashboard.common import tables as base_tables
 from conveyordashboard.volumes import tables as volume_tables
 
 
-class IndexView(tables.DataTableView):
+class IndexView(base_tables.PagedTableMixin, tables.DataTableView):
     table_class = volume_tables.VolumesTable
     template_name = 'volumes/index.html'
     page_title = _("Volumes")
@@ -29,7 +30,16 @@ class IndexView(tables.DataTableView):
     def get_data(self):
         volumes = []
         try:
-            volumes = api.volume_list(self.request)
+            marker, sort_dir = self._get_marker()
+            search_opts = {
+                'marker': marker,
+                'sort_dir': sort_dir,
+                'paginate': True
+            }
+            volumes, self._has_more_data, self._has_prev_data = \
+                api.volume_list(self.request, search_opts=search_opts)
+            if sort_dir == "asc":
+                volumes.reverse()
         except Exception:
             exceptions.handle(self.request,
                               _("Unable to retrieve volumes list."))
