@@ -16,14 +16,19 @@ from django.utils.translation import ugettext_lazy as _
 
 from horizon import tables
 
-from openstack_dashboard.dashboards.project.networks.subnets.tables \
-    import SubnetsTable
-from openstack_dashboard.dashboards.project.networks.tables \
-    import NetworksTable
-from openstack_dashboard.dashboards.project.routers.tables import RoutersTable
+from openstack_dashboard.dashboards.project.networks import tables \
+    as net_tables
 
 from conveyordashboard.common import actions as common_actions
 from conveyordashboard.common import constants as consts
+
+
+class CloneNetwork(common_actions.CreateClonePlan):
+    """"""
+
+
+class MigrateNetwork(common_actions.CreateMigratePlan):
+    """"""
 
 
 class NetworksFilterAction(tables.FilterAction):
@@ -34,7 +39,7 @@ class NetworksFilterAction(tables.FilterAction):
                 if query in network.name.lower()]
 
 
-class NetworksTable(NetworksTable):
+class NetworksTable(net_tables.NetworksTable):
     class Meta(object):
         name = 'networks'
         verbose_name = _("Networks")
@@ -42,35 +47,5 @@ class NetworksTable(NetworksTable):
         table_actions = (common_actions.CreateClonePlanWithMulRes,
                          common_actions.CreateMigratePlanWithMulRes,
                          NetworksFilterAction)
-        row_actions = (common_actions.CreateClonePlan,
-                       common_actions.CreateMigratePlan,)
-
-
-class SubnetsTable(SubnetsTable):
-    class Meta(object):
-        name = 'subnets'
-        hidden_title = False
-        verbose_name = _("Subnets")
-        css_classes = "table-res %s" % consts.NEUTRON_SUBNET
-        table_actions = (NetworksFilterAction,)
-        row_actions = (common_actions.CreateClonePlan,
-                       common_actions.CreateMigratePlan,)
-
-
-class RoutersTable(RoutersTable):
-    def __init__(self, request, data=None, needs_form_wrapper=None, **kwargs):
-        super(RoutersTable, self).__init__(
-            request,
-            data=data,
-            needs_form_wrapper=needs_form_wrapper,
-            **kwargs)
-        del self.columns['ext_net']
-
-    class Meta(object):
-        name = 'routers'
-        hidden_title = False
-        varbose_name = _("Routers")
-        css_classes = "table-res %s" % consts.NEUTRON_ROUTER
-        table_actions = (NetworksFilterAction,)
-        row_actions = (common_actions.CreateClonePlan,
-                       common_actions.CreateMigratePlan,)
+        row_actions = (CloneNetwork,
+                       MigrateNetwork,)

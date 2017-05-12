@@ -16,26 +16,42 @@ from django.utils.translation import ugettext_lazy as _
 
 from horizon import tables
 from openstack_dashboard.dashboards.project.access_and_security.\
-    floating_ips.tables import FloatingIPsTable
+    floating_ips import tables as fip_tables
 from openstack_dashboard.dashboards.project.access_and_security.\
-    security_groups.tables import SecurityGroupsTable
+    security_groups import tables as secgroup_tables
 
 from conveyordashboard.common import actions as common_actions
 from conveyordashboard.common import constants as consts
 
 
-class SecurityGroupsTable(SecurityGroupsTable):
+class CloneSecurityGroup(common_actions.CreateClonePlan):
+    """"""
+
+
+class MigrateSecurityGroup(common_actions.CreateMigratePlan):
+    """"""
+
+
+class SecurityGroupsTable(secgroup_tables.SecurityGroupsTable):
     class Meta(object):
         name = 'security_groups'
         verbose_name = _("Security Groups")
         css_classes = "table-res %s" % consts.NEUTRON_SECGROUP
         table_actions = (common_actions.CreateClonePlanWithMulRes,
                          common_actions.CreateMigratePlanWithMulRes)
-        row_actions = (common_actions.CreateClonePlan,
-                       common_actions.CreateMigratePlan,)
+        row_actions = (CloneSecurityGroup,
+                       MigrateSecurityGroup,)
 
 
-class FloatingIPsTable(FloatingIPsTable):
+class CloneFloatingIP(common_actions.CreateClonePlan):
+    """"""
+
+
+class MigrateFloatingIP(common_actions.CreateMigratePlan):
+    """"""
+
+
+class FloatingIPsTable(fip_tables.FloatingIPsTable):
     ip = tables.Column("floating_ip_address",
                        verbose_name=_("IP Address"),
                        attrs={'data-type': "ip"})
@@ -53,5 +69,5 @@ class FloatingIPsTable(FloatingIPsTable):
         css_classes = "table-res %s" % consts.NEUTRON_FLOATINGIP
         table_actions = (common_actions.CreateClonePlanWithMulRes,
                          common_actions.CreateMigratePlanWithMulRes)
-        row_actions = (common_actions.CreateClonePlan,
-                       common_actions.CreateMigratePlan,)
+        row_actions = (CloneFloatingIP,
+                       MigrateFloatingIP,)

@@ -20,6 +20,14 @@ from conveyordashboard.common import actions as common_actions
 from conveyordashboard.common import constants as consts
 
 
+class ClonePool(common_actions.CreateClonePlan):
+    """"""
+
+
+class MigratePool(common_actions.CreateMigratePlan):
+    """"""
+
+
 class PoolsTable(lb_tables.PoolsTable):
 
     class Meta(object):
@@ -28,5 +36,5 @@ class PoolsTable(lb_tables.PoolsTable):
         css_classes = ' '.join(['table-res', consts.NEUTRON_POOL])
         table_actions = (common_actions.CreateClonePlanWithMulRes,
                          common_actions.CreateMigratePlanWithMulRes)
-        row_actions = (common_actions.CreateClonePlan,
-                       common_actions.CreateMigratePlan,)
+        row_actions = (ClonePool,
+                       MigratePool,)
