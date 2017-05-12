@@ -56,8 +56,9 @@ class UpdateVolumeRow(tables.Row):
     ajax = True
 
     def get_data(self, request, volume_id):
-        volume = api.ResourceDetail(request,
-                                    consts.CINDER_VOLUME, volume_id).get()
+        volume = api.get_wrapped_detail_resource(request,
+                                                 consts.CINDER_VOLUME,
+                                                 volume_id)
         return volume
 
 
