@@ -148,7 +148,7 @@ class RowActionsView(generic.View):
         res_type = request.GET['res_type']
         id = request.GET['id']
         next_url = request.GET.get('next_url', None)
-        res = api.ResourceDetail(request, res_type, id).get()
+        res = api.get_wrapped_detail_resource(request, res_type, id)
         if res_type in TYPE_CLASS_MAPPING:
             table = TYPE_CLASS_MAPPING[res_type](request, next_url=next_url)
             actions = table.render_row_actions(res)

@@ -232,29 +232,12 @@ def stack_get(request, stack_id):
     return models.Stack(resource_detail(request, consts.HEAT_STACK, stack_id))
 
 
-class ResourceDetail(object):
-    """Wrap dict response to class."""
-
-    def __init__(self, request, res_type, res_id, **kwargs):
-        self.request = request
-        self.res_type = res_type
-        self.res_id = res_id
-        self.kwargs = kwargs
-
-    def _get_server(self):
-        return server_get(self.request, self.res_id)
-
-    def _get_volume(self):
-        return volume_get(self.request, self.res_id)
-
-    def _get_stack(self):
-        return stack_get(self.request, self.res_id)
-
-    def get(self):
-        method = ''.join(('_get_', self.res_type.split('::')[-1].lower()))
-        if hasattr(self, method):
-            return getattr(self, method)()
-        else:
-            return models.Resource(resource_detail(self.request,
-                                                   self.res_type,
-                                                   self.res_id))
+def get_wrapped_detail_resource(request, res_type, res_id):
+    if res_type == consts.NOVA_SERVER:
+        return server_get(request, res_id)
+    elif res_type == consts.CINDER_VOLUME:
+        return volume_get(request, res_id)
+    elif res_type == consts.HEAT_STACK:
+        return stack_get(request, res_id)
+    else:
+        return models.Resource(resource_detail(request, res_type, res_id))
