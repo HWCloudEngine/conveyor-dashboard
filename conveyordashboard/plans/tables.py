@@ -232,6 +232,7 @@ class PlansTable(tables.DataTable):
     plan_id = tables.Column("plan_id",
                             link="horizon:conveyor:plans:detail",
                             verbose_name=_("Plan Id"))
+    plan_name = tables.Column("plan_name", verbose_name=_("Plan Name"))
     plan_type = tables.Column("plan_type",
                               verbose_name=_("Plan Type"))
     created = tables.Column("created_at",

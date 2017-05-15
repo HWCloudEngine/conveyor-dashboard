@@ -19,11 +19,12 @@ from horizon import exceptions
 from horizon import views
 from oslo_log import log as logging
 
-from openstack_dashboard import api as os_api
-
 from conveyordashboard.api import api
 from conveyordashboard.common import constants as consts
+from conveyordashboard.common import resource_state
 from conveyordashboard.overview import tables as overview_tables
+from conveyordashboard.topology import tables as topo_tables
+from conveyordashboard.topology import topology
 
 from conveyordashboard.floating_ips.tables import FloatingIPsTable
 from conveyordashboard.instances.tables import InstancesTable
@@ -52,27 +53,57 @@ class IndexView(views.HorizonTemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
-        res = dict()
-        res[consts.NOVA_SERVER] = self.get_instances_data()
-        res[consts.CINDER_VOLUME] = self.get_volumes_data()
-        res[consts.NEUTRON_NET] = self.get_networks_data()
-        res[consts.NEUTRON_SECGROUP] = self.get_security_groups_data()
-        res[consts.NEUTRON_POOL] = self.get_pools_data()
 
-        data = []
-        tenant_name = self.request.user.tenant_name
-        for k, v in res.items():
-            if not len(v):
-                continue
-            else:
-                for entry in v:
-                    data.append(Res(tenant_name, entry.id, k,
-                                    entry.name, entry))
-        context['table'] = overview_tables.ResTable(self.request,
-                                                    data=data).render()
+        availability_zone = self.request.GET.get('availability_zone', None)
+        azs = api.availability_zone_list(self.request)
+        if availability_zone not in [az.zoneName for az in azs]:
+            availability_zone = azs[0].zoneName
+
+        context['azs'] = azs
+        context['availability_zone'] = availability_zone
+
+        plan_name = '%s#%s' % (self.request.user.tenant_id, availability_zone)
+
+        plan = None
+        for p in api.plan_list(self.request):
+            if plan_name == p.plan_name:
+                plan = api.plan_get(self.request, p.plan_id)
+                break
+
+        if plan is None:
+            servers = self._get_instances_data()
+            servers_id_dict = self._extract_server_ids(servers,
+                                                       availability_zone)
+
+            if not servers_id_dict:
+                return context
+
+            # TODO(drngsl) Need to check id_dict's length is 0 or not, if true,
+            # return context, and make sure html
+            # template is correct for js executing without any error or
+            # exceptions(Mainly for drawing topology).
+
+            # TODO(drngsl) First, check plan with plan_name is exsiting,
+            # if not, create a new plan.
+            plan = api.plan_create(self.request, consts.CLONE, servers_id_dict,
+                                   plan_name=plan_name)
+
+        # TODO(drngsl) Supposing plan type is clone
+        d3_data = topology.load_plan_d3_data(self.request, plan, consts.CLONE)
+
+        plan_deps_table = topo_tables.PlanDepsTable(
+            self.request,
+            topo_tables.trans_plan_deps(plan.original_dependencies),
+            plan_id=plan.plan_id,
+            plan_type=consts.CLONE)
+        context['plan_deps_table'] = plan_deps_table.render()
+
+        context['plan'] = plan
+        context['plan_type'] = consts.CLONE
+        context['d3_data'] = d3_data
         return context
 
-    def get_instances_data(self):
+    def _get_instances_data(self):
         instances = []
         try:
             instances = api.resource_list(self.request, consts.NOVA_SERVER)
@@ -81,55 +112,15 @@ class IndexView(views.HorizonTemplateView):
                               _("Unable to retrieve instances list."))
         return instances
 
-    def get_volumes_data(self):
-        volumes = []
-        try:
-            volumes = api.resource_list(self.request, consts.CINDER_VOLUME)
-            volumes = [os_api.cinder.Volume(v) for v in volumes]
-        except Exception:
-            exceptions.handle(self.request,
-                              _("Unable to retrieve volumes list."))
-        return volumes
-
-    def get_networks_data(self):
-        nets = []
-        try:
-            nets = api.net_list_for_tenant(self.request,
-                                           self.request.user.tenant_id)
-        except Exception:
-            exceptions.handle(self.request,
-                              _("Unable to retrieve network list."))
-        return nets
-
-    def get_security_groups_data(self):
-        try:
-            secgroups = api.sg_list(self.request, self.request.user.tenant_id)
-        except Exception:
-            secgroups = []
-            exceptions.handle(self.request,
-                              _('Unable to retrieve security groups.'))
-        return sorted(secgroups, key=lambda group: group.name)
-
-    def get_floating_ips_data(self):
-        try:
-            fips = api.resource_list(self.request, consts.NEUTRON_FLOATINGIP)
-            LOG.info("a&s fips: %s", [ip.__dict__ for ip in fips])
-        except Exception:
-            fips = []
-            exceptions.handle(self.request,
-                              _('Unable to retrieve floating IP addresses.'))
-        return fips
-
-    def get_pools_data(self):
-        pools = []
-        try:
-            request = self.request
-            pools = api.resource_list(request, consts.NEUTRON_POOL)[0].pools
-            pools = [os_api.lbaas.Pool(p) for p in pools]
-        except Exception:
-            exceptions.handle(self.request,
-                              _('Unable to retrieve pools list.'))
-        return pools
+    def _extract_server_ids(self, servers, az_name):
+        res_ids = []
+        for res in servers:
+            # TODO(drngsl) Supposing plan type is clone
+            if res.status in resource_state.INSTANCE_CLONE_STATE \
+                    and getattr(res, 'OS-EXT-AZ:availability_zone',
+                                None) == az_name:
+                res_ids.append({'type': consts.NOVA_SERVER, 'id': res.id})
+        return res_ids
 
 
 TYPE_CLASS_MAPPING = {

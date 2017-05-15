@@ -35,8 +35,9 @@ def plan_list(request, search_opts=None):
     return api.conveyorclient(request).plans.list(search_opts)
 
 
-def plan_create(request, plan_type, resource):
-    return api.conveyorclient(request).plans.create(plan_type, resource)
+def plan_create(request, plan_type, resource, plan_name=None):
+    return api.conveyorclient(request).plans.create(plan_type, resource,
+                                                    plan_name=plan_name)
 
 
 def plan_delete(request, plan_id):
