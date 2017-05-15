@@ -22,11 +22,16 @@ class Conveyor(horizon.Dashboard):
     name = _(getattr(settings, 'CONVEYOR_DASHBOARD_NAME', "Conveyor"))
     supports_tenants = True
     slug = "conveyor"
-    panels = ('overview', 'instances',
-              'volumes', 'cgroups',
-              'networks', 'floating_ips', 'security_groups',
-              'loadbalancers', 'stacks',
-              'plans', 'triggers')
+    panels = ('overview',
+              'instances',
+              'volumes',
+              'cgroups',
+              'networks',
+              'floating_ips',
+              'security_groups',
+              'loadbalancers',
+              'stacks',
+              'plans')
     default_panel = 'instances'
 
 horizon.register(Conveyor)
