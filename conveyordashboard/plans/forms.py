@@ -222,37 +222,39 @@ class CreatePlan(forms.SelfHandlingForm):
             exceptions.handle(request, msg, redirect=redirect)
 
 
-class MigrateDestination(forms.SelfHandlingForm):
+class Destination(forms.SelfHandlingForm):
     az = forms.ChoiceField(label=_("Target Availability Zone"),
                            required=False)
-    host = forms.ChoiceField(label=_("Host"),
-                             required=False)
 
     def __init__(self, request, *args, **kwargs):
-        super(MigrateDestination, self).__init__(request, *args, **kwargs)
+        super(Destination, self).__init__(request, *args, **kwargs)
         initial = kwargs.get('initial', {})
         plan_id = initial.get('plan_id')
         self.fields['plan_id'] = forms.CharField(widget=forms.HiddenInput,
                                                  initial=plan_id)
+        self.fields['plan_type'] = forms.CharField(
+            widget=forms.HiddenInput, initial='clone')
 
         try:
             zones = api.availability_zone_list(request)
-            LOG.info("zones={}".format([z.__dict__ for z in zones]))
         except Exception:
             zones = []
             exceptions.handle(request, _("Unable to retrieve availability "
                                          "zones."))
 
-        zone_list = [(forms.fields.get_dc(zone.zoneName),
-                      forms.fields.get_dcname(zone.zoneName))
-                     for zone in zones if zone.zoneState['available']]
-        zone_list.insert(0, ("", _("Any")))
         zone_list = [(zone.zoneName, zone.zoneName)
                      for zone in zones if zone.zoneState['available']]
+        zone_list.insert(0, ("", _("Any")))
         self.fields["az"].choices = dict.fromkeys(zone_list).keys()
 
     def handle(self, request, data):
-        pass
+        plan_id = data['plan_id']
+        plan_type = data['plan_type']
+        zone_name = data['az']
+        LOG.info("Handle destination: az=%(az)s, plan_id=%(id)s,"
+                 " plan_type=%(type)s",
+                 {'az': zone_name, 'id': plan_id, 'type': plan_type})
+        return True
 
 
 class ClonePlan(forms.SelfHandlingForm):

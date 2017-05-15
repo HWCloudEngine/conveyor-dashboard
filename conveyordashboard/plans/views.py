@@ -387,25 +387,29 @@ class CreateTriggerView(forms.ModalFormView):
         return initial
 
 
-class MigrateDestinationView(forms.ModalFormView):
-    form_class = plan_forms.MigrateDestination
-    form_id = 'migrate_destination_form'
+class DestinationView(forms.ModalFormView):
+    form_class = plan_forms.Destination
+    form_id = 'destination_form'
     modal_header = _("Migrate Destination")
-    template_name = 'plans/migrate_destination.html'
+    template_name = 'plans/destination.html'
     context_object_name = 'plan'
-    submit_label = _("Migrate")
-    submit_url = reverse_lazy("horizon:conveyor:plans:migrate_destination")
     success_url = reverse_lazy("horizon:conveyor:plans:index")
-    page_title = _("Migrate Destination")
 
     def get_context_data(self, **kwargs):
-        context = super(MigrateDestinationView,
+        context = super(DestinationView,
                         self).get_context_data(**kwargs)
+        plan_type = constants.CLONE
+        self.submit_label = plan_type.title()
+        self.page_title = '%s Destination' % self.submit_label
         return context
 
     def get_initial(self):
-        initial = super(MigrateDestinationView, self).get_initial()
-        initial.update({'plan_id': self.kwargs['plan_id']})
+        initial = super(DestinationView, self).get_initial()
+        initial.update({'plan_id': self.kwargs['plan_id'],
+                        'plan_type': constants.CLONE})
+        submit_url = 'horizon:conveyor:plans:destination'
+        self.submit_url = reverse(submit_url,
+                                  kwargs={'plan_id': self.kwargs['plan_id']})
         return initial
 
 

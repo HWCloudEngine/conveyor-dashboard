@@ -32,8 +32,8 @@ urlpatterns = patterns(
     url(PLAN % 'export', views.ExportView.as_view(), name='export'),
     url(PLAN % 'create_trigger', views.CreateTriggerView.as_view(),
         name='create_trigger'),
-    url(PLAN % 'migrate_destination', views.MigrateDestinationView.as_view(),
-        name='migrate_destination'),
+    url(PLAN % 'destination', views.DestinationView.as_view(),
+        name='destination'),
     url(PLAN % 'update', views.UpdateView.as_view(), name='update'),
 
     url(r'^get_resource_detail$', views.ResourceDetailJsonView.as_view(),
