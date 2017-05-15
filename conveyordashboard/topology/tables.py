@@ -22,6 +22,15 @@ from django.utils.translation import ugettext_lazy as _
 from horizon import tables
 from horizon.utils import filters
 
+from conveyordashboard.api import models
+
+
+def trans_plan_deps(plan_deps):
+    deps = []
+    for dep in plan_deps.values():
+        deps.append(models.Resource(dep))
+    return deps
+
 
 class CreateAction(tables.LinkAction):
     name = 'add'
@@ -205,9 +214,11 @@ def get_dep_name(dep):
 
 
 class PlanDepsTable(tables.DataTable):
-    name = tables.Column(get_dep_name, verbose_name=_("Name"))
-    res_id = tables.Column('name_in_template', verbose_name=_("Resource ID"))
-    res_type = tables.Column('type', verbose_name=_("Resource Type"))
+    name = tables.Column(get_dep_name, verbose_name=_("Name"), sortable=False)
+    res_id = tables.Column('name_in_template', verbose_name=_("Resource ID"),
+                           sortable=False)
+    res_type = tables.Column('type', verbose_name=_("Resource Type"),
+                             sortable=False)
 
     def get_object_id(self, obj):
         return obj.name_in_template

@@ -33,6 +33,7 @@ from horizon.utils import memoized
 from conveyordashboard.api import api
 from conveyordashboard.api import models
 from conveyordashboard.common import constants
+from conveyordashboard.common import tables as common_tables
 from conveyordashboard.plans import forms as plan_forms
 from conveyordashboard.plans import resources
 from conveyordashboard.plans import tables as plan_tables
@@ -51,7 +52,7 @@ def trans_plan_deps(plan_deps):
     return deps
 
 
-class IndexView(tables.DataTableView):
+class IndexView(common_tables.PagedTableMixin, tables.DataTableView):
     table_class = plan_tables.PlansTable
     template_name = 'plans/index.html'
     page_title = _("Plans")
@@ -59,14 +60,20 @@ class IndexView(tables.DataTableView):
     @memoized.memoized_method
     def get_data(self):
         plans = []
-        marker = self.request.GET.get(
-            plan_tables.PlansTable._meta.pagination_param, None)
-        search_opts = self.get_filters({'marker': marker, 'paginate': True})
 
         try:
-            plans = api.plan_list(self.request, search_opts=search_opts)
-            tenant_id = self.request.user.tenant_id
-            plans = [plan for plan in plans if plan.project_id == tenant_id]
+            marker, sort_dir = self._get_marker()
+            search_opts = {
+                'marker': marker,
+                'sort_dir': sort_dir,
+                'paginate': True
+            }
+
+            plans, self._has_more_data, self._has_prev_data = \
+                api.plan_list(self.request, search_opts=search_opts)
+
+            if sort_dir == "asc":
+                plans.reverse()
         except Exception:
             exceptions.handle(self.request,
                               _("Unable to retrieve plan list."))
@@ -387,25 +394,30 @@ class CreateTriggerView(forms.ModalFormView):
         return initial
 
 
-class MigrateDestinationView(forms.ModalFormView):
-    form_class = plan_forms.MigrateDestination
-    form_id = 'migrate_destination_form'
-    modal_header = _("Migrate Destination")
-    template_name = 'plans/migrate_destination.html'
+class DestinationView(forms.ModalFormView):
+    form_class = plan_forms.Destination
+    form_id = 'destination_form'
+    template_name = 'plans/destination.html'
     context_object_name = 'plan'
-    submit_label = _("Migrate")
-    submit_url = reverse_lazy("horizon:conveyor:plans:migrate_destination")
     success_url = reverse_lazy("horizon:conveyor:plans:index")
-    page_title = _("Migrate Destination")
 
     def get_context_data(self, **kwargs):
-        context = super(MigrateDestinationView,
+        plan_type = constants.CLONE
+        self.submit_label = plan_type.title()
+        self.modal_header = '%s Destination' % self.submit_label
+        self.page_title = '%s Destination' % self.submit_label
+        context = super(DestinationView,
                         self).get_context_data(**kwargs)
+        context['plan_type'] = constants.CLONE
         return context
 
     def get_initial(self):
-        initial = super(MigrateDestinationView, self).get_initial()
-        initial.update({'plan_id': self.kwargs['plan_id']})
+        initial = super(DestinationView, self).get_initial()
+        initial.update({'plan_id': self.kwargs['plan_id'],
+                        'plan_type': constants.CLONE})
+        submit_url = 'horizon:conveyor:plans:destination'
+        self.submit_url = reverse(submit_url,
+                                  kwargs={'plan_id': self.kwargs['plan_id']})
         return initial
 
 
@@ -517,6 +529,34 @@ class UpdateView(View):
         #              'dependencies': i_dependencies}
         # return http.HttpResponse(json.dumps(resp_data),
         #                          content_type='application/json')
+
+
+class UpdateResourceView(View):
+    @staticmethod
+    def post(request, **kwargs):
+        plan_id = kwargs['plan_id']
+        POST = request.POST
+        resp = {'result': 'Succeed'}
+        try:
+            update_res = json.JSONDecoder().decode(POST['update_resource'])
+        except Exception as e:
+            resp = {'result': 'Failed',
+                    'message': 'update_resources format error.'}
+            return http.HttpResponse(json.dumps(resp),
+                                     content_type='application/json')
+        try:
+
+            if update_res:
+                plan_forms.preprocess_update_resources(update_res)
+                api.update_plan_resource(request, plan_id, update_res)
+        except Exception as e:
+            LOG.error("Update plan %(plan_id)s with %(res)s resources failed."
+                      " %(error)s",
+                      {'plan_id': plan_id, 'res': update_res, 'error': e})
+            resp = {'result': 'Failed'}
+
+        return http.HttpResponse(json.dumps(resp),
+                                 content_type='application/json')
 
 
 class ResourceDetailJsonView(View):

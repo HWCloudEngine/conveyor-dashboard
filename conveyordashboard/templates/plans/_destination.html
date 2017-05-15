@@ -1,0 +1,15 @@
+{% extends "horizon/common/_modal_form.html" %}
+{% load i18n %}
+{% block modal-body %}
+<div class="left">
+    <fieldset>
+    {% include "horizon/common/_form_fields.html" %}
+    </fieldset>
+</div>
+<div class="right">
+    <h4>{% trans "Description:" %}</h4>
+    <p>{% trans "Clone All the resources of this plan to another specific availability zone." %}</p>
+    <h4>{% trans "Clone System Volume" %}</h4>
+    <p>{% trans "Clone the instances with it's bootable volume together." %}</p>
+</div>
+{% endblock %}
