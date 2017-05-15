@@ -1,7 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n %}
 {% load static %}
-{% block title %}{% trans "Consistency Groups" %}{% endblock %}
 {% block main %}
 {{ table.render }}
 {% endblock %}
@@ -9,4 +7,3 @@
 {% include "horizon/_scripts.html" %}
 <script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.selector.js' %}"></script>
 {% endblock %}
-

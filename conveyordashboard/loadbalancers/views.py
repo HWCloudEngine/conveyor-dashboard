@@ -20,5 +20,5 @@ from conveyordashboard.loadbalancers import tabs as conveyor_tabs
 
 class IndexView(tabs.TabbedTableView):
     tab_group_class = (conveyor_tabs.LoadBalancerTabs)
-    template_name = 'loadbalancers/index.html'
+    template_name = '_res_table.html'
     page_title = _("Load Balancer")

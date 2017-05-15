@@ -23,7 +23,7 @@ from conveyordashboard.volumes import tables as volume_tables
 
 class IndexView(tables.DataTableView):
     table_class = volume_tables.VolumesTable
-    template_name = 'volumes/index.html'
+    template_name = '_res_table.html'
     page_title = _("Volumes")
 
     def get_data(self):

@@ -24,7 +24,7 @@ from conveyordashboard.cgroups import tables as cgroup_tables
 
 class IndexView(tables.DataTableView):
     table_class = cgroup_tables.VolumeCGroupsTable
-    template_name = 'cgroups/index.html'
+    template_name = 'res_table.html'
     page_title = _("Consistency Groups")
 
     def get_data(self):

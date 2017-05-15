@@ -23,7 +23,7 @@ from conveyordashboard.floating_ips import tables as fip_tables
 
 class IndexView(tables.DataTableView):
     table_class = fip_tables.FloatingIPsTable
-    template_name = 'floating_ips/index.html'
+    template_name = '_res_table.html'
     page_title = _("Floating IPs")
 
     def get_data(self):

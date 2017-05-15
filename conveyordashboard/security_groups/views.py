@@ -22,7 +22,7 @@ from conveyordashboard.security_groups import tables as secgroup_tables
 
 class IndexView(tables.DataTableView):
     table_class = secgroup_tables.SecurityGroupsTable
-    template_name = 'security_groups/index.html'
+    template_name = '_res_table.html'
     page_title = _("Security Groups")
 
     def get_data(self):

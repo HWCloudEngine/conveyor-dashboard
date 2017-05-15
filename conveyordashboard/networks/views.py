@@ -23,7 +23,7 @@ from conveyordashboard.networks import tables as network_tables
 
 class IndexView(tables.DataTableView):
     table_class = network_tables.NetworksTable
-    template_name = 'networks/index.html'
+    template_name = '_res_table.html'
     page_title = _("Networks")
 
     def get_data(self):
