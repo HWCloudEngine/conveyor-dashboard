@@ -23,6 +23,23 @@ from conveyordashboard.common import constants as consts
 RESOURCE_TYPE_IMAGE_MAPPINGS = consts.RESOURCE_TYPE_IMAGE_MAPPINGS
 
 
+def update_pagination(entities, page_size, marker, sort_dir):
+    has_more_data, has_prev_data = False, False
+    if len(entities) > page_size:
+        has_more_data = True
+        entities.pop()
+        if marker is not None:
+            has_prev_data = True
+    # first page condition when reached via prev back
+    elif sort_dir == 'asc' and marker is not None:
+        has_more_data = True
+    # last page condition
+    elif marker is not None:
+        has_prev_data = True
+
+    return entities, has_more_data, has_prev_data
+
+
 def get_resource_image(res_type, color='green'):
     if res_type not in RESOURCE_TYPE_IMAGE_MAPPINGS:
         res_type = 'UNKNOWN'
@@ -32,11 +49,32 @@ def get_resource_image(res_type, color='green'):
 
 
 def plan_list(request, search_opts=None):
-    return api.conveyorclient(request).plans.list(search_opts)
+    search_opts = search_opts or {}
+
+    paginate = search_opts.pop('paginate', False)
+    marker = search_opts.pop('marker', None)
+    sort_dir = search_opts.pop('sort_dir', 'desc')
+
+    if paginate:
+        page_size = utils.get_page_size(request)
+
+        plans = api.conveyorclient(request).plans.list(
+            search_opts,
+            marker=marker,
+            limit=page_size+1,
+            sort_key='created_at',
+            sort_dir=sort_dir)
+
+        volumes, has_more_data, has_prev_data = \
+            update_pagination(plans, page_size, marker, sort_dir)
+        return plans, has_more_data, has_prev_data
+    else:
+        return api.conveyorclient(request).plans.list(search_opts)
 
 
-def plan_create(request, plan_type, resource):
-    return api.conveyorclient(request).plans.create(plan_type, resource)
+def plan_create(request, plan_type, resource, plan_name=None):
+    return api.conveyorclient(request).plans.create(plan_type, resource,
+                                                    plan_name=plan_name)
 
 
 def plan_delete(request, plan_id):
