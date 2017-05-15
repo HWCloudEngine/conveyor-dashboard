@@ -28,10 +28,7 @@ from openstack_dashboard.dashboards.project.instances \
 from conveyordashboard.api import api
 from conveyordashboard.common import actions as common_actions
 from conveyordashboard.common import constants as consts
-
-CLONE_ALLOWED_STATUS = ("SHUTOFF",)
-
-MIGRATE_ALLOWED_STATUS = ("SHUTOFF",)
+from conveyordashboard.common import resource_state
 
 
 def get_property(obj, key, default=None):
@@ -62,21 +59,21 @@ def get_size(instance):
     return _("Not available")
 
 
-class CreateInstanceClonePlan(common_actions.CreateClonePlan):
+class CloneInstance(common_actions.CreateClonePlan):
     def allowed(self, request, instance=None):
         """Allow terminate action if instance not currently being deleted."""
         if not instance:
             return True
-        return (instance.status in CLONE_ALLOWED_STATUS) \
+        return (instance.status in resource_state.INSTANCE_CLONE_STATE) \
             and not project_tables.is_deleting(instance)
 
 
-class CreateInstanceMigratePlan(common_actions.CreateMigratePlan):
+class MigrateInstance(common_actions.CreateMigratePlan):
     def allowed(self, request, instance=None):
         """Allow terminate action if instance not currently being deleted."""
         if not instance:
             return True
-        return (instance.status in MIGRATE_ALLOWED_STATUS) \
+        return (instance.status in resource_state.INSTANCE_MIGRATE_STATE) \
             and not project_tables.is_deleting(instance)
 
 
@@ -154,6 +151,8 @@ class InstancesTable(tables.DataTable):
         status=True,
         status_choices=STATUS_CHOICES,
         display_choices=project_tables.STATUS_DISPLAY_CHOICES)
+    availability_zone = tables.Column("OS-EXT-AZ:availability_zone",
+                                      verbose_name=_("Availability Zone"))
     task = tables.Column("OS-EXT-STS:task_state",
                          verbose_name=_("Task"),
                          empty_value=project_tables.TASK_DISPLAY_NONE,
@@ -176,5 +175,5 @@ class InstancesTable(tables.DataTable):
                          InstanceFilterAction)
         row_class = UpdateRow
         row_actions = (project_tables.ConfirmResize,
-                       CreateInstanceClonePlan,
-                       CreateInstanceMigratePlan,)
+                       CloneInstance,
+                       MigrateInstance,)

@@ -12,21 +12,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+INSTANCE_CLONE_STATE = ('SHUTOFF',)
+INSTANCE_MIGRATE_STATE = ('SHUTOFF',)
 
-import horizon
-
-
-class Conveyor(horizon.Dashboard):
-    name = _(getattr(settings, 'CONVEYOR_DASHBOARD_NAME', "Conveyor"))
-    supports_tenants = True
-    slug = "conveyor"
-    panels = ('overview', 'instances',
-              'volumes', 'cgroups',
-              'networks', 'floating_ips', 'security_groups',
-              'loadbalancers', 'stacks',
-              'plans', 'triggers')
-    default_panel = 'instances'
-
-horizon.register(Conveyor)
+VOLUME_CLONE_STATE = ('available', 'in-use')
+VOLUME_MIGRATE_STATE = ('available', 'in-use')

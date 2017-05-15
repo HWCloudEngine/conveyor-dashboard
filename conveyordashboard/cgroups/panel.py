@@ -12,21 +12,16 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 import horizon
 
+from conveyordashboard import dashboard
 
-class Conveyor(horizon.Dashboard):
-    name = _(getattr(settings, 'CONVEYOR_DASHBOARD_NAME', "Conveyor"))
-    supports_tenants = True
-    slug = "conveyor"
-    panels = ('overview', 'instances',
-              'volumes', 'cgroups',
-              'networks', 'floating_ips', 'security_groups',
-              'loadbalancers', 'stacks',
-              'plans', 'triggers')
-    default_panel = 'instances'
 
-horizon.register(Conveyor)
+class CGroups(horizon.Panel):
+    name = _("Consistency Groups")
+    slug = 'cgroups'
+
+
+dashboard.Conveyor.register(CGroups)

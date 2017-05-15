@@ -11,30 +11,28 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+
 from django.utils.translation import ugettext_lazy as _
 
-from openstack_dashboard.dashboards.project.loadbalancers \
-    import tables as lb_tables
+from horizon import exceptions
+from horizon import tables
 
-from conveyordashboard.common import actions as common_actions
+from conveyordashboard.api import api
 from conveyordashboard.common import constants as consts
+from conveyordashboard.cgroups import tables as cgroup_tables
 
 
-class ClonePool(common_actions.CreateClonePlan):
-    """"""
+class IndexView(tables.DataTableView):
+    table_class = cgroup_tables.VolumeCGroupsTable
+    template_name = 'cgroups/index.html'
+    page_title = _("Consistency Groups")
 
-
-class MigratePool(common_actions.CreateMigratePlan):
-    """"""
-
-
-class PoolsTable(lb_tables.PoolsTable):
-
-    class Meta(object):
-        name = "poolstable"
-        verbose_name = _("Pools")
-        css_classes = ' '.join(['table-res', consts.NEUTRON_POOL])
-        table_actions = (common_actions.CreateClonePlanWithMulRes,
-                         common_actions.CreateMigratePlanWithMulRes)
-        row_actions = (ClonePool,
-                       MigratePool,)
+    def get_data(self):
+        cgroups = []
+        try:
+            cgroups = api.resource_list(self.request,
+                                        consts.CINDER_CONSISGROUP)
+        except Exception:
+            exceptions.handle(self.request, _("Unable to retrieve "
+                                              "volume consistency groups."))
+        return cgroups

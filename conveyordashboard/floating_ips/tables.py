@@ -11,30 +11,42 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+
 from django.utils.translation import ugettext_lazy as _
 
-from openstack_dashboard.dashboards.project.loadbalancers \
-    import tables as lb_tables
+from horizon import tables
+from openstack_dashboard.dashboards.project.access_and_security.\
+    floating_ips import tables as fip_tables
 
 from conveyordashboard.common import actions as common_actions
 from conveyordashboard.common import constants as consts
 
 
-class ClonePool(common_actions.CreateClonePlan):
+class CloneFloatingIP(common_actions.CreateClonePlan):
     """"""
 
 
-class MigratePool(common_actions.CreateMigratePlan):
+class MigrateFloatingIP(common_actions.CreateMigratePlan):
     """"""
 
 
-class PoolsTable(lb_tables.PoolsTable):
+class FloatingIPsTable(fip_tables.FloatingIPsTable):
+    ip = tables.Column("floating_ip_address",
+                       verbose_name=_("IP Address"),
+                       attrs={'data-type': "ip"})
+    fixed_ip = tables.Column('fixed_ip_address',
+                             verbose_name=_("Mapped Fixed IP Address"))
+    pool = tables.Column("floating_network_id",
+                         verbose_name=_("Pool"))
+
+    def get_object_display(self, datum):
+        return datum.floating_ip_address
 
     class Meta(object):
-        name = "poolstable"
-        verbose_name = _("Pools")
-        css_classes = ' '.join(['table-res', consts.NEUTRON_POOL])
+        name = 'floating_ips'
+        verbose_name = _("Floating IPs")
+        css_classes = "table-res %s" % consts.NEUTRON_FLOATINGIP
         table_actions = (common_actions.CreateClonePlanWithMulRes,
                          common_actions.CreateMigratePlanWithMulRes)
-        row_actions = (ClonePool,
-                       MigratePool,)
+        row_actions = (CloneFloatingIP,
+                       MigrateFloatingIP,)

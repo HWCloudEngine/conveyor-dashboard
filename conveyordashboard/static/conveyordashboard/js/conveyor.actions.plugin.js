@@ -1,3 +1,18 @@
+/*  Copyright (c) 2017 Huawei, Inc.
+
+    Licensed under the Apache License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may obtain
+    a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+    License for the specific language governing permissions and limitations
+    under the License.
+*/
+
 var conveyor_action_url = "/conveyor/overview/row_actions";
 var conveyor_table_action_url = "/conveyor/overview/table_actions";
 var next_url = window.location.href;
@@ -19,7 +34,7 @@ var table_res_type_mappings = {
 	"poolstable":"OS::Neutron::Pool"
 };
 
-var conveyor_clone_plan_topology = "a.create-plan-for-mul-sel";
+var conveyor_clone_plan_topology = "a.create-clone-plan-for-mul-sel";
 var conveyor_migrate_plan_topology = "a.create-migrate-plan-for-mul-sel";
 var conveyor_multi_sel_action = [conveyor_clone_plan_topology, conveyor_migrate_plan_topology];
 var conveyor_ids = {};

@@ -41,9 +41,9 @@ class StacksUpdateRow(tables.Row):
 
     def get_data(self, request, stack_id):
         try:
-            stack = api.ResourceDetail(request,
-                                       consts.HEAT_STACK,
-                                       stack_id).get()
+            stack = api.get_wrapped_detail_resource(request,
+                                                    consts.HEAT_STACK,
+                                                    stack_id)
             if stack.stack_status == 'DELETE_COMPLETE':
                 # returning 404 to the ajax call removes the
                 # row from the table on the ui

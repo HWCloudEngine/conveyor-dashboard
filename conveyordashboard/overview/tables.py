@@ -17,6 +17,38 @@ from django.utils.translation import ugettext_lazy as _
 from horizon import tables
 
 from conveyordashboard.common import actions as common_actions
+from conveyordashboard.common import constants as consts
+from conveyordashboard.common import resource_state
+
+
+class CloneRes(common_actions.CreateClonePlan):
+    def allowed(self, request, datnum=None):
+        if not datnum:
+            return False
+        obj = getattr(datnum, 'obj', None)
+        if obj is None:
+            return False
+        if datnum.res_type == consts.NOVA_SERVER:
+            return obj.status in resource_state.INSTANCE_CLONE_STATE
+        elif datnum.res_type == consts.CINDER_VOLUME:
+            return obj.status in resource_state.VOLUME_CLONE_STATE
+        else:
+            return True
+
+
+class MigrateRes(common_actions.CreateMigratePlan):
+    def allowed(self, request, datnum=None):
+        if not datnum:
+            return False
+        obj = getattr(datnum, 'obj', None)
+        if obj is None:
+            return False
+        if datnum.res_type == consts.NOVA_SERVER:
+            return obj.status in resource_state.INSTANCE_MIGRATE_STATE
+        elif datnum.res_type == consts.CINDER_VOLUME:
+            return obj.status in resource_state.VOLUME_MIGRATE_STATE
+        else:
+            return True
 
 
 class ActionsTable(tables.DataTable):
@@ -30,13 +62,13 @@ class ActionsTable(tables.DataTable):
 class ResTable(tables.DataTable):
     project_id = tables.Column('project_id', verbose_name=_("Project ID"),
                                hidden=True)
-    name = tables.Column("name", verbose_name=_("Name"))
-    res_type = tables.Column("res_type", verbose_name=_("Resource Type"))
+    name = tables.Column("name", verbose_name=_("Name"), sortable=False)
+    res_type = tables.Column("res_type", verbose_name=_("Resource Type"),
+                             sortable=False)
 
     class Meta(object):
         name = 'resource'
         verbose_name = _("Resource")
         table_actions = (common_actions.CreateClonePlanWithMulRes,
                          common_actions.CreateMigratePlanWithMulRes)
-        row_actions = (common_actions.CreateClonePlan,
-                       common_actions.CreateMigratePlan)
+        row_actions = (CloneRes, MigrateRes)

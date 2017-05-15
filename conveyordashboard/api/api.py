@@ -15,15 +15,12 @@ from django.conf import settings
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from horizon.utils import functions as utils
 from openstack_dashboard import api as os_api
-from oslo_log import log as logging
 
 from conveyordashboard import api
 from conveyordashboard.api import models
 from conveyordashboard.common import constants as consts
 
 RESOURCE_TYPE_IMAGE_MAPPINGS = consts.RESOURCE_TYPE_IMAGE_MAPPINGS
-
-LOG = logging.getLogger(__name__)
 
 
 def get_resource_image(res_type, color='green'):
@@ -56,7 +53,6 @@ def update_plan_resource(request, plan, resources):
 
 
 def download_template(request, plan_id):
-    LOG.info("Download_template %s" % plan_id)
     return api.conveyorclient(request).plans.download_template(plan_id)
 
 
@@ -155,6 +151,17 @@ def flavor_get(request, id):
     return models.Flavor(resource_detail(request, consts.NOVA_FLAVOR, id))
 
 
+def volume_list(request, search_opts=None):
+    volumes = resource_list(request, consts.CINDER_VOLUME,
+                            search_opts=search_opts)
+    return [os_api.cinder.Volume(v) for v in volumes]
+
+
+def volume_get(request, id):
+    volume = resource_detail(request, consts.CINDER_VOLUME, id)
+    return models.Volume(volume)
+
+
 def net_get(request, id):
     network = resource_detail(request, consts.NEUTRON_NET, id)
     return os_api.neutron.Network(network)
@@ -216,24 +223,21 @@ def pool_list(request, **kwargs):
     return [os_api.lbaas.Pool(p) for p in pools]
 
 
-class ResourceDetail(object):
-    """Wrap dict response to class."""
+def stack_list(request, **kwargs):
+    stacks = resource_list(request, consts.HEAT_STACK)
+    return [models.StackRes(s) for s in stacks]
 
-    def __init__(self, request, res_type, res_id, **kwargs):
-        self.request = request
-        self.res_type = res_type
-        self.res_id = res_id
-        self.kwargs = kwargs
 
-    def _get_server(self):
-        return server_get(self.request, self.res_id)
+def stack_get(request, stack_id):
+    return models.Stack(resource_detail(request, consts.HEAT_STACK, stack_id))
 
-    def get(self):
-        method = ''.join(('_get_', self.res_type.split('::')[-1].lower()))
-        LOG.info("Method={0}".format(method))
-        if hasattr(self, method):
-            return getattr(self, method)()
-        else:
-            return models.Resource(resource_detail(self.request,
-                                                   self.res_type,
-                                                   self.res_id))
+
+def get_wrapped_detail_resource(request, res_type, res_id):
+    if res_type == consts.NOVA_SERVER:
+        return server_get(request, res_id)
+    elif res_type == consts.CINDER_VOLUME:
+        return volume_get(request, res_id)
+    elif res_type == consts.HEAT_STACK:
+        return stack_get(request, res_id)
+    else:
+        return models.Resource(resource_detail(request, res_type, res_id))

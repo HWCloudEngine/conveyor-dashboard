@@ -13,28 +13,24 @@
 #    under the License.
 from django.utils.translation import ugettext_lazy as _
 
-from openstack_dashboard.dashboards.project.loadbalancers \
-    import tables as lb_tables
+from horizon import exceptions
+from horizon import tables
 
-from conveyordashboard.common import actions as common_actions
+from conveyordashboard.api import api
 from conveyordashboard.common import constants as consts
+from conveyordashboard.floating_ips import tables as fip_tables
 
 
-class ClonePool(common_actions.CreateClonePlan):
-    """"""
+class IndexView(tables.DataTableView):
+    table_class = fip_tables.FloatingIPsTable
+    template_name = 'floating_ips/index.html'
+    page_title = _("Floating IPs")
 
-
-class MigratePool(common_actions.CreateMigratePlan):
-    """"""
-
-
-class PoolsTable(lb_tables.PoolsTable):
-
-    class Meta(object):
-        name = "poolstable"
-        verbose_name = _("Pools")
-        css_classes = ' '.join(['table-res', consts.NEUTRON_POOL])
-        table_actions = (common_actions.CreateClonePlanWithMulRes,
-                         common_actions.CreateMigratePlanWithMulRes)
-        row_actions = (ClonePool,
-                       MigratePool,)
+    def get_data(self):
+        fips = []
+        try:
+            fips = api.resource_list(self.request, consts.NEUTRON_FLOATINGIP)
+        except Exception:
+            exceptions.handle(self.request,
+                              _("Unable to retrieve floating IP addresses."))
+        return fips
