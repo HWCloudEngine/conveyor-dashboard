@@ -222,37 +222,63 @@ class CreatePlan(forms.SelfHandlingForm):
             exceptions.handle(request, msg, redirect=redirect)
 
 
-class MigrateDestination(forms.SelfHandlingForm):
+class Destination(forms.SelfHandlingForm):
     az = forms.ChoiceField(label=_("Target Availability Zone"),
-                           required=False)
-    host = forms.ChoiceField(label=_("Host"),
-                             required=False)
+                           required=True)
+    sys_clone = forms.BooleanField(label=_("Clone System Volume"),
+                                   required=False)
 
     def __init__(self, request, *args, **kwargs):
-        super(MigrateDestination, self).__init__(request, *args, **kwargs)
+        super(Destination, self).__init__(request, *args, **kwargs)
         initial = kwargs.get('initial', {})
         plan_id = initial.get('plan_id')
         self.fields['plan_id'] = forms.CharField(widget=forms.HiddenInput,
                                                  initial=plan_id)
+        self.fields['plan_type'] = forms.CharField(
+            widget=forms.HiddenInput, initial='clone')
 
         try:
             zones = api.availability_zone_list(request)
-            LOG.info("zones={}".format([z.__dict__ for z in zones]))
         except Exception:
             zones = []
             exceptions.handle(request, _("Unable to retrieve availability "
                                          "zones."))
 
-        zone_list = [(forms.fields.get_dc(zone.zoneName),
-                      forms.fields.get_dcname(zone.zoneName))
-                     for zone in zones if zone.zoneState['available']]
-        zone_list.insert(0, ("", _("Any")))
         zone_list = [(zone.zoneName, zone.zoneName)
                      for zone in zones if zone.zoneState['available']]
+        # zone_list.insert(0, ("", _("Any")))
         self.fields["az"].choices = dict.fromkeys(zone_list).keys()
 
     def handle(self, request, data):
-        pass
+        plan_id = data['plan_id']
+        plan_type = data['plan_type']
+        zone_name = data['az']
+        sys_clone = data['sys_clone'] == 'True'
+        LOG.info("Handle destination: plan_id=%(id)s,"
+                 " plan_type=%(type)s, az=%(az)s, sys_clone=%(sys_clone)s",
+                 {'az': zone_name, 'id': plan_id,
+                  'type': plan_type, 'sys_clone': sys_clone})
+        if plan_type == constants.CLONE:
+            try:
+                api.export_template_and_clone(request, plan_id, zone_name,
+                                              sys_clone=sys_clone)
+                return True
+            except Exception as e:
+                LOG.error("Clone plan %(plan_id)s failed. %(error)s",
+                          {'plan_id': plan_id, 'error': e})
+                exceptions.handle(request,
+                                  _("Clone plan failed."))
+        elif plan_type == constants.MIGRATE:
+            try:
+                api.migrate(request, plan_id, zone_name)
+                return True
+            except Exception as e:
+                LOG.error("Migrate plan %(plan_id)s failed. %(error)s",
+                          {'plan_id': plan_id, 'error': e})
+        else:
+            msg = _("Unsupported plan type.")
+            redirect = reverse('horizon:conveyor:plan:index')
+            exceptions.handle(request, msg, redirect=redirect)
 
 
 class ClonePlan(forms.SelfHandlingForm):
