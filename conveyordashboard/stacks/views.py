@@ -24,7 +24,7 @@ from conveyordashboard.stacks import tables as stacks_tables
 
 class IndexView(tables.DataTableView):
     table_class = stacks_tables.StacksTable
-    template_name = 'stacks/index.html'
+    template_name = '_res_table.html'
     page_title = _("Stacks")
 
     @memoized.memoized_method
