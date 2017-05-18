@@ -111,7 +111,12 @@ class DetailView(tabs.TabView):
         try:
             plan = api.plan_get(self.request, plan_id)
         except Exception:
-            exceptions.handle(self.request, _("Unable to retrieve plan."))
+            redirect = reverse(self.redirect_url)
+            exceptions.handle(self.request,
+                              _("Unable to retrieve detail for "
+                                "plan %s.") % plan_id,
+                              redirect=redirect)
+            raise exceptions.Http302(redirect)
         return plan
 
     def get_tabs(self, request, *args, **kwargs):
