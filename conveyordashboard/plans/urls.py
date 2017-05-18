@@ -30,8 +30,6 @@ urlpatterns = patterns(
     url(PLAN % 'cancel', views.CancelView.as_view(), name='cancel'),
     url(r'^import$', views.ImportView.as_view(), name='import'),
     url(PLAN % 'export', views.ExportView.as_view(), name='export'),
-    url(PLAN % 'create_trigger', views.CreateTriggerView.as_view(),
-        name='create_trigger'),
     url(PLAN % 'destination', views.DestinationView.as_view(),
         name='destination'),
     url(PLAN % 'update', views.UpdateView.as_view(), name='update'),

@@ -168,18 +168,6 @@ class GenerateTemplate(tables.BatchAction):
             raise Exception("Unknown plan type %s" % plan.plan_type)
 
 
-class CreateTrigger(tables.LinkAction):
-    name = 'create_trigger'
-    verbose_name = _("Create Trigger")
-    url = 'horizon:conveyor:plans:create_trigger'
-    icon = 'download'
-    classes = ("ajax-modal", "btn-default", "btn-trigger")
-    help_text = _("Creating trigger for clone plan.")
-
-    def allowed(self, request, plan):
-        return plan.plan_status not in ('expired',)
-
-
 class PlanFilterAction(tables.FilterAction):
     def filter(self, table, plans, filter_string):
         q = filter_string.lower()
@@ -265,4 +253,4 @@ class PlansTable(tables.DataTable):
         table_actions = (ImportPlan, DeletePlan, PlanFilterAction)
         row_class = UpdateRow
         row_actions = (ClonePlan, MigratePlan, GenerateTemplate,
-                       ModifyPlan, ExportPlan, DeletePlan, CreateTrigger,)
+                       ModifyPlan, ExportPlan, DeletePlan,)

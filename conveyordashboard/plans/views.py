@@ -378,22 +378,6 @@ class ExportView(View):
         return response
 
 
-class CreateTriggerView(forms.ModalFormView):
-    form_class = plan_forms.ImportPlan
-    template_name = 'plans/create_trigger.html'
-    context_object_name = 'plan'
-    success_url = reverse_lazy("horizon:conveyor:plans:index")
-    page_title = _("Import Clone Plan")
-
-    def get_context_data(self, **kwargs):
-        context = super(CreateTriggerView, self).get_context_data(**kwargs)
-        return context
-
-    def get_initial(self):
-        initial = super(CreateTriggerView, self).get_initial()
-        return initial
-
-
 class DestinationView(forms.ModalFormView):
     form_class = plan_forms.Destination
     form_id = 'destination_form'

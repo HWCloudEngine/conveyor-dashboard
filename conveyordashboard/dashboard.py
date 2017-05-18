@@ -25,7 +25,6 @@ class Conveyor(horizon.Dashboard):
     panels = ('overview',
               'instances',
               'volumes',
-              'cgroups',
               'networks',
               'floating_ips',
               'security_groups',
