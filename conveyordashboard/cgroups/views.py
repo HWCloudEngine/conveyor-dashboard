@@ -18,8 +18,8 @@ from horizon import exceptions
 from horizon import tables
 
 from conveyordashboard.api import api
-from conveyordashboard.common import constants as consts
 from conveyordashboard.cgroups import tables as cgroup_tables
+from conveyordashboard.common import constants as consts
 
 
 class IndexView(tables.DataTableView):

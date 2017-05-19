@@ -44,4 +44,3 @@ class IndexView(tables.DataTableView):
                 if filter_field and filter_string:
                     filters[filter_field] = filter_string
         return filters
-

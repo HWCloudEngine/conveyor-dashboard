@@ -30,8 +30,6 @@ class IndexView(tables.DataTableView):
     @memoized.memoized_method
     def get_data(self):
         stacks = []
-        marker = self.request.GET.get(
-            stacks_tables.StacksTable._meta.pagination_param, None)
         try:
             stacks = api.stack_list(self.request)
         except Exception:
