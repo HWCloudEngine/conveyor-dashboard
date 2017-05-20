@@ -13,6 +13,7 @@
     <div id="is_original" data-is_original="{{is_original}}"></div>
   </div>
 
+    <a id="edit_plan_res" class="hidden btn btn-default btn-sm ajax-modal" href=""></a>
 <!-- Actions -->
   <!--AZ-->
     <div style="float: left">
@@ -60,7 +61,14 @@
     $(function() {
         "use strict";
         $("#plan_deps").treeTable();
-        $("g.node").click($node_click);
+        //$("g.node").click($node_click);
+        $("g.node").click(function () {
+                var node_id = $(this).attr("node_id");
+                var node_type = $(this).attr("node_type").split("::")[2].toLowerCase();
+                var a = $("#edit_plan_res");
+                $(a).attr("href",getPrefixUrl() + "conveyor/plans/{{ plan.plan_id }}/" + node_type + "/" + node_id);
+                $(a).trigger('click');
+        });
         var plan_id = '{{ plan.plan_id }}';
         $("a.btn-clone").click(function () {
             $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});

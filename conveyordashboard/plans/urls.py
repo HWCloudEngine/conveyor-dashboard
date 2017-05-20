@@ -19,6 +19,7 @@ from conveyordashboard.plans import views
 from conveyordashboard.topology import views as topology_views
 
 PLAN = r'^(?P<plan_id>[^/]+)/%s$'
+EDIT_PLAN_RES = r'^(?P<plan_id>[^/]+)/%s/(?P<res_id>[^/]+)$'
 
 urlpatterns = patterns(
     'conveyordashboard.plans.views',
@@ -50,5 +51,23 @@ urlpatterns = patterns(
     url(r'^get_local_topology$',
         topology_views.LocalTopologyView.as_view(), name='local_topology'),
     url(r'^get_global_topology$',
-        topology_views.GlobalTopologyView.as_view(), name='global_topology')
+        topology_views.GlobalTopologyView.as_view(), name='global_topology'),
+
+    # Edit plan resource
+    url(EDIT_PLAN_RES % 'server', views.EditInstanceView.as_view(),
+        name='edit_server'),
+    url(EDIT_PLAN_RES % 'flavor', views.EditFlavorView.as_view(),
+        name='edit_flavor'),
+    url(EDIT_PLAN_RES % 'keypair', views.EditKeyPairView,
+        name='edit_keypair'),
+    url(EDIT_PLAN_RES % 'volume', views.EditVolumeView.as_view(),
+        name='edit_volume'),
+    url(EDIT_PLAN_RES % 'net', views.EditNetView.as_view(),
+        name='edit_net'),
+    url(EDIT_PLAN_RES % 'subnet', views.EditSubnetView.as_view(),
+        name='edit_subnet'),
+    url(EDIT_PLAN_RES % 'port', views.EditPortView.as_view(),
+        name='edit_port'),
+    url(EDIT_PLAN_RES % 'securitygroup', views.EditSecurityGroupView.as_view(),
+        name='edit_securitygroup'),
 )

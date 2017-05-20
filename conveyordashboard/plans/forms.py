@@ -354,3 +354,240 @@ class ModifyPlan(forms.SelfHandlingForm):
         msg = ("Update plan %s successfully." % plan_id)
         messages.success(request, msg)
         return True
+
+
+# Edit plan resources
+# OS::Nova
+
+class EditResource(forms.SelfHandlingForm):
+    plan_id = forms.CharField(widget=forms.HiddenInput())
+    res_id = forms.CharField(widget=forms.HiddenInput())
+
+    def __init__(self, request, *args, **kwargs):
+        super(EditResource, self).__init__(request, *args, **kwargs)
+        self.initial = kwargs.get('initial', {})
+        self.detail = self.initial.get('detail', {})
+        self.properties = self.detail.get('properties', {})
+        self.parameters = self.detail.get('parameters', {})
+        self.extra_properties = self.detail.get('extra_properties', {})
+
+
+class EditInstance(EditResource):
+
+    def __init__(self, request, *args, **kwargs):
+        super(EditInstance, self).__init__(request, *args, **kwargs)
+
+        self.fields['name'] = forms.CharField(
+            label='Name',
+            widget=forms.TextInput(attrs={'readonly': 'readonly'}),
+            initial=self.properties.get('name', ''),
+            required=False)
+        self.fields['availability_zone'] = forms.CharField(
+            label='Availability Zone',
+            widget=forms.TextInput(attrs={'readonly': 'readonly'}),
+            initial=self.properties.get('availability_zone', ''),
+            required=False)
+        self.fields['description'] = forms.CharField(
+            label='Description',
+            widget=forms.TextInput(),
+            initial=self.properties.get('description', ''),
+            required=False)
+        self.fields['user_data'] = forms.CharField(
+            label='user_data',
+            widget=forms.Textarea(),
+            initial=self.properties.get('user_data', ''),
+            required=False)
+
+    def handle(self, request, data):
+        return True
+
+
+class EditKeyPair(EditResource):
+    def __init__(self, request, *args, **kwargs):
+        super(EditKeyPair, self).__init__(request, *args, **kwargs)
+
+    def handle(self, request, data):
+        return True
+
+
+class EditFlavor(EditResource):
+    def __init__(self, request, *args, **kwargs):
+        super(EditFlavor, self).__init__(request, *args, **kwargs)
+
+        self.fields['ram'] = forms.CharField(
+            label='RAM',
+            widget=forms.TextInput(attrs={'readonly': 'readonly'}),
+            initial=self.properties.get('ram', ''),
+            required=False)
+        self.fields['vcpus'] = forms.CharField(
+            label='VCPUs',
+            widget=forms.TextInput(attrs={'readonly': 'readonly'}),
+            initial=self.properties.get('vcpus', ''),
+            required=False)
+        self.fields['disk'] = forms.CharField(
+            label='Disk',
+            widget=forms.TextInput(attrs={'readonly': 'readonly'}),
+            initial=self.properties.get('disk', ''),
+            required=False)
+
+    def handle(self, request, data):
+        return True
+
+
+# OS::Volume
+
+class EditVolume(forms.SelfHandlingForm):
+
+    def __init__(self, request, *args, **kwargs):
+        super(EditVolume, self).__init__(request, *args, **kwargs)
+
+        pass
+
+    def handle(self, request, data):
+        return True
+
+
+class EditVolumeType(forms.SelfHandlingForm):
+    def __init__(self, request, *args, **kwargs):
+        super(EditVolumeType, self).__init__(request, *args, **kwargs)
+        pass
+
+    def handle(self, request, data):
+        return True
+
+
+class EditQos(forms.SelfHandlingForm):
+    def __init__(self, request, *args, **kwargs):
+        super(EditQos, self).__init__(request, *args, **kwargs)
+        pass
+
+    def handle(self, request, data):
+        return True
+
+
+# OS::Net
+
+class EditNet(EditResource):
+    def __init__(self, request, *args, **kwargs):
+        super(EditNet, self).__init__(request, *args, **kwargs)
+
+        self.fields['name'] = forms.CharField(
+            label='Name',
+            max_length=255,
+            widget=forms.TextInput(),
+            initial=self.properties.get('name', ''),
+            required=False)
+        self.fields['admin_state'] = forms.ChoiceField(
+            choices=[(True, _('UP')),
+                     (False, _('DOWN'))],
+            label='Admin State',
+            initial=self.properties.get('admin_state_up', 'UP'),
+            required=False,
+            help_text=_("The state to start"
+                        " the network in."))
+        self.fields['shared'] = forms.BooleanField(
+            label='Shared',
+            initial=self.properties.get('shared', False),
+            required=False)
+
+    def handle(self, request, data):
+        return True
+
+
+class EditSubnet(EditResource):
+    def __init__(self, request, *args, **kwargs):
+        super(EditSubnet, self).__init__(request, *args, **kwargs)
+
+        self.fields['name'] = forms.CharField(
+            label='Name',
+            max_length=255,
+            widget=forms.TextInput(),
+            initial=self.properties.get('name', ''),
+            required=False)
+
+        self.fields['cidr'] = forms.IPField(
+            label=_("Network Address"),
+            required=False,
+            initial="",
+            widget=forms.TextInput(
+                attrs={
+                    'class': 'switched',
+                    'data-switch-on': 'source',
+                    'data-source-manual': _("Network Address"),}),
+            help_text=_("Network address in CIDR format "
+                        "(e.g. 192.168.0.0/24, 2001:DB8::/48)"),
+            version=forms.IPv4 | forms.IPv6,
+            mask=True)
+        self.fields['gateway_ip'] = forms.IPField(
+            label=_("Gateway IP"),
+            widget=forms.TextInput(attrs={
+                'class': 'switched',
+                'data-switch-on': 'gateway_ip',
+                'data-source-manual': _("Gateway IP")
+            }),
+            required=False,
+            initial="",
+            help_text=_("IP address of Gateway (e.g. 192.168.0.254) "
+                        "The default value is the first IP of the "
+                        "network address "
+                        "(e.g. 192.168.0.1 for 192.168.0.0/24, "
+                        "2001:DB8::1 for 2001:DB8::/48). "
+                        "If you use the default, leave blank. "
+                        "If you do not want to use a gateway, "
+                        "check 'Disable Gateway' below."),
+            version=forms.IPv4 | forms.IPv6,
+            mask=False)
+        self.fields['no_gateway'] = forms.BooleanField(
+            label=_("Disable Gateway"),
+            widget=forms.CheckboxInput(
+                attrs={'class': 'switchable',
+                       'data-slug': 'gateway_ip',
+                       'data-hide-on-checked': 'true'
+                       }),
+            initial=False,
+            required=False)
+        self.fields['subnetpool'] = forms.ChoiceField(
+            label=_("Address pool"),
+            widget=forms.SelectWidget(attrs={
+                'class': 'switched switchable',
+                'data-slug': 'subnetpool',
+                'data-switch-on': 'source',
+                'data-source-subnetpool': _('Address pool')},
+                data_attrs=('name', 'prefixes',
+                            'ip_version',
+                            'min_prefixlen',
+                            'max_prefixlen',
+                            'default_prefixlen'),
+                transform=lambda x: "%s (%s)" % (x.name, ", ".join(x.prefixes))
+                if 'prefixes' in x else "%s" % (x.name)),
+            required=False)
+
+    def handle(self, request, data):
+        return True
+
+
+class EditPort(forms.SelfHandlingForm):
+    def __init__(self, request, *args, **kwargs):
+        super(EditPort, self).__init__(request, *args, **kwargs)
+        pass
+
+    def handle(self, request, data):
+        return True
+
+
+class EditSecurityGroup(forms.SelfHandlingForm):
+    def __init__(self, request, *args, **kwargs):
+        super(EditSecurityGroup, self).__init__(request, *args, **kwargs)
+        pass
+
+    def handle(self, request, data):
+        return True
+
+
+class EditRouter(forms.SelfHandlingForm):
+    def __init__(self, request, *args, **kwargs):
+        super(EditRouter, self).__init__(request, *args, **kwargs)
+        pass
+
+    def handle(self, request, data):
+        return True

@@ -1,0 +1,32 @@
+{% extends "horizon/common/_modal_form.html" %}
+{% load i18n %}
+{% block modal-body-right %}
+    <h4>{% trans "Description:" %}</h4>
+    <p>{% trans "Clone All the resources of this plan to another specific availability zone." %}</p>
+    <h4>{% trans "Clone System Volume" %}</h4>
+    <p>{% trans "Clone the instances with it's bootable volume together." %}</p>
+{% endblock %}
+{% block modal-js %}
+    <script type="text/javascript">
+    $(function () {
+        "use strict";
+        $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
+        $.get(getPrefixUrl() + "api/conveyor/index", function (resp) {
+            console.log(resp)
+        });
+        $.get(getPrefixUrl() + "api/conveyor/test/123", function (resp) {
+            console.log(resp)
+        });
+
+        $("input[type=submit]").click(function () {
+            $.post(getPrefixUrl() + "api/conveyor/plans/" + $("#id_plan_id").val() + "/{{ res_type }}/{{ res_id }}", {"name": "test"}, function (resp) {
+                console.log(resp)
+            });
+            return false;
+        });
+
+        conveyorAPI.deletePlan('123');
+        console.log('end')
+    });
+    </script>
+{% endblock %}
