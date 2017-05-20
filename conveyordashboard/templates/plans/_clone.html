@@ -13,7 +13,11 @@
     $(function() {
       "use strict";
       $("g.node").click(function () {
-        conveyorEditPlanRes.nodeClick(this);
+        var node_id = $(this).attr("node_id");
+        var node_type = $(this).attr("node_type").split("::")[2].toLowerCase();
+        var a = $("#edit_plan_res");
+        $(a).attr("href", WEBROOT + "conveyor/plans/{{ plan.plan_id }}/" + node_type + "/" + node_id);
+        $(a).trigger('click');
       });
     });
   </script>

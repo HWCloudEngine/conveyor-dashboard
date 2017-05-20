@@ -17,6 +17,8 @@ from django.utils.translation import ugettext_lazy as _
 
 import horizon
 
+from conveyordashboard.api import rest  # noqa
+
 
 class Conveyor(horizon.Dashboard):
     name = _(getattr(settings, 'CONVEYOR_DASHBOARD_NAME', "Conveyor"))

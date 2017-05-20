@@ -13,7 +13,8 @@
     <input id="id_dependencies" name="dependencies" type="hidden" value="{}"/>
     <div id="is_original" data-is_original="{{is_original}}"></div>
   </div>
-  <!-- Actions -->
+  <a id="edit_plan_res" class="hidden btn btn-default btn-sm ajax-modal" href=""></a>
+<!-- Actions -->
   <!--AZ-->
   <div>
     <div class="left">
@@ -56,13 +57,26 @@
 
       depsTreeTableAndCallTopo();
 
-      $("g.node").click(function () {
-        conveyorEditPlanRes.nodeClick(this);
-      });
-
       $('[name=availability_zone]').change(function () {
         horizon.modals.modal_spinner(gettext("Loading"));
         window.location.href = '{% url 'horizon:conveyor:overview:index' %}' + '?availability_zone=' + $(this).val();
+      });
+      $("g.node").click(function () {
+        var node_id = $(this).attr("node_id");
+        var node_type = $(this).attr("node_type").split("::")[2].toLowerCase();
+        var a = $("#edit_plan_res");
+        $(a).attr("href", WEBROOT + "conveyor/plans/{{ plan.plan_id }}/" + node_type + "/" + node_id);
+        $(a).trigger('click');
+      });
+      var plan_id = '{{ plan.plan_id }}';
+      $("a.btn-clone").click(function () {
+          $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
+          var postdata = {"plan_id": plan_id,
+              "update_resource": $('#id_update_resource').val()};
+          $.post(WEBROOT + "conveyor/plans/{{ plan.plan_id }}/update_resource",postdata,function(data){
+              {# TODO(drngsl): Pop window to show the failure message or not according to result data. #}
+              console.log(data)
+          });
       });
     });
   </script>

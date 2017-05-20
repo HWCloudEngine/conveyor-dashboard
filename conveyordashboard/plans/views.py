@@ -607,3 +607,104 @@ class ResourceDetailJsonView(View):
                 'image': api.get_resource_image(resource_type, 'red')}
         return http.HttpResponse(json.dumps(resp),
                                  content_type='application/json')
+
+
+# Edit plan resource
+
+class EditResourceView(forms.ModalFormView):
+    form_id = 'edit_plan_res_form'
+    success_url = reverse_lazy("horizon:conveyor:plans:index")
+
+    def get_context_data(self, **kwargs):
+        res_type = self.res_type.split('::')[-1].lower()
+        # self.form_id = 'edit_%s_form' % res_type
+        self.template_name = 'res_form/%s.html' % res_type
+        submit_url = "horizon:conveyor:plans:edit_%s" % res_type
+        self.submit_url = reverse(submit_url,
+                                  kwargs={
+                                      'plan_id': self.kwargs['plan_id'],
+                                      'res_id': self.kwargs['res_id']
+                                  })
+        context = super(EditResourceView, self).get_context_data(**kwargs)
+        context['res_type'] = res_type
+        context['plan_id'] = self.kwargs['plan_id'],
+        context['res_id'] = self.kwargs['res_id']
+        return context
+
+    def _get_detail_resource(self):
+        plan_id = self.kwargs['plan_id']
+        res_id = self.kwargs['res_id']
+        resource = api.resource_detail_from_plan(self.request, res_id, plan_id)
+        LOG.debug("Detail source for %s from plan %s is %s",
+                  res_id, plan_id, resource)
+        return resource
+
+    def get_initial(self):
+        initial = super(EditResourceView, self).get_initial()
+        initial.update({
+            'plan_id': self.kwargs['plan_id'],
+            'plan_type': constants.CLONE,
+            'res_id': self.kwargs['res_id'],
+            'detail': self._get_detail_resource()
+        })
+        return initial
+
+
+class EditInstanceView(EditResourceView):
+    res_type = constants.NOVA_SERVER
+    form_class = plan_forms.EditInstance
+    modal_header = 'Edit Instance'
+
+
+class EditFlavorView(EditResourceView):
+    res_type = constants.NOVA_FLAVOR
+    form_class = plan_forms.EditFlavor
+    modal_header = 'Edit Flavor'
+
+
+class EditKeyPairView(EditResourceView):
+    res_type = constants.NOVA_KEYPAIR
+    form_class = plan_forms.EditKeyPair
+    modal_header = 'Edit Key Pair'
+
+
+class EditVolumeView(EditResourceView):
+    res_type = constants.CINDER_VOLUME
+    form_class = plan_forms.EditVolume
+    modal_header = 'Edit Volume'
+
+
+class EditVolumeTypeView(EditResourceView):
+    res_type = constants.CINDER_VOLUME
+    form_class = plan_forms.EditVolumeType
+    modal_header = 'Edit Volume'
+
+
+class EditQosView(EditResourceView):
+    res_type = constants.CINDER_QOS
+    form_class = plan_forms.EditQos
+    modal_header = 'Edit Volume'
+
+
+class EditNetView(EditResourceView):
+    res_type = constants.NEUTRON_NET
+    form_class = plan_forms.EditNet
+    modal_header = 'Edit Network'
+
+
+class EditSubnetView(EditResourceView):
+    res_type = constants.NEUTRON_SUBNET
+    form_class = plan_forms.EditSubnet
+    modal_header = 'Edit Subnet'
+
+
+class EditPortView(EditResourceView):
+    res_type = constants.NEUTRON_PORT
+    form_class = plan_forms.EditPort
+    modal_header = 'Edit Port'
+
+
+class EditSecurityGroupView(EditResourceView):
+    res_type = constants.NEUTRON_SECGROUP
+    form_class = plan_forms.EditSecurityGroup
+    modal_header = 'Edit Security Group'
