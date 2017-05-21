@@ -17,17 +17,14 @@
 	.modal-body table{margin-bottom: 0!important;}
 </style>
 <link rel="stylesheet" href="{% static 'conveyordashboard/css/jquery.treeTable.css' %}"/>
-<script type="text/javascript" src="{% static 'conveyordashboard/js/json2.js' %}"></script>
-<script type="text/javascript" src="{% static 'conveyordashboard/js/jquery.cookie.js' %}"></script>
-<script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.utils.js' %}"></script>
 <script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.js' %}"></script>
 <script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.res.action.js' %}"></script>
 <script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.plan.action.js' %}"></script>
-<script type="text/javascript" src="{% static 'conveyordashboard/js/jquery.treeTable.js' %}"></script>
 <script type="text/javascript">
-	$(document).ready(function() {
-		$("#plan_deps").treeTable();
-	});
+    $(function() {
+        "use strict";
+        $("#plan_deps").treeTable();
+    });
 </script>
 <fieldset>
 {% include "horizon/common/_form_fields.html" %}
@@ -91,6 +88,6 @@
 {% endblock %}
 {% block modal-footer %}
 <input class="btn btn-primary pull-right" name="save" type="submit" value="{% trans "Save" %}" />
-<input class="btn btn-primary pull-right" name="migrate" type="submit" value="{% trans "Migrate" %}" style="margin-right: 8px" dest="{% url 'horizon:conveyor:plans:migrate_destination' plan_id %}"/>
-<a href="{% url 'horizon:conveyor:instances:index' %}" class="btn btn-default cancel" is_new={{is_original}}>{% trans "Cancel" %}</a>
+<input class="btn btn-primary pull-right" name="migrate" type="submit" value="{% trans "Migrate" %}" style="margin-right: 8px" dest="{% url 'horizon:conveyor:plans:destination' plan_id %}"/>
+<a href="{% url 'horizon:conveyor:plans:index' %}" class="btn btn-default cancel" is_new={{is_original}}>{% trans "Cancel" %}</a>
 {% endblock %}

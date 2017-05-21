@@ -23,19 +23,14 @@
 	#resource_info_box{width:400px;margin: 70px auto 0;display: none}
 </style>
 <link rel="stylesheet" href="{% static 'conveyordashboard/css/jquery.treeTable.css' %}"/>
-<script type="text/javascript" src="{% static 'conveyordashboard/js/json2.js' %}"></script>
-<script type="text/javascript" src="{% static 'conveyordashboard/js/jquery.cookie.js' %}"></script>
-<script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.validate.js' %}"></script>
-<script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.utils.js' %}"></script>
 <script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.js' %}"></script>
 <script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.res.action.js' %}"></script>
 <script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.plan.action.js' %}"></script>
-<script type="text/javascript" src="{% static 'conveyordashboard/js/jquery.treeTable.js' %}"></script>
-<script type="text/javascript" src="{% static 'conveyordashboard/js/d3.v3.min.js' %}"></script>
 <script type="text/javascript">
-	$(document).ready(function() {
-		$("#plan_deps").treeTable();
-	});
+    $(function() {
+        "use strict";
+        $("#plan_deps").treeTable();
+    });
 </script>
 <div>
 	<fieldset>{% include "horizon/common/_form_fields.html" %}</fieldset>

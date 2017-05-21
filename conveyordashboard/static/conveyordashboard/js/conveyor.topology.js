@@ -56,7 +56,6 @@ function update(){
   //Setup click action for all nodes
   node.on("mouseover", function(d) {
     $("#info_box").html(d.info_box);
-    current_info = d.name;
   });
   node.on("mouseout", function(d) {
     $("#info_box").html('');
@@ -230,7 +229,7 @@ function ajax_poll(poll_time){
 
       //Check for updates and new nodes
       json.nodes.forEach(function(d){
-        current_node = findNode(d.id);
+        var current_node = findNode(d.id);
         //Check if node already exists
         if (current_node) {
           //Node already exists, just update it
@@ -313,7 +312,7 @@ function update_topo(json){
         });
       }
 
-      current_node = findNode(d.id);
+      var current_node = findNode(d.id);
       //Check if node already exists
       if (current_node) {
         //Node already exists, just update it
@@ -411,7 +410,7 @@ function redraw_topo(ajax_url){
         });
       }
 
-      current_node = findNode(d.id);
+      var current_node = findNode(d.id);
       //Check if node already exists
       if (current_node) {
         //Node already exists, just update it

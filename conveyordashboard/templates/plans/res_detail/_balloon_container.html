@@ -3,7 +3,9 @@
 {% include template_name %}
 <script type="text/javascript">
 $(function(){
-	for(action in cancel_actions){if($(cancel_actions[action]).length){$(cancel_actions[action]).click($hide_table_info);}}
-	for(action in save_actions){if($(save_actions[action]).length){$(save_actions[action]).click($save_table_info);}}
+    "use strict";
+    var action;
+    for(action in cancel_actions){if($(cancel_actions[action]).length){$(cancel_actions[action]).click($hide_table_info);}}
+    for(action in save_actions){if($(save_actions[action]).length){$(save_actions[action]).click($save_table_info);}}
 });
 </script>
