@@ -21,3 +21,15 @@ function getRootPath() {
     var postPath = strPath.substring(0, strPath.substr(1).indexOf('/') + 1);
     return (prePath + postPath);
 }
+
+"use strict";
+
+var conveyorService = conveyorService || {};
+
+conveyorService.cancelPlan = function (plan_id) {
+  $.ajaxSetup({async: false});
+  $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
+  $.post(WEBROOT + "/conveyor/plans/" + plan_id + "/cancel", function(json){
+    return json;
+  });
+};

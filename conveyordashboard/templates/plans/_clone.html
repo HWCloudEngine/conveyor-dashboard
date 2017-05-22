@@ -26,21 +26,26 @@
 </style>
 <script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.js' %}"></script>
 <script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.res.action.js' %}"></script>
-<script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.plan.action.js' %}"></script>
 <script type="text/javascript">
-    $(function() {
-        "use strict";
-        $("#plan_deps").treeTable();
-    });
+  $(function() {
+    "use strict";
+    $("#plan_deps").treeTable();
+
+    var plan_id = '{{ plan_id }}';
+    var clonePlanForm = $('#clone_plan_form');
+    $(clonePlanForm).find(['name=plan_id']).val(plan_id);
+    {# Click resource node image for edit plan resource #}
+    $("g.node").click($node_click);
+  });
 </script>
 <div>
 	<fieldset>{% include "horizon/common/_form_fields.html" %}</fieldset>
 </div>
 <div id="resource_container" class="resource_container">
-	<input id="id_action_type" name="action_type" type="hidden" value="">
-	<input id="id_plan_type" name="plan_type" type="hidden" value="{{type}}">
-	<input id="id_plan_id" name="plan_id" type="hidden" data-plan_id="{{ plan_id }}" value="{{ plan_id }}" />
-	<input id="id_update_resource" name="update_resource" type="hidden" value="[]" />
+{#	<input id="id_action_type" name="action_type" type="hidden" value="clone">#}
+{#	<input id="id_plan_type" name="plan_type" type="hidden" value="{{type}}">#}
+{#	<input id="id_plan_id" name="plan_id" type="hidden" data-plan_id="{{ plan_id }}" value="{{ plan_id }}" />#}
+{#	<input id="id_update_resource" name="update_resource" type="hidden" value="[]" />#}
 	<input id="id_updated_resources" name="updated_resources" type="hidden" value="{}"/>
 	<input id="id_dependencies" name="dependencies" type="hidden" value="{}"/>
 	<div id="is_original" data-is_original="{{is_original}}"></div>
@@ -54,89 +59,10 @@
 	</div>
 	<div id="d3_data" data-d3_data="{{ d3_data }}"></div>
 </div>
-<div class="modal-dialog plan-destination-dialog" style="z-index: 9999; display: none; width: auto;">
-	<div class="modal-content ui-draggable">
-		<div class="modal-header ui-draggable-handle">
-			<a class="close" id="close_plan_dest_dialog" href="javascipt:void(0);">&times;</a>
-			<h3 class="modal-title">
-			{{type|title}}
-			</h3>
-		</div>
-		<div class="modal-body clearfix">
-			<div class="left">
-				<div class="form-group ">
-					<label class="control-label" for="id_availability_zone">Availability Zone</label>
-					<div class=" ">
-						<select class="form-control" id="id_availability_zone" name="availability_zone" data-original-title="" title="">
-							<option value="">Any</option>
-							{%for az in azs%}<option value="{{az.zoneName}}">{{az.zoneName}}</option>{%endfor%}
-						</select>
-					</div>
-				</div>
-				<div class="form-group ">
-					<label class="control-label" for="id_host">Host</label>
-					<div class=" ">
-						<select class="form-control" id="id_host" name="host" data-original-title="" title="">
-							<option value="">Any</option>
-						</select>
-					</div>
-				</div>
-				<div class="form-group ">
-					<div class=" ">
-						<div class="checkbox">
-							<label><input id="id_sys_clone" name="sys_clone" type="checkbox"/>
-								<span>{% trans "Clone System Volume"%}</span>
-							</label>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="right">
-			    <h3>Description:</h3>
-			    <p>{{type|title}} All the resources of this plan to another specific az</p>
-			</div>
-		</div>
-		<div class="modal-footer">
-			<div class="btn btn-primary clone_plan">
-			{{type|title}}
-			</div>
-		</div>
-	</div>
-</div>
-<div class="modal-dialog save-plan-dialog" style="z-index:9999;display:none;width:auto;">
-	<div class="modal-content ui-draggable">
-		<div class="modal-header ui-draggable-handle">
-			<a class="close" id="close_save_plan_dialog" href="javascipt:void(0);">&times;</a>
-			<h3 class="modal-title">
-			{% trans "Save" %}
-			</h3>
-		</div>
-		<div class="modal-body clearfix">
-			<div class="left">
-				<div class="form-group ">
-					<div class=" ">
-						<div class="checkbox">
-							<label><input id="id_sys_clone_for_save" name="sys_clone_for_save" type="checkbox"/>
-								<span>{% trans "Clone System Volume"%}</span>
-							</label>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="right">
-			    <p>Clone system volume of related instance while execute the clone plan</p>
-			</div>
-		</div>
-		<div class="modal-footer">
-			<div class="btn btn-primary save_plan">
-			{% trans "Save" %}
-			</div>
-		</div>
-	</div>
-</div>
+
 {% endblock %}
 {% block modal-footer %}
-<input class="btn btn-primary pull-right" name="save" type="submit" value="{% trans "Save" %}" />
-<input class="btn btn-primary pull-right" name="clone" type="submit" value="{% trans "Clone" %}" style="margin-right: 8px" />
-<a href="{% url 'horizon:conveyor:plans:index' %}" class="btn btn-default cancel" is_new={{is_original}}>{% trans "Cancel" %}</a>
+  <a class="btn btn-default cancel cancel_clone" href="{% url 'horizon:conveyor:plans:index' %}" is_new={{is_original}}>{% trans "Cancel" %}</a>
+  <a class="btn btn-default btn-sm ajax-modal" href="{% url 'horizon:conveyor:plans:save' plan_id %}">{% trans "Save" %}</a>
+  <a class="btn btn-default btn-sm ajax-modal btn-clone" href="{% url 'horizon:conveyor:plans:destination' plan_id %}">{% trans "Clone" %}</a>
 {% endblock %}

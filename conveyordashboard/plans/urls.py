@@ -26,6 +26,7 @@ urlpatterns = patterns(
     url(PLAN % '', views.DetailView.as_view(), name='detail'),
     url(r'^clone$', views.CloneView.as_view(), name='clone'),
     url(r'^migrate$', views.MigrateView.as_view(), name='migrate'),
+    url(PLAN % 'save', views.SaveView.as_view(), name='save'),
     url(PLAN % 'modify', views.ModifyView.as_view(), name='modify'),
     url(PLAN % 'cancel', views.CancelView.as_view(), name='cancel'),
     url(r'^import$', views.ImportView.as_view(), name='import'),
