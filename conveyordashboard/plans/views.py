@@ -292,6 +292,26 @@ class MigrateView(forms.ModalFormView):
         return initial
 
 
+class SaveView(forms.ModalFormView):
+    """Save the edited plan that create from res directly"""
+
+    form_class = plan_forms.SavePlan
+    form_id = 'save_plan_form'
+    modal_header = _("Save Plan")
+    template_name = 'plans/save.html'
+    submit_label = _("Save")
+    success_url = reverse_lazy("horizon:conveyor:plans:index")
+    page_title = _("Save")
+
+    def get_initial(self):
+        initial = super(SaveView, self).get_initial()
+        args = {'plan_id': self.kwargs['plan_id']}
+        initial.update(args)
+        submit_url = 'horizon:conveyor:plans:save'
+        self.submit_url = reverse(submit_url, kwargs=args)
+        return initial
+
+
 class ModifyView(forms.ModalFormView):
     form_class = plan_forms.ModifyPlan
     form_id = 'modify_form'

@@ -25,6 +25,7 @@ $cancel_clone = function() {
 /*
 * For clone plan*/
 $(function(){
+  "use strict";
 	var clone_ipt=$("input[type='submit'][name='clone']");
 	if(clone_ipt.length){
 		clone_ipt.click(function(){
@@ -63,6 +64,7 @@ $(function(){
 /*
 * For migrate plan*/
 $(function(){
+  "use strict";
 	var migrate_ipt = $("input[type='submit'][name='migrate']");
 	if(migrate_ipt.length) {
 		migrate_ipt.click(function () {
@@ -93,6 +95,7 @@ $(function(){
 /*
 * Cancel plan*/
 $(function () {
+  "use strict";
 	var cancel_btn = $("a.btn.cancel");
 	if(cancel_btn.length && cancel_btn.attr("is_new") == "True") {
 		cancel_btn.click($cancel_clone);

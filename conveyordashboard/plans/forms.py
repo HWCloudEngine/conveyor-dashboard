@@ -235,7 +235,7 @@ class Destination(forms.SelfHandlingForm):
         self.fields['plan_id'] = forms.CharField(widget=forms.HiddenInput,
                                                  initial=plan_id)
         self.fields['plan_type'] = forms.CharField(
-            widget=forms.HiddenInput, initial='clone')
+            widget=forms.HiddenInput, initial=initial.get('plan_type'))
 
         try:
             zones = api.availability_zone_list(request)
@@ -325,6 +325,38 @@ class MigratePlan(forms.SelfHandlingForm):
             msg = _("Some error occurs when processing plan host.")
             redirect = reverse('horizon:conveyor:plans:index')
             exceptions.handle(request, msg, redirect=redirect)
+
+
+class SavePlan(forms.SelfHandlingForm):
+    plan_id = forms.CharField(widget=forms.HiddenInput())
+    plan_type = forms.CharField(widget=forms.HiddenInput())
+    sys_clone = forms.BooleanField(label=_("Clone System Volume"),
+                                   widget=forms.CheckboxInput(),
+                                   required=False)
+    resources = forms.CharField(widget=forms.HiddenInput())
+
+    def handle(self, request, data):
+        LOG.info("Save plan with data: %s", data)
+        plan_id = data['plan_id']
+        sys_clone = data['sys_clone'] == 'True'
+        try:
+            resources = json.JSONDecoder().decode(data['resources'])
+            preprocess_update_resources(resources)
+            if len(resources) > 0:
+                api.update_plan_resource(request, plan_id, resources)
+            api.export_clone_template(request, plan_id,
+                                      sys_clone=sys_clone)
+            msg = ("Save plan %s successfully." % plan_id)
+            messages.success(request, msg)
+            return True
+        except Exception as e:
+            LOG.error("Save plan %(plan_id)s failed with data %(data)s. "
+                      "%(error)s",
+                      {'plan_id': plan_id, 'data': data, 'error': e})
+            redirect = reverse('horizon:conveyor:plan:index')
+            exceptions.handle(request,
+                              _("Save plan %s failed.") % plan_id,
+                              redirect=redirect)
 
 
 class ModifyPlan(forms.SelfHandlingForm):
