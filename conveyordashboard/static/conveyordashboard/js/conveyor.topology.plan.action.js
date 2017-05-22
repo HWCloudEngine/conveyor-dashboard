@@ -31,7 +31,7 @@ $(function(){
 			$("input#id_action_type").val("clone");
 			var clone_dest_dialog = $("div.plan-destination-dialog");
 			$(clone_dest_dialog).find(".modal-footer").css({"margin-left":"0px", "margin-right": "0px"});
-			var left = ($("form#plan_topology_form").width() - $(clone_dest_dialog).width()) / 2;
+			var left = ($("form#clone_plan_form").width() - $(clone_dest_dialog).width()) / 2;
 			$(clone_dest_dialog).css({"display": "block", "position": "fixed", "left": left+"px", "top": "30px"});
 			return false;
 		});
@@ -39,7 +39,7 @@ $(function(){
 			$("input#id_action_type").val("save");
 			var spd=$("div.save-plan-dialog");
 			spd.find(".modal-footer").css({"margin-left":"0px", "margin-right": "0px"});
-			var left = ($("form#plan_topology_form").width() - $(spd).width()) / 2;
+			var left = ($("form#clone_plan_form").width() - $(spd).width()) / 2;
 			spd.css({"display": "block", "position": "fixed", "left": left+"px", "top": "30px"});
 			return false;
 		});
@@ -49,13 +49,13 @@ $(function(){
 	var clone_node = $("div.clone_plan");
 	if(clone_node.length) {
 		clone_node.click(function(){
-			$("form#plan_topology_form").submit();
+			$("form#clone_plan_form").submit();
 		});
 	}
 	var save_node = $("div.save_plan");
 	if(save_node.length){
 		save_node.click(function () {
-			$("form#plan_topology_form").submit();
+			$("form#clone_plan_form").submit();
 		});
 	}
 });
@@ -69,13 +69,13 @@ $(function(){
 			var plan_dest_node = $("div.plan-destination-dialog");
 			$("input#id_action_type").val("migrate");
 			$(plan_dest_node).find(".modal-footer").css({"margin-left":"0px", "margin-right": "0px"});
-			var left = ($("form#plan_migrate_form").width() - $(plan_dest_node).width()) / 2;
+			var left = ($("form#migrate_plan_form").width() - $(plan_dest_node).width()) / 2;
 			$(plan_dest_node).css({"display": "block", "position": "fixed", "left": left+"px", "top": "30px"});
 			return false;
 		});
 		$("input[type='submit'][name='save']").click(function(){
 			$("input#id_action_type").val("save");
-			$("form#plan_migrate_form").submit();
+			$("form#migrate_plan_form").submit();
 		});
 		$("g.node").click(function () {
 			return false;
@@ -85,7 +85,7 @@ $(function(){
 	var migrate_node = $("div.migrate-plan");
 	if(migrate_node.length) {
 		$(migrate_node).click(function(){
-			$("form#plan_migrate_form").submit();
+			$("form#migrate_plan_form").submit();
 		});
 	}
 });

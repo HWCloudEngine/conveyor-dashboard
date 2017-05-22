@@ -474,7 +474,7 @@ $node_click = function(){
 		"update_data": JSON.stringify(update_data),
 		"updated_res": updated_res,
 		"is_original": is_original};
-	jQuery.post(rootPath + "conveyor/plans/get_resource_detail",postdata,function(data){
+	jQuery.post(rootPath + "/conveyor/plans/get_resource_detail",postdata,function(data){
 		if(data.msg !== "success") {
 			return false;
 		}
@@ -539,7 +539,7 @@ function open_add_operation(t_selector, t_type, add_action_selector){
 				}
 			}else if(t_type == "rules"){
 				if($("#resource_info_box form#create_security_group_rule_form").length){return;}
-				$.get(rootPath+"conveyor/plans/"+$('#secgroup_wrap').attr('os_id')+"/add_rule/", function(rsp){
+				$.get(rootPath+"/conveyor/plans/"+$('#secgroup_wrap').attr('os_id')+"/add_rule/", function(rsp){
 					form = $(rsp).find("form#create_security_group_rule_form");
 					$(form).append($(form).find("div.col-sm-6:first").html()).find("div.modal-body").remove();
 					$(form).find("div.modal-footer").remove();

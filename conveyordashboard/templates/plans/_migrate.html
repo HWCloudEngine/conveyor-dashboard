@@ -19,7 +19,6 @@
 <link rel="stylesheet" href="{% static 'conveyordashboard/css/jquery.treeTable.css' %}"/>
 <script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.js' %}"></script>
 <script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.res.action.js' %}"></script>
-<script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.plan.action.js' %}"></script>
 <script type="text/javascript">
     $(function() {
         "use strict";
@@ -30,12 +29,6 @@
 {% include "horizon/common/_form_fields.html" %}
 </fieldset>
 <div id="resource_container" class="resource_container">
-	<div class="form-data hidden">
-		<input id="id_plan_id" name="plan_id" type="hidden" data-plan_id="{{ plan_id }}" value="{{ plan_id }}" />
-		<input id="id_plan_type" name="plan_type" type="hidden" value="{{type}}">
-		<input id="id_action_type" name="action_type" type="hidden" value="">
-		<div id="is_original" data-is_original="{{is_original}}"></div>
-	</div>
 	<div id="info_box"></div>
 	<div id="stack_box"></div>
 	<div id="plan_deps_table">{{plan_deps_table}}</div>
@@ -44,50 +37,10 @@
 		<div class="thbDetail"></div>
 	</div>
 </div>
-<div class="modal-dialog plan-destination-dialog" style="z-index: 9999; display: none; width: auto;">
-	<div class="modal-content ui-draggable">
-		<div class="modal-header ui-draggable-handle">
-			<a class="close" id="close_plan_dest_dialog" href="javascipt:void(0);">&times;</a>
-			<h3 class="modal-title">
-			Migrate
-			</h3>
-		</div>
-		<div class="modal-body clearfix">
-			<div class="left">
-				<div class="form-group ">
-					<label class="control-label" for="id_availability_zone">Availability Zone</label>
-					<div class=" ">
-						<select class="form-control" id="id_availability_zone" name="availability_zone" data-original-title="" title="">
-							<option value="">Any</option>
-							{%for az in azs%}<option value="{{az.zoneName}}">{{az.zoneName}}</option>{%endfor%}
-						</select>
-					</div>
-				</div>
-				<div class="form-group ">
-					<label class="control-label" for="id_host">Host</label>
-					<div class=" ">
-						<select class="form-control" id="id_host" name="host" data-original-title="" title="">
-							<option value="">Any</option>
-						</select>
-					</div>
-				</div>
-			</div>
-			<div class="right">
-			    <h3>Description:</h3>
-			    <p>Migrate All the resources of this plan to another specific az</p>
-			</div>
-		</div>
-		<div class="modal-footer">
-			<div class="btn btn-primary migrate-plan">
-			Migrate
-			</div>
-		</div>
-	</div>
-</div>
 <div id="d3_data" data-d3_data="{{ d3_data }}"></div>
 {% endblock %}
 {% block modal-footer %}
-<input class="btn btn-primary pull-right" name="save" type="submit" value="{% trans "Save" %}" />
-<input class="btn btn-primary pull-right" name="migrate" type="submit" value="{% trans "Migrate" %}" style="margin-right: 8px" dest="{% url 'horizon:conveyor:plans:destination' plan_id %}"/>
-<a href="{% url 'horizon:conveyor:plans:index' %}" class="btn btn-default cancel" is_new={{is_original}}>{% trans "Cancel" %}</a>
+  <a class="btn btn-default cancel cancel_migrate" href="{% url 'horizon:conveyor:plans:index' %}">{% trans "Cancel" %}</a>
+  <a class="btn btn-default btn-sm ajax-modal" href="{% url 'horizon:conveyor:plans:save' plan_id %}">{% trans "Save" %}</a>
+  <a class="btn btn-default btn-sm ajax-modal" href="{% url 'horizon:conveyor:plans:destination' plan_id %}">{% trans "Migrate" %}</a>
 {% endblock %}
