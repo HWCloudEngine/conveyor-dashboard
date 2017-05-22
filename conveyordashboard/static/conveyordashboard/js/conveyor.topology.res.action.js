@@ -474,7 +474,7 @@ $node_click = function(){
 		"update_data": JSON.stringify(update_data),
 		"updated_res": updated_res,
 		"is_original": is_original};
-	jQuery.post(rootPath + "conveyor/plans/get_resource_detail",postdata,function(data){
+	jQuery.post(rootPath + "/conveyor/plans/get_resource_detail",postdata,function(data){
 		if(data.msg !== "success") {
 			return false;
 		}

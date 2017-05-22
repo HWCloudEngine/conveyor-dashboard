@@ -171,21 +171,6 @@ def clone_plan(request, action_type):
     return msg
 
 
-def migrate_plan(request, action_type):
-    POST = request.POST
-    plan_id = POST['plan_id']
-    az = POST.get('availability_zone', None)
-
-    if action_type == 'migrate':
-        api.migrate(request, plan_id, az)
-    elif action_type == 'save':
-        api.export_migrate_template(request, plan_id)
-    else:
-        api.plan_delete(request, plan_id)
-    msg = ("%s plan %s successfully." % (action_type.title(), plan_id))
-    return msg
-
-
 class CreatePlan(forms.SelfHandlingForm):
     def __init__(self, request, *args, **kwargs):
         super(CreatePlan, self).__init__(request, *args, **kwargs)
@@ -235,7 +220,7 @@ class Destination(forms.SelfHandlingForm):
         self.fields['plan_id'] = forms.CharField(widget=forms.HiddenInput,
                                                  initial=plan_id)
         self.fields['plan_type'] = forms.CharField(
-            widget=forms.HiddenInput, initial='clone')
+            widget=forms.HiddenInput, initial=initial.get('plan_type'))
 
         try:
             zones = api.availability_zone_list(request)
@@ -282,6 +267,12 @@ class Destination(forms.SelfHandlingForm):
 
 
 class ClonePlan(forms.SelfHandlingForm):
+    # plan_id = forms.CharField(widget=forms.HiddenInput())
+    # action_type = forms.CharField(widget=forms.HiddenInput())
+    # az = forms.CharField(widget=forms.HiddenInput(), initial='')
+    # sys_clone = forms.BooleanField(widget=forms.HiddenInput(),
+    #                                required=False)
+
     def __init__(self, request, *args, **kwargs):
         super(ClonePlan, self).__init__(request, *args, **kwargs)
 
@@ -305,26 +296,68 @@ class ClonePlan(forms.SelfHandlingForm):
 
 
 class MigratePlan(forms.SelfHandlingForm):
-    def __init__(self, request, *args, **kwargs):
-        super(MigratePlan, self).__init__(request, args, kwargs)
+    plan_id = forms.CharField(widget=forms.HiddenInput())
+    action_type = forms.CharField(widget=forms.HiddenInput(),
+                                  initial='migrate')
+    az = forms.CharField(widget=forms.HiddenInput(), initial='')
+    is_original = forms.CharField(widget=forms.HiddenInput())
 
     def handle(self, request, data):
+        LOG.info("Migrate plan with data: %s", data)
+        plan_id = data['plan_id']
+        action_type = data['action_type']
         try:
-            POST = request.POST
-            LOG.info("Plan Actions Arguments: %s", POST)
-            action_type = POST['action_type']
             if action_type not in ['migrate', 'save', 'cancel']:
                 LOG.error("Action type only support clone, migrate or "
                           "cancel for migrating plan. while action_type "
                           "here is %s." % action_type)
                 raise Exception
-            msg = migrate_plan(request, action_type)
+            if action_type == 'migrate':
+                api.migrate(request, plan_id, data['az'])
+            elif action_type == 'save':
+                api.export_migrate_template(request, plan_id)
+            else:
+                api.plan_delete(request, plan_id)
+            msg = "%s plan %s successfully." % (action_type.title(), plan_id)
             messages.success(request, msg)
             return True
-        except Exception:
+        except Exception as e:
+            LOG.info("%(action)s plan %(plan_id)s failed. %(error)s",
+                     {'action': action_type, 'plan_id': plan_id, 'error': e})
             msg = _("Some error occurs when processing plan host.")
             redirect = reverse('horizon:conveyor:plans:index')
             exceptions.handle(request, msg, redirect=redirect)
+
+
+class SavePlan(forms.SelfHandlingForm):
+    plan_id = forms.CharField(widget=forms.HiddenInput())
+    sys_clone = forms.BooleanField(label=_("Clone System Volume"),
+                                   required=False)
+    resources = forms.CharField(widget=forms.HiddenInput(),
+                                initial='[]')
+
+    def handle(self, request, data):
+        LOG.info("Save plan with data: %s", data)
+        plan_id = data['plan_id']
+        sys_clone = data['sys_clone'] == 'True'
+        try:
+            resources = json.loads(data['resources'])
+            preprocess_update_resources(resources)
+            if len(resources) > 0:
+                api.update_plan_resource(request, plan_id, resources)
+            api.export_clone_template(request, plan_id,
+                                      sys_clone=sys_clone)
+            msg = ("Save plan %s successfully." % plan_id)
+            messages.success(request, msg)
+            return True
+        except Exception as e:
+            LOG.error("Save plan %(plan_id)s failed with data %(data)s. "
+                      "%(error)s",
+                      {'plan_id': plan_id, 'data': data, 'error': e})
+            redirect = reverse('horizon:conveyor:plans:index')
+            exceptions.handle(request,
+                              _("Save plan %s failed.") % plan_id,
+                              redirect=redirect)
 
 
 class ModifyPlan(forms.SelfHandlingForm):

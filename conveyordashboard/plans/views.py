@@ -18,6 +18,7 @@ import yaml
 from django.core.urlresolvers import reverse
 from django.core.urlresolvers import reverse_lazy
 from django import http
+from django.utils.http import urlencode
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import View
 
@@ -126,7 +127,7 @@ class DetailView(tabs.TabView):
 
 class CloneView(forms.ModalFormView):
     form_class = plan_forms.ClonePlan
-    form_id = 'plan_topology_form'
+    form_id = 'clone_plan_form'
     modal_header = _("Plan Topology")
     template_name = 'plans/clone.html'
     context_object_name = 'plan'
@@ -135,14 +136,14 @@ class CloneView(forms.ModalFormView):
     page_title = _("Plan Topology")
 
     def get_context_data(self, **kwargs):
-        context = super(CloneView, self).get_context_data(**kwargs)
-
         plan, is_original = self.get_object()
 
-        context['type'] = constants.CLONE
+        self.modal_header = 'Plan Topology ' + plan.plan_id
+        context = super(CloneView, self).get_context_data(**kwargs)
+
         context['plan'] = plan
         context['plan_id'] = plan.plan_id
-        CloneView.modal_header = 'Plan Topology ' + plan.plan_id
+        context['plan_type'] = constants.CLONE
 
         plan_deps_table = topology_tables.PlanDepsTable(
             self.request,
@@ -157,7 +158,7 @@ class CloneView(forms.ModalFormView):
                                              is_original)
         context['d3_data'] = d3_data
         context['is_original'] = is_original
-        context['azs'] = self.get_zones()
+        # context['azs'] = self.get_zones()
 
         return context
 
@@ -209,21 +210,31 @@ class CloneView(forms.ModalFormView):
 
 class MigrateView(forms.ModalFormView):
     form_class = plan_forms.MigratePlan
-    form_id = 'plan_migrate_form'
+    form_id = 'migrate_plan_form'
     modal_header = _("Migrate Plan")
     template_name = 'plans/migrate.html'
     context_object_name = 'plan'
-    submit_url = reverse_lazy("horizon:conveyor:plans:migrate")
     success_url = reverse_lazy("horizon:conveyor:plans:index")
 
+    def _init_data(self):
+        plan = getattr(self, 'plan', None)
+        if plan is None:
+            plan, is_original = self.get_object()
+            setattr(self, 'plan', plan)
+            setattr(self, 'is_original', is_original)
+
     def get_context_data(self, **kwargs):
+        self._init_data()
+        plan = getattr(self, 'plan')
+        is_original = getattr(self, 'is_original')
+
+        self.modal_header = 'Migrate Plan ' + plan.plan_id
+        base_url = reverse('horizon:conveyor:plans:migrate')
+        params = urlencode({'plan_id': plan.plan_id})
+        self.submit_url = '?'.join([base_url, params])
+
         context = super(MigrateView, self).get_context_data(**kwargs)
-
-        plan, is_original = self.get_object()
-
         context['plan_id'] = plan.plan_id
-        context['type'] = constants.MIGRATE
-        MigrateView.modal_header = 'Migrate Plan ' + plan.plan_id
 
         plan_deps_table = topology_tables.PlanDepsTable(
             self.request,
@@ -237,12 +248,6 @@ class MigrateView(forms.ModalFormView):
                                              constants.MIGRATE,
                                              is_original)
         context['d3_data'] = d3_data
-        context['is_original'] = is_original
-        # az_form = plan_forms.Destination(self.request,
-        #                                  initial={'plan_id': plan.plan_id})
-        context['azs'] = self.get_zones()
-        # context['az_form'] = az_form.as_table()
-
         return context
 
     @memoized.memoized_method
@@ -265,7 +270,7 @@ class MigrateView(forms.ModalFormView):
             except Exception:
                 msg = _("Query string is not a correct format.")
                 exceptions.handle(self.request, msg)
-                return
+                return None, None
         elif 'plan_id' in self.request.GET:
             try:
                 return (api.plan_get(self.request,
@@ -274,7 +279,7 @@ class MigrateView(forms.ModalFormView):
             except Exception:
                 msg = _("Unable to retrieve plan details.")
                 exceptions.handle(self.request, msg)
-                return
+                return None, None
 
         msg = _("Query string does not contain either plan_id or res ids.")
         exceptions.handle(self.request, msg)
@@ -289,6 +294,40 @@ class MigrateView(forms.ModalFormView):
 
     def get_initial(self):
         initial = super(MigrateView, self).get_initial()
+        self._init_data()
+        plan = getattr(self, 'plan')
+        is_original = getattr(self, 'is_original')
+        initial.update({
+            'plan_id': plan.plan_id,
+            'is_original': is_original,
+
+        })
+        LOG.info("Migrate view initial: %s", initial)
+        return initial
+
+
+class SaveView(forms.ModalFormView):
+    """Save the edited plan that create from res directly"""
+
+    form_class = plan_forms.SavePlan
+    form_id = 'save_plan_form'
+    modal_header = _("Save Plan")
+    template_name = 'plans/save.html'
+    submit_label = _("Save")
+    success_url = reverse_lazy("horizon:conveyor:plans:index")
+    page_title = _("Save")
+
+    def get_context_data(self, **kwargs):
+        LOG.info("kwargs: %s", kwargs['form'].__dict__)
+        submit_url = 'horizon:conveyor:plans:save'
+        self.submit_url = reverse(submit_url,
+                                  kwargs={'plan_id': self.kwargs['plan_id']})
+        return super(SaveView, self).get_context_data(**kwargs)
+
+    def get_initial(self):
+        initial = super(SaveView, self).get_initial()
+        args = {'plan_id': self.kwargs['plan_id']}
+        initial.update(args)
         return initial
 
 
