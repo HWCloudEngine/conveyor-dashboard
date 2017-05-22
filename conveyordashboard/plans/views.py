@@ -126,7 +126,7 @@ class DetailView(tabs.TabView):
 
 class CloneView(forms.ModalFormView):
     form_class = plan_forms.ClonePlan
-    form_id = 'plan_topology_form'
+    form_id = 'clone_plan_form'
     modal_header = _("Plan Topology")
     template_name = 'plans/clone.html'
     context_object_name = 'plan'
@@ -209,7 +209,7 @@ class CloneView(forms.ModalFormView):
 
 class MigrateView(forms.ModalFormView):
     form_class = plan_forms.MigratePlan
-    form_id = 'plan_migrate_form'
+    form_id = 'migrate_plan_form'
     modal_header = _("Migrate Plan")
     template_name = 'plans/migrate.html'
     context_object_name = 'plan'
@@ -289,6 +289,31 @@ class MigrateView(forms.ModalFormView):
 
     def get_initial(self):
         initial = super(MigrateView, self).get_initial()
+        return initial
+
+
+class SaveView(forms.ModalFormView):
+    """Save the edited plan that create from res directly"""
+
+    form_class = plan_forms.SavePlan
+    form_id = 'save_plan_form'
+    modal_header = _("Save Plan")
+    template_name = 'plans/save.html'
+    submit_label = _("Save")
+    success_url = reverse_lazy("horizon:conveyor:plans:index")
+    page_title = _("Save")
+
+    def get_context_data(self, **kwargs):
+        LOG.info("kwargs: %s", kwargs['form'].__dict__)
+        submit_url = 'horizon:conveyor:plans:save'
+        self.submit_url = reverse(submit_url,
+                                  kwargs={'plan_id': self.kwargs['plan_id']})
+        return super(SaveView, self).get_context_data(**kwargs)
+
+    def get_initial(self):
+        initial = super(SaveView, self).get_initial()
+        args = {'plan_id': self.kwargs['plan_id']}
+        initial.update(args)
         return initial
 
 
