@@ -3,18 +3,18 @@
 	<div class="form-group header">{{ data.name }}</div>
 	{%if rules_table %}
 	<div class="form-group rules">
-  		<label class="control-label" id="id_sgrs" changed="false" data-ori="{{data.rules}}">{% trans "Rules" %}</label>
-  		{{rules_table}}
+    <label class="control-label" id="id_sgrs" changed="false" data-ori="{{data.rules}}">{% trans "Rules" %}</label>
+    {{rules_table}}
 	</div>
 	{% endif %}
 	{%if data.secgroups %}
 	<div class="form-group "><div class=""><div class="checkbox"><label><input {% if data.from_other%}checked="checked"{%endif%} id="id_from_other" name="from_other" type="checkbox"><span>Select from Other Security Groups</span></label></div></div></div>
 	<div class="form-group">
-  		<label class="control-label">{% trans "Security Groups" %}</label>
-    	<div class=" ">
-    		<select class="form-control" name="sgs" data-ori="{{ id }}">
+    <label class="control-label">{% trans "Security Groups" %}</label>
+    <div class=" ">
+      <select class="form-control" name="sgs" data-ori="{{ id }}">
 			{% for sg in data.secgroups %}
-			<option name="sg" value="{{ sg.id }}" {%ifequal id sg.id %}selected="selected"{%endifequal%}>{{ sg.name }} {{ sg.id }}</option>
+        <option name="sg" value="{{ sg.id }}" {%ifequal id sg.id %}selected="selected"{%endifequal%}>{{ sg.name }} {{ sg.id }}</option>
 			{% endfor %}
 			</select>
 		</div>
@@ -28,12 +28,13 @@
 	</div>
 </div>
 <script>
-$(function(){
-	table = "#resource_info_box table#rules";
-	add_action = "#rules__action_add_rule";
-	rm_action = "#rules__action_delete_rule";
-	open_add_operation(table, "rules", add_action);
-	open_delete_operation(table, rm_action);
-	// $("#resource_info_box select[name=sgs]").change(function(){update_sg_rules($(this).val(), "#resource_info_box div.rules");return false;})
-})
+  $(function(){
+    "use strict";
+    var table = "#resource_info_box table#rules";
+    var add_action = "#rules__action_add_rule";
+    var rm_action = "#rules__action_delete_rule";
+    open_add_operation(table, "rules", add_action);
+    open_delete_operation(table, rm_action);
+    // $("#resource_info_box select[name=sgs]").change(function(){update_sg_rules($(this).val(), "#resource_info_box div.rules");return false;})
+  })
 </script>

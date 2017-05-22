@@ -16,6 +16,7 @@ ADD_JS_FILES = [
     'conveyordashboard/js/lib/jquery.cookie.js',
     'conveyordashboard/js/lib/jquery.treeTable.js',
     'conveyordashboard/js/lib/json2.js',
+    'conveyordashboard/js/conveyor.selector.js',
     'conveyordashboard/js/conveyor.utils.js',
     'conveyordashboard/js/conveyor.validate.js',
 ]
