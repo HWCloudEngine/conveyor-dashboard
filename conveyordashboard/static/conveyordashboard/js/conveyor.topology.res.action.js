@@ -135,7 +135,7 @@ function dict_merge(src, update){
 
 function get_update_resource(resource_type, resource_id){
 	var data_from = $(update_resources_input).val();
-	data_from = eval('(' + data_from + ')');
+	data_from = $.parseJSON(data_from);
 	for(var index in data_from) {
 		update_res = data_from[index];
 		if(update_res.resource_type === resource_type && update_res.resource_id === resource_id){
@@ -152,7 +152,7 @@ function merge(dict1, dict2) {
 
 function save_changed_info(resource_type, resource_id, data) {
 	var data_from = $(update_resources_input).val();
-	data_from = eval('(' + data_from + ')');
+	data_from = $.parseJSON(data_from);
 	for(var index in data_from) {
 		update_res = data_from[index];
 		if(update_res.resource_type === resource_type && update_res.resource_id === resource_id) {
@@ -311,7 +311,7 @@ $save_table_info = function() {
 		var resource_id = $(detailinfo_div).attr("resource_id");
 		var data = {'resource_type': resource_type, 'resource_id': resource_id};
 		if(resource_type === 'OS::Nova::Server'){
-			var user_data_node=$("input#id_user_data"); if($(user_data_node).attr("data-ori") != $(user_data_node).val()){ data["user_data"] = $(user_data_node).val(); }
+			var user_data_node=$("#id_user_data"); if($(user_data_node).attr("data-ori") != $(user_data_node).val()){ data["user_data"] = $(user_data_node).val(); }
 			var desp_node=$("#id_description"); if($(desp_node).attr("data-ori") != $(desp_node).val()){ data["description"] = $(desp_node).val(); }
 			var md_tale=$("div#resource_info_box table#metadatas");
 			if(md_tale.length){
@@ -393,7 +393,7 @@ $save_table_info = function() {
 				var t_rules = $("div#resource_info_box table#rules");
 				if($(t_rules).length){
 					if(typeof($(t_rules).attr("deleted_ids"))!="undefined"){
-						var json_rs = eval('('+rules+')');
+						var json_rs = $.parseJSON(rules);
 						var deleted_r_ids = $(t_rules).attr("deleted_ids").split(' ');
 						for(index in deleted_r_ids){
 							var id = deleted_r_ids[index];
@@ -649,7 +649,7 @@ function add_sg_rule_for_sg(){
 		if(data.status == "success") {
 			sgr = data.sgr;
 			sgrs_node = $("#id_sgrs");
-			ori_rs = eval('(' + $(sgrs_node).attr("data-ori") + ')');
+			ori_rs = $.parseJSON($(sgrs_node).attr("data-ori"));
 			ori_rs.push(sgr);
 			$(sgrs_node).attr({"data-ori": JSON.stringify(ori_rs), "changed": true});
 			$("table#rules tbody").append($(data.sgr_html).find("tbody tr").prop("outerHTML"));

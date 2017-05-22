@@ -16,7 +16,7 @@
 	{%if metadata%}
 	<div class="form-group">
 		<label class="control-label">{% trans "Metadata" %}</label>
-  		{{metadata}}
+    {{metadata}}
 	</div>
 	{%endif%}
 </div>
@@ -27,11 +27,12 @@
 	</div>
 </div>
 <script>
-$(function(){
-	table = "table#metadatas";
-	add_action = "#metadatas__action_add_metadata";
-	rm_action = "#metadatas__action_delete_metadata";
-	open_add_operation(table, "metadatas", add_action);
-	open_delete_operation(table, rm_action);
-})
+  $(function(){
+    "use strict";
+    var table = "table#metadatas";
+    var add_action = "#metadatas__action_add_metadata";
+    var rm_action = "#metadatas__action_delete_metadata";
+    open_add_operation(table, "metadatas", add_action);
+    open_delete_operation(table, rm_action);
+  })
 </script>

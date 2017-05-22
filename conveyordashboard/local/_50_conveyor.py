@@ -1,5 +1,3 @@
-# from conveyordashboard import exceptions
-
 # The name of the dashboard to be added to HORIZON['dashboards']. Required.
 DASHBOARD = 'conveyor'
 
@@ -10,12 +8,12 @@ ADD_INSTALLED_APPS = [
     'conveyordashboard'
 ]
 
-
 ADD_JS_FILES = [
     'conveyordashboard/js/lib/d3.v3.min.js',
     'conveyordashboard/js/lib/jquery.cookie.js',
     'conveyordashboard/js/lib/jquery.treeTable.js',
     'conveyordashboard/js/lib/json2.js',
+    'conveyordashboard/js/conveyor.selector.js',
     'conveyordashboard/js/conveyor.utils.js',
     'conveyordashboard/js/conveyor.validate.js',
 ]

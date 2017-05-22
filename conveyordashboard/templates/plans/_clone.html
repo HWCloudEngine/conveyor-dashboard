@@ -8,6 +8,8 @@
   <p>{% trans "Import Plan from local plan template file." %}</p>
 {% endblock %}
 {% block modal-body %}
+  <link rel="stylesheet" href="{% static 'conveyordashboard/css/conveyordashboard.css' %}"/>
+  <link rel="stylesheet" href="{% static 'conveyordashboard/css/jquery.treeTable.css' %}"/>
 <style>
 	#plan_deps_table .table > thead > tr > th{padding:4px 8px!important;}
 	#plan_deps_table .table > tbody > tr > td{padding:0 8px!important;}
@@ -22,7 +24,6 @@
 	.modal-body table{margin-bottom: 0!important;}
 	#resource_info_box{width:400px;margin: 70px auto 0;display: none}
 </style>
-<link rel="stylesheet" href="{% static 'conveyordashboard/css/jquery.treeTable.css' %}"/>
 <script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.js' %}"></script>
 <script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.res.action.js' %}"></script>
 <script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.plan.action.js' %}"></script>

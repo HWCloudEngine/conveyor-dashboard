@@ -12,57 +12,60 @@
     <input id="id_dependencies" name="dependencies" type="hidden" value="{}"/>
     <div id="is_original" data-is_original="{{is_original}}"></div>
   </div>
-
-<!-- Actions -->
+  <!-- Actions -->
   <!--AZ-->
+  <div>
     <div style="float: left">
-        <select class="form-control" id="id_availability_zone" name="availability_zone" data-original-title="" title="">
-            {%for az in azs%}<option value="{{az.zoneName}}" {%ifequal availability_zone az.zoneName %}selected="selected"{%endifequal%}>{{az.zoneName}}</option>{%endfor%}
-        </select>
+      <select class="form-control" id="id_availability_zone" name="availability_zone" data-original-title="" title="">
+        {%for az in azs%}<option value="{{az.zoneName}}" {%ifequal availability_zone az.zoneName %}selected="selected"{%endifequal%}>{{az.zoneName}}</option>{%endfor%}
+      </select>
     </div>
     <div style="float: right"><a class="btn btn-default btn-sm ajax-modal btn-clone" href="{% url "horizon:conveyor:plans:destination" plan.plan_id %}">Clone</a></div>
-{% if plan %}
-<div>
-  <div id="plan_deps_table">{{plan_deps_table}}</div>
-  <div id="conveyor_plan_topology" style="position: relative">
-    <div id="info_box" class="info_box"></div>
-    <div id="stack_box" class="stack_box"></div>
   </div>
-  <div id="resource_info_box"></div>
-  <div id="thumbnail">
-    <div class="thbDetail"></div>
-  </div>
-  <div id="d3_data" data-d3_data="{{ d3_data }}"></div>
-</div>
-{% endif %}
+  {% if plan %}
+    <div>
+      <div id="plan_deps_table">{{plan_deps_table}}</div>
+      <div id="conveyor_plan_topology" style="position: relative">
+        <div id="info_box" class="info_box"></div>
+        <div id="stack_box" class="stack_box"></div>
+      </div>
+      <div id="resource_info_box"></div>
+      <div id="thumbnail">
+        <div class="thbDetail"></div>
+      </div>
+      <div id="d3_data" data-d3_data="{{ d3_data }}"></div>
+    </div>
+  {% endif %}
 {% endblock %}
 {% block js %}
-{% include "horizon/_scripts.html" %}
-<style>
-    #plan_deps_table .table > thead > tr > th{padding:4px 8px!important;}
-    #plan_deps_table .table > tbody > tr > td{padding:0 8px!important;}
-    #plan_deps_table .table > tbody > tr > td span{margin-left: 0!important;}
-    .parent td{line-height: 30px!important;}
-    [id|=node--1] > td > span{margin-left: -10px!important;}
-</style>
-    <script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.res.action.js' %}"></script>
-    <script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.js' %}"></script>
-    <link rel="stylesheet" href="{% static 'conveyordashboard/css/jquery.treeTable.css' %}"/>
-<script type="text/javascript">
+  {% include "horizon/_scripts.html" %}
+  <style>
+      #plan_deps_table .table > thead > tr > th{padding:4px 8px!important;}
+      #plan_deps_table .table > tbody > tr > td{padding:0 8px!important;}
+      #plan_deps_table .table > tbody > tr > td span{margin-left: 0!important;}
+      .parent td{line-height: 30px!important;}
+      [id|=node--1] > td > span{margin-left: -10px!important;}
+  </style>
+  <link rel="stylesheet" href="{% static 'conveyordashboard/css/jquery.treeTable.css' %}"/>
+  <script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.res.action.js' %}"></script>
+  <script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.js' %}"></script>
+  <script type="text/javascript">
     $(function() {
-        "use strict";
-        $("#plan_deps").treeTable();
-        $("g.node").click($node_click);
-        var plan_id = '{{ plan.plan_id }}';
-        $("a.btn-clone").click(function () {
-            $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
-            var postdata = {"plan_id": plan_id,
-                "update_resource": $('#id_update_resource').val()};
-            $.post(getPrefixUrl() + "conveyor/plans/{{ plan.plan_id }}/update_resource",postdata,function(data){
-                {# TODO(drngsl): Pop window to show the failure message or not according to result data. #}
-                console.log(data)
-            });
+      "use strict";
+      $("#plan_deps").treeTable();
+      $("g.node").click($node_click);
+      var plan_id = '{{ plan.plan_id }}';
+      $("a.btn-clone").click(function () {
+        $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
+        var postdata = {
+          "plan_id": plan_id,
+          "update_resource": $('#id_update_resource').val()
+        };
+        $.post(getPrefixUrl() + "conveyor/plans/{{ plan.plan_id }}/update_resource",postdata,function(data){
+          {# TODO(drngsl): Pop window to show the failure message or not according to result data. #}
+          console.log(data)
         });
+      });
     });
-</script>
+  </script>
 {% endblock %}
