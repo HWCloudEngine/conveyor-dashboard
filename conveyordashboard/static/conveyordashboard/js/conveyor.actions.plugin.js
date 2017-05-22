@@ -99,7 +99,7 @@ function get_row_action(data, table_type, tr, res_id){
 			var action_id = action_ids[index];
 			action_id = action_id.replace(/type/g, table_type);
 			action_id = action_id.replace(/id/g, res_id);
-			
+
 			if($(actions).find(action_id).length == 0) {continue;}
 			action = $(actions).find(action_id);
 			$(tr).find("td.actions_column ul").append("<li class=\"clearfix\">"+$(action).prop("outerHTML")+"</li>");
@@ -114,20 +114,20 @@ function get_table_action(data, table, table_type){
 		for(index in action_ids){
 			var action_id = action_ids[index];
 			action_id = action_id.replace(/type/g, table_type);
-			
+
 			action = $(actions).find(action_id);
 			if($(actions).find(action_id).length == 0) {continue;}
-			
+
 			if($(table).find("thead tr.table_caption div.table_actions div.table_actions_menu").length){
 				$(table).find("thead tr.table_caption div.table_actions div.table_actions_menu").before($(action).prop("outerHTML"));
 			}else {
 				$(table).find("thead tr.table_caption div.table_actions").append($(action).prop("outerHTML"));
 			}
 		}
-		
+
 		if($(conveyor_clone_plan_topology).length){$(conveyor_clone_plan_topology).click($conveyor_create_plan_topology);}
 		if($(conveyor_migrate_plan_topology).length){$(conveyor_migrate_plan_topology).click($conveyor_create_migrate_plan_topology);}
-		
+
 		var type = table_res_type_mappings[$(table).attr("id")];
 		$(table).find("thead input.table-row-multi-select").click(function(){
 			if ($(this).attr("checked") == "checked") {
@@ -145,7 +145,7 @@ function get_table_action(data, table, table_type){
 			if(conveyor_ids.hasOwnProperty(type)) {tmp_ids = conveyor_ids[type];}
 			if($(this).attr("checked") == "checked") {
 				if($.inArray(id, tmp_ids) == -1) {
-					tmp_ids.push(id);			
+					tmp_ids.push(id);
 				}
 			} else {
 				index = $.inArray(id, tmp_ids);
@@ -166,15 +166,15 @@ $(function(){
 			res_table = $(table_id);
 			table_type = $(res_table).attr("id");
 			res_type = table_res_type_mappings[table_type];
-			
+
 			if($(res_table).attr("class").indexOf("OS::") >= 0){return;}
-			
+
 			//contains empty row means that does not contains data rows.
 			if($(res_table).find("tbody tr.empty").length){return;}
-			
+
 			//table_actions
 			if($(res_table).find("tbody tr").length){get_table_action({"res_type": res_type, "next_url": next_url}, res_table, table_type);}
-			
+
 			//row_actions
 			$(res_table).find("tbody tr").each(function(){
 				tr = this;
