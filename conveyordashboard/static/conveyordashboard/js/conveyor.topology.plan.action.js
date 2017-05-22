@@ -12,13 +12,14 @@
     License for the specific language governing permissions and limitations
     under the License.
 */
+var rootPath = getRootPath();
 
 $cancel_clone = function() {
-	if($(this).attr("id") == "close_plan_dest_dialog") {return false;}
-	var plan_id = $("#id_plan_id").val();
-	$.ajaxSetup({async: false});
-	$.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
-	$.post(getPrefixUrl() + "conveyor/plans/" + plan_id + "/cancel", function(json){});
+  if($(this).attr("id") == "close_plan_dest_dialog") {return false;}
+  var plan_id = $("#id_plan_id").val();
+  $.ajaxSetup({async: false});
+  $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
+  $.post(rootPath + "/conveyor/plans/" + plan_id + "/cancel", function(json){});
 };
 
 /*

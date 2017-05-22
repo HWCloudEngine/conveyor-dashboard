@@ -13,11 +13,6 @@
     under the License.
 */
 
-function getPrefixUrl() {
-    var url = window.location.href;
-    return url.split("conveyor")[0]
-}
-
 function getRootPath() {
     var strFullPath = window.document.location.href;
     var strPath = window.document.location.pathname;

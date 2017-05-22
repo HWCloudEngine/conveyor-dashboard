@@ -13,6 +13,8 @@
     under the License.
 */
 
+var rootPath = getRootPath();
+
 var table_info = "div#resource_info_box";
 var detailinfo_div = "div.detailInfoCon";
 var update_resources_input = "input#id_update_resource";
@@ -166,7 +168,7 @@ function save_changed_info(resource_type, resource_id, data) {
 }
 
 function get_update_plan_url(plan_id){
-	return getPrefixUrl() + "conveyor/plans/"+plan_id+"/update";
+	return rootPath + "/conveyor/plans/"+plan_id+"/update";
 }
 
 function update_resource_name(res_id, data) {
@@ -472,7 +474,7 @@ $node_click = function(){
 		"update_data": JSON.stringify(update_data),
 		"updated_res": updated_res,
 		"is_original": is_original};
-	jQuery.post(getPrefixUrl() + "conveyor/plans/get_resource_detail",postdata,function(data){
+	jQuery.post(rootPath + "conveyor/plans/get_resource_detail",postdata,function(data){
 		if(data.msg !== "success") {
 			return false;
 		}
@@ -537,7 +539,7 @@ function open_add_operation(t_selector, t_type, add_action_selector){
 				}
 			}else if(t_type == "rules"){
 				if($("#resource_info_box form#create_security_group_rule_form").length){return;}
-				$.get(getPrefixUrl()+"conveyor/plans/"+$('#secgroup_wrap').attr('os_id')+"/add_rule/", function(rsp){
+				$.get(rootPath+"conveyor/plans/"+$('#secgroup_wrap').attr('os_id')+"/add_rule/", function(rsp){
 					form = $(rsp).find("form#create_security_group_rule_form");
 					$(form).append($(form).find("div.col-sm-6:first").html()).find("div.modal-body").remove();
 					$(form).find("div.modal-footer").remove();
@@ -618,7 +620,7 @@ function add_md_for_server(t_seletor){
  * sg_id:		security_group_id.
  * rt_selector: js selector of rules table.*/
 function update_sg_rules(sg_id, rt_selector){
-	$.get(getPrefixUrl() + "conveyor/plans/get_secgroup_rules/" + sg_id, function(rsp){
+	$.get(rootPath + "/conveyor/plans/get_secgroup_rules/" + sg_id, function(rsp){
 		$(rt_selector).find(".table_wrapper").replaceWith(rsp);
 		var table = "#resource_info_box table#rules";
 		var add_action = "#rules__action_add_rule";
@@ -645,7 +647,7 @@ function add_sg_rule_for_sg(){
 	secgroup_rule = {'rule_menu': rule_menu, 'direction': direction, 'ip_protocol': ip_protocol, 'port_or_range': port_or_range, 'port': port, 'from_port': from_port, 'to_port': to_port,
 	'icmp_type': icmp_type, 'icmp_code': icmp_code, 'remote': remote, 'cidr': cidr, 'security_group': security_group, 'ethertype': ethertype};
 	$.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
-	jQuery.post(getPrefixUrl() + "conveyor/plans/secgroup/"+$("#secgroup_wrap").attr('od_id')+"/create_rule/",{'secgroup_rule': JSON.stringify(secgroup_rule)},function(data){
+	jQuery.post(rootPath + "/conveyor/plans/secgroup/"+$("#secgroup_wrap").attr('od_id')+"/create_rule/",{'secgroup_rule': JSON.stringify(secgroup_rule)},function(data){
 		if(data.status == "success") {
 			sgr = data.sgr;
 			sgrs_node = $("#id_sgrs");
