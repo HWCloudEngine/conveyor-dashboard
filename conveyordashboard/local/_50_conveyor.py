@@ -1,3 +1,5 @@
+from django.conf import settings
+
 # The name of the dashboard to be added to HORIZON['dashboards']. Required.
 DASHBOARD = 'conveyor'
 
@@ -17,3 +19,6 @@ ADD_JS_FILES = [
     'conveyordashboard/js/conveyor.utils.js',
     'conveyordashboard/js/conveyor.validate.js',
 ]
+
+if getattr(settings, 'CONVEYOR_USE_ACTION_PLUGIN', False):
+    ADD_JS_FILES.append('conveyordashboard/js/conveyor.actions.plugin.js')

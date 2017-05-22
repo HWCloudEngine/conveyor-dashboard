@@ -558,3 +558,7 @@ CONVEYOR_REPO_URL = 'http://storage.apps.openstack.org'
 # Overrides the default dashboard name (Conveyor) that is displayed
 # in the main accordion navigation
 # CONVEYOR_DASHBOARD_NAME = "Conveyor"
+
+# If set True, on each openstack_dashboard res table that support to Clone or
+# Migrate will add 'Clone' and 'Migrate' actions.
+#CONVEYOR_USE_ACTION_PLUGIN = "False"
