@@ -18,7 +18,6 @@ ADD_JS_FILES = [
     'conveyordashboard/js/conveyor.service.js',
     'conveyordashboard/js/conveyor.selector.js',
     'conveyordashboard/js/conveyor.utils.js',
-    'conveyordashboard/js/conveyor.validate.js',
     'conveyordashboard/js/clone_plan_form.js',
     'conveyordashboard/js/migrate_plan_form.js',
     'conveyordashboard/js/save_plan_form.js',

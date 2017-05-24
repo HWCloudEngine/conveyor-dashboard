@@ -2,63 +2,25 @@
 {% load i18n %}
 {% load static %}
 {% load url from future %}
-
-{% block modal-body-right %}
-  <h3>{% trans "Description:" %}</h3>
-  <p>{% trans "Import Plan from local plan template file." %}</p>
-{% endblock %}
 {% block modal-body %}
   <link rel="stylesheet" href="{% static 'conveyordashboard/css/conveyordashboard.css' %}"/>
-  <link rel="stylesheet" href="{% static 'conveyordashboard/css/jquery.treeTable.css' %}"/>
-<style>
-	#plan_deps_table .table > thead > tr > th{padding:4px 8px!important;}
-	#plan_deps_table .table > tbody > tr > td{padding:0 8px!important;}
-	#plan_deps_table {height:200px;overflow-x: hidden;overflow-y:auto}
-	#plan_deps_table .table > tbody > tr > td span{margin-left: 0!important;}
-	.parent td{line-height: 30px!important;}
-	#info_box{top:240px;}
-	#stack_box{top:250px;width:400px;z-index: -1;}
-	#conveyor_plan_topology{position:relative;z-index: 99}
-	#thumbnail{width: 200px;position: absolute;top:520px}
-	.thbDetail{position: absolute;top:10px;left: 10px}
-	.modal-body table{margin-bottom: 0!important;}
-	#resource_info_box{width:400px;margin: 70px auto 0;display: none}
-</style>
-<script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.js' %}"></script>
-<script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.res.action.js' %}"></script>
-<script type="text/javascript">
-  $(function() {
-    "use strict";
-    $("#plan_deps").treeTable();
-
-    var plan_id = '{{ plan_id }}';
-    var clonePlanForm = $('#clone_plan_form');
-    $(clonePlanForm).find(['name=plan_id']).val(plan_id);
-    {# Click resource node image for edit plan resource #}
-    $("g.node").click($node_click);
-  });
-</script>
-<div>
-	<fieldset>{% include "horizon/common/_form_fields.html" %}</fieldset>
-</div>
-<div id="resource_container" class="resource_container">
-	<input id="id_updated_resources" name="updated_resources" type="hidden" value="{}"/>
-	<input id="id_dependencies" name="dependencies" type="hidden" value="{}"/>
+  <script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.res.action.js' %}"></script>
+  <div>
+    <fieldset>{% include "horizon/common/_form_fields.html" %}</fieldset>
+  </div>
 	<div id="is_original" data-is_original="{{is_original}}"></div>
-	<div id="info_box" class="info_box"></div>
-	<div id="stack_box" class="stack_box"></div>
-	<div id="plan_deps_table">{{plan_deps_table}}</div>
-	<div id="conveyor_plan_topology"></div>
-	<div id="resource_info_box"></div>
-	<div id="thumbnail">
-		<div class="thbDetail"></div>
-	</div>
-	<div id="d3_data" data-d3_data="{{ d3_data }}"></div>
-</div>
-
+  {% include "_deps_topo.html" %}
 {% endblock %}
 {% block modal-footer %}
   <a class="btn btn-default cancel cancel_clone" href="{% url 'horizon:conveyor:plans:index' %}" is_new={{is_original}}>{% trans "Cancel" %}</a>
   <a class="btn btn-default btn-sm ajax-modal" href="{% url 'horizon:conveyor:plans:save' plan_id %}">{% trans "Save" %}</a>
   <a class="btn btn-default btn-sm ajax-modal btn-clone" href="{% url 'horizon:conveyor:plans:destination' plan_id %}">{% trans "Clone" %}</a>
+{% endblock %}
+{% block modal-js %}
+  <script type="text/javascript">
+    $(function() {
+      "use strict";
+      $("g.node").click($node_click);
+    });
+  </script>
 {% endblock %}
