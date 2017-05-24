@@ -143,7 +143,6 @@ class CloneView(forms.ModalFormView):
             setattr(self, 'is_original', is_original)
 
     def get_context_data(self, **kwargs):
-        LOG.info("kwargs: %s", kwargs['form'].__dict__)
         self._init_data()
         plan = getattr(self, 'plan')
         is_original = getattr(self, 'is_original')
@@ -340,7 +339,6 @@ class SaveView(forms.ModalFormView):
     page_title = _("Save")
 
     def get_context_data(self, **kwargs):
-        LOG.info("kwargs: %s", kwargs['form'].__dict__)
         submit_url = 'horizon:conveyor:plans:save'
         self.submit_url = reverse(submit_url,
                                   kwargs={'plan_id': self.kwargs['plan_id']})

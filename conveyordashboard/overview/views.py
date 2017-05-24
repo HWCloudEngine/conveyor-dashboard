@@ -54,15 +54,15 @@ class IndexView(views.HorizonTemplateView):
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
 
+        availability_zone = self.request.GET.get('availability_zone', None)
         try:
-            availability_zone = self.request.GET.get('availability_zone', None)
             azs = api.availability_zone_list(self.request)
             if availability_zone not in [az.zoneName for az in azs]:
                 availability_zone = azs[0].zoneName
-        except Exception:
+        except Exception as e:
+            azs = []
             exceptions.handle(self.request,
                               _("Unable to retrieve availability zone."))
-            return context
 
         context['azs'] = azs
         context['availability_zone'] = availability_zone
@@ -79,10 +79,10 @@ class IndexView(views.HorizonTemplateView):
                 if plan_name == p.plan_name:
                     plan = api.plan_get(self.request, p.plan_id)
                     break
-        except Exception:
+        except Exception as e:
+            LOG.error("search plan failed. %s", e)
             exceptions.handle(self.request,
                               _("Unable to retrieve plan list."))
-            return context
 
         if plan is None:
             servers = self._get_instances_data()
@@ -103,7 +103,8 @@ class IndexView(views.HorizonTemplateView):
                 plan = api.plan_create(self.request, plan_type,
                                        servers_id_dict,
                                        plan_name=plan_name)
-            except Exception:
+            except Exception as e:
+                LOG.error("Create plan failed. %s", e)
                 exceptions.handle(self.request,
                                   _("Create plan fialed."))
 

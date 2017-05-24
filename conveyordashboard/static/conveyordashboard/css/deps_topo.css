@@ -1,0 +1,58 @@
+#plan_deps_table .table > thead > tr > th {
+    padding: 4px 8px !important;
+}
+
+#plan_deps_table .table > tbody > tr > td {
+    padding: 0 8px !important;
+}
+
+#plan_deps_table {
+    height: 200px;
+    overflow-x: hidden;
+    overflow-y: auto
+}
+
+#plan_deps_table .table > tbody > tr > td span {
+    margin-left: 0 !important;
+}
+
+.parent td {
+    line-height: 30px !important;
+}
+
+#info_box {
+    top: 240px;
+}
+
+#stack_box {
+    top: 250px;
+    width: 400px;
+    z-index: -1;
+}
+
+#conveyor_plan_topology {
+    position: relative;
+    z-index: 99
+}
+
+#thumbnail {
+    width: 200px;
+    position: absolute;
+    top: 520px
+}
+
+.thbDetail {
+    position: absolute;
+    top: 10px;
+    left: 10px
+}
+
+.modal-body table {
+    margin-bottom: 0 !important;
+}
+
+#resource_info_box {
+    width: 400px;
+    margin: 70px auto 0;
+    display: none
+}
