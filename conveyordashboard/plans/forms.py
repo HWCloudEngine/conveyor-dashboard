@@ -215,6 +215,10 @@ class ClonePlan(forms.SelfHandlingForm):
     is_original = forms.CharField(widget=forms.HiddenInput)
     update_resource = forms.CharField(widget=forms.HiddenInput,
                                       initial='[]')
+    updated_resources = forms.CharField(widget=forms.HiddenInput,
+                                        initial='{}')
+    dependencies = forms.CharField(widget=forms.HiddenInput,
+                                   initial='{}')
 
     def handle(self, request, data):
         LOG.info("Clone plan with data: %s", data)
@@ -228,7 +232,6 @@ class ClonePlan(forms.SelfHandlingForm):
                 raise Exception
 
             resources = json.loads(data['update_resource'])
-            LOG.info('Get update_resources ori: %s', resources)
             preprocess_update_resources(resources)
             LOG.info("Get update resources for plan. "
                      "update_resources={}".format(resources))
@@ -309,6 +312,8 @@ class SavePlan(forms.SelfHandlingForm):
             resources = json.loads(data['resources'])
             preprocess_update_resources(resources)
             if len(resources) > 0:
+                LOG.info("Save plan %(plan)s with resources %(resources)s",
+                         {'plan': plan_id, resources: resources})
                 api.update_plan_resource(request, plan_id, resources)
             api.export_clone_template(request, plan_id,
                                       sys_clone=sys_clone)
