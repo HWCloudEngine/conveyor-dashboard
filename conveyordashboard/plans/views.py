@@ -189,30 +189,24 @@ class CloneView(forms.ModalFormView):
                 return api.plan_create(self.request,
                                        constants.CLONE,
                                        resource), True
-            except Exception:
-                msg = _("Query string is not a correct format.")
+            except Exception as e:
+                LOG.error("Create plan failed. %s", e)
+                msg = _("Create plan failed.")
                 exceptions.handle(self.request, msg)
-                return
+                return None, None
         elif 'plan_id' in self.request.GET:
             try:
                 return (api.plan_get(self.request,
                                      self.request.GET['plan_id']),
                         False)
-            except Exception:
+            except Exception as e:
+                LOG.error("Unable to retrieve plan details. %s", e)
                 msg = _("Unable to retrieve plan details.")
                 exceptions.handle(self.request, msg)
-                return
+                return None, None
 
         msg = _("Query string does not contain either plan_id or res ids.")
         exceptions.handle(self.request, msg)
-
-    def get_zones(self, *args, **kwargs):
-        try:
-            zones = api.availability_zone_list(self.request)
-            return zones
-        except Exception:
-            exceptions.handle(self.request,
-                              _("Unable to retrieve availability zones."))
 
     def get_initial(self):
         initial = super(CloneView, self).get_initial()
@@ -303,14 +297,6 @@ class MigrateView(forms.ModalFormView):
         msg = _("Query string does not contain either plan_id or res ids.")
         exceptions.handle(self.request, msg)
 
-    def get_zones(self, *args, **kwargs):
-        try:
-            zones = api.availability_zone_list(self.request)
-            return zones
-        except Exception:
-            exceptions.handle(self.request,
-                              _("Unable to retrieve availability zones."))
-
     def get_initial(self):
         initial = super(MigrateView, self).get_initial()
         self._init_data()
@@ -376,9 +362,6 @@ class ModifyView(forms.ModalFormView):
 
         d3_data = topology.load_d3_data(self.request, plan.plan_id,
                                         plan.updated_dependencies)
-        # d3_data = topology.load_plan_d3_data(self.request,
-        #                                      plan,
-        #                                      'clone')
         context['d3_data'] = d3_data
         return context
 
