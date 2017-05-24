@@ -101,39 +101,6 @@ function showTopology(){
 	$("#conveyor_plan_topology").show();
 	$("#thumbnail").show();
 }
-/* The type of item in src or update must be String Array
- * Object(here is Dictionary)*/
-function arr_merge(src, update) {
-    if(src === null || typeof src === "undefined") {return update;}
-	if (update === null || typeof update === "undefined") {return src;}
-	for(var index=0;index<update.length;index++) {
-		var value = update[index];
-		if('[object Array]' == Object.prototype.toString.call(value)){
-			src[index] = arr_merge(src[index], update);
-		}else if((typeof obj=='object') && obj.constructor==Object) {
-			src[index] = dict_merge(src[index], update[index]);
-		}else {
-			src[index] = value;
-		}
-	}
-	return src;
-}
-/* The type of values in src or update must be String Array
- * Object(here is Dictionary)*/
-function dict_merge(src, update){
-	if(src === null || typeof src === "undefined") {return update;}
-	if (update === null || typeof update === "undefined") {return src;}
-	$.each(update, function (k, v) {
-		if('[object Array]' == Object.prototype.toString.call(v)){
-			src[k] = arr_merge(src[k], update);
-		}else if((typeof obj=='object') && obj.constructor==Object) {
-			src[k] = dict_merge(src[k], v);
-		}else {
-			src[k] = v;
-		}
-	});
-	return src;
-}
 
 function get_update_resource(resource_type, resource_id){
 	var data_from = $(update_resources_input).val();
@@ -146,19 +113,13 @@ function get_update_resource(resource_type, resource_id){
 	return {};
 }
 
-function merge(dict1, dict2) {
-	$.each(dict2, function (k, v) {
-		dict1[k] = v
-	});
-}
-
 function save_changed_info(resource_type, resource_id, data) {
 	var data_from = $(update_resources_input).val();
 	data_from = $.parseJSON(data_from);
 	for(var index in data_from) {
 		update_res = data_from[index];
 		if(update_res.resource_type === resource_type && update_res.resource_id === resource_id) {
-			merge(update_res, data);
+			conveyorUtil.merge(update_res, data);
 			$(update_resources_input).val(JSON.stringify(data_from));
 			return;
 		}
@@ -242,29 +203,6 @@ function res_changed(resource_type, resource_id, data) {
 		$(updated_resources_input).val(JSON.stringify(json.updated_resources));
 		$(dependencies_input).val(JSON.stringify(json.dependencies));
 	 });
-}
-
-function compare_ip(ipBegin, ipEnd)
-{
-    temp1 = ipBegin.split(".");
-    temp2 = ipEnd.split(".");
-    for (i = 0; i < 4; i++){
-    	j = parseInt(temp1[i]); k = parseInt(temp2[i]);
-    	if (j>k){
-    		return 1;
-    	}else if (j<k){
-    		return -1;
-    	}
-    }
-    return 0;     
-}
-
-function ip_check_in_cidr(alloc, ip) {
-	try{
-		for(index in alloc){if(compare_ip(alloc[index].start, ip) <= 0 && compare_ip(ip, alloc[index].end) <= 0) { return true; }}
-		return false;
-	} catch(e) {return false;}
-	
 }
 
 function check_network_value_specs(value_specs) {
@@ -361,7 +299,7 @@ $save_table_info = function() {
 			$("input.ip").each(function(){
 				var ori_ip = $(this).attr("data-ori"); var ip=$(this).val();
 				var alloc = JSON.parse($(this).attr("data-alloc"));
-				if(! ip_check_in_cidr(alloc, ip)) {
+				if(! conveyorUtil.ipCheckInCidr(alloc, ip)) {
 					$(this).focus();
 					return false;
 				}
@@ -377,7 +315,7 @@ $save_table_info = function() {
 			var name_node=$("input#id_name"); if($(name_node).attr("data-ori") != $(name_node).val()){ data["name"] = $(name_node).val(); }
 			var cidr_node=$("input#id_cidr");
 			var cidr=$(cidr_node).val();
-			if(!check_cidr(cidr, 31)){return false;}
+			if(!conveyorUtil.checkCidr(cidr, 31)){return false;}
 			if($(cidr_node).attr("data-ori") != cidr){ data["cidr"]=cidr }
 			var getway_ip_node=$("input#id_gateway_ip"); if($(getway_ip_node).attr("data-ori") != $(getway_ip_node).val()){ data["gateway_ip"] = $(getway_ip_node).val(); }
 			if($("input#id_no_gateway").is(":checked")){data["no_gateway"] = true;}else{data["no_gateway"] = false;}
