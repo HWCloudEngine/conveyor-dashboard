@@ -16,28 +16,11 @@
 	.thbDetail{position: absolute;top:10px;left: 10px}
 	.modal-body table{margin-bottom: 0!important;}
 </style>
-<link rel="stylesheet" href="{% static 'conveyordashboard/css/jquery.treeTable.css' %}"/>
-<script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.js' %}"></script>
-<script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.res.action.js' %}"></script>
-<script type="text/javascript">
-    $(function() {
-        "use strict";
-        $("#plan_deps").treeTable();
-    });
-</script>
-<fieldset>
-{% include "horizon/common/_form_fields.html" %}
-</fieldset>
-<div id="resource_container" class="resource_container">
-	<div id="info_box"></div>
-	<div id="stack_box"></div>
-	<div id="plan_deps_table">{{plan_deps_table}}</div>
-	<div id="conveyor_plan_topology"  class="migrate-plan"></div>
-	<div id="thumbnail">
-		<div class="thbDetail"></div>
-	</div>
-</div>
-<div id="d3_data" data-d3_data="{{ d3_data }}"></div>
+  <script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.res.action.js' %}"></script>
+  <fieldset>
+    {% include "horizon/common/_form_fields.html" %}
+  </fieldset>
+  {% include "_deps_topo.html" %}
 {% endblock %}
 {% block modal-footer %}
   <a class="btn btn-default cancel cancel_migrate" href="{% url 'horizon:conveyor:plans:index' %}">{% trans "Cancel" %}</a>
