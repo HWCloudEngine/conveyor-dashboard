@@ -4,23 +4,22 @@
 {% load url from future %}
 {% block modal-body %}
   <link rel="stylesheet" href="{% static 'conveyordashboard/css/conveyordashboard.css' %}"/>
-  <script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.res.action.js' %}"></script>
   <div>
     <fieldset>{% include "horizon/common/_form_fields.html" %}</fieldset>
   </div>
   <div id="is_original" data-is_original="{{is_original}}"></div>
   {% include "_deps_topo.html" %}
+  <script type="text/javascript">
+    $(function() {
+      "use strict";
+      $("g.node").click(function () {
+        conveyorEditPlanRes.nodeClick(this);
+      });
+    });
+  </script>
 {% endblock %}
 {% block modal-footer %}
   <a class="btn btn-default cancel cancel_clone" href="{% url 'horizon:conveyor:plans:index' %}" is_new={{is_original}}>{% trans "Cancel" %}</a>
   <a class="btn btn-default btn-sm ajax-modal" href="{% url 'horizon:conveyor:plans:save' plan_id %}">{% trans "Save" %}</a>
   <a class="btn btn-default btn-sm ajax-modal btn-clone" href="{% url 'horizon:conveyor:plans:destination' plan_id %}">{% trans "Clone" %}</a>
-{% endblock %}
-{% block modal-js %}
-  <script type="text/javascript">
-    $(function() {
-      "use strict";
-      $("g.node").click($node_click);
-    });
-  </script>
 {% endblock %}
