@@ -5,7 +5,7 @@
 {% block main %}
   <div id="resource_container" class="resource_container">
     <input id="id_action_type" name="action_type" type="hidden" value="">
-    <input id="id_plan_type" name="plan_type" type="hidden" value="{{type}}">
+    <input id="id_plan_type" name="plan_type" type="hidden" value="{{plan.plan_type}}">
     <input id="id_plan_id" name="plan_id" type="hidden" data-plan_id="{{ plan.plan_id }}" value="{{ plan.plan_id }}" />
     <input id="id_update_resource" name="update_resource" type="hidden" value="[]" />
     <input id="id_updated_resources" name="updated_resources" type="hidden" value="{}"/>
@@ -47,13 +47,14 @@
       [id|=node--1] > td > span{margin-left: -10px!important;}
   </style>
   <link rel="stylesheet" href="{% static 'conveyordashboard/css/jquery.treeTable.css' %}"/>
-  <script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.res.action.js' %}"></script>
   <script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.js' %}"></script>
   <script type="text/javascript">
     $(function() {
       "use strict";
-      $("#plan_deps").treeTable();
-      $("g.node").click($node_click);
+
+      $("g.node").click(function () {
+        conveyorEditPlanRes.nodeClick(this);
+      });
 
       $("a.btn-clone").click(function () {
         {% if plan %}
@@ -65,6 +66,7 @@
       });
 
       $('[name=availability_zone]').change(function () {
+        horizon.modals.modal_spinner(gettext("Loading"));
         window.location.href = '{% url 'horizon:conveyor:overview:index' %}' + '?availability_zone=' + $(this).val();
       });
     });

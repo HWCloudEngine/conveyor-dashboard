@@ -20,17 +20,21 @@ $(function () {
   horizon.modals.addModalInitFunction(conveyorClonePlan);
 
   function conveyorClonePlan(modal) {
+    depsTreeTableAndCallTopo();
+
     var clonePlanForm = $(modal).find('#clone_plan_form');
     var plan_id = $(clonePlanForm).find('[name=plan_id]').val();
-
-    if(typeof plan_id !== 'undefined') {
-      $(modal).find('.modal-header a.close').click(function () {
+    var is_original = $(clonePlanForm).find('[name=is_original]').val();
+    if($.inArray(is_original, ['True', 'true']) >= 0) {
+      if(typeof plan_id !== 'undefined') {
+        $(modal).find('.modal-header a.close').click(function () {
+          conveyorService.cancelPlan(plan_id);
+        });
+      }
+      $(modal).find('.modal-footer a.cancel_clone').click(function () {
         conveyorService.cancelPlan(plan_id);
       });
     }
-    $(modal).find('.modal-footer a.cancel_clone').click(function () {
-      conveyorService.cancelPlan(plan_id);
-    });
   }
 
   var cloneFormModal = $('#clone_plan_form').parent();

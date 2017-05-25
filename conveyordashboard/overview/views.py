@@ -76,7 +76,9 @@ class IndexView(views.HorizonTemplateView):
         try:
             for p in api.plan_list(self.request,
                                    search_opts={'plan_name': plan_name}):
-                if plan_name == p.plan_name:
+                if plan_name == p.plan_name \
+                        and p.plan_status in ('initiating', 'creating',
+                                              'available', 'finished'):
                     plan = api.plan_get(self.request, p.plan_id)
                     break
         except Exception as e:
@@ -98,7 +100,7 @@ class IndexView(views.HorizonTemplateView):
                 return context
 
             try:
-                # TODO(drngsl) First, check plan with plan_name is exsiting,
+                # TODO(drngsl) First, check plan with plan_name is existing,
                 # if not, create a new plan.
                 plan = api.plan_create(self.request, plan_type,
                                        servers_id_dict,
@@ -108,18 +110,18 @@ class IndexView(views.HorizonTemplateView):
                 exceptions.handle(self.request,
                                   _("Create plan fialed."))
 
-        d3_data = topology.load_plan_d3_data(self.request, plan, plan_type)
-
-        plan_deps_table = topo_tables.PlanDepsTable(
-            self.request,
-            topo_tables.trans_plan_deps(plan.original_dependencies),
-            plan_id=plan.plan_id,
-            plan_type=consts.CLONE)
-        context['plan_deps_table'] = plan_deps_table.render()
-
         context['plan'] = plan
-        context['plan_type'] = consts.CLONE
-        context['d3_data'] = d3_data
+
+        if plan is not None:
+            d3_data = topology.load_plan_d3_data(self.request, plan, plan_type)
+
+            plan_deps_table = topo_tables.PlanDepsTable(
+                self.request,
+                topo_tables.trans_plan_deps(plan.original_dependencies),
+                plan_id=plan.plan_id,
+                plan_type=plan.plan_type)
+            context['plan_deps_table'] = plan_deps_table.render()
+            context['d3_data'] = d3_data
         return context
 
     def _get_instances_data(self):
