@@ -155,6 +155,8 @@ class Destination(forms.SelfHandlingForm):
     plan_type = forms.CharField(widget=forms.HiddenInput)
     az = forms.ChoiceField(label=_("Target Availability Zone"),
                            required=True)
+    copy_data = forms.BooleanField(label=_("Copy Data Volume"),
+                                   required=False)
     resources = forms.CharField(widget=forms.HiddenInput,
                                 initial='[]')
 
@@ -317,6 +319,8 @@ class MigratePlan(forms.SelfHandlingForm):
 class SavePlan(forms.SelfHandlingForm):
     plan_id = forms.CharField(widget=forms.HiddenInput)
     sys_clone = forms.BooleanField(label=_("Clone System Volume"),
+                                   required=False)
+    copy_data = forms.BooleanField(label=_("Copy Data Volume"),
                                    required=False)
     resources = forms.CharField(widget=forms.HiddenInput,
                                 initial='[]')

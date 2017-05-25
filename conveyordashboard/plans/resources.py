@@ -141,6 +141,10 @@ class ResourceDetailFromPlan(object):
         md_table = topology_tables.MetadataTable(self.request, metadata)
         context['metadata'] = md_table.render()
 
+        if 'copy_data' not in props:
+            props['copy_data'] = self.res.get('extra_properties',
+                                              {}).get('copy_data', True)
+
         plan = api.plan_get(self.request, self.plan_id)
         dependencies = plan.updated_dependencies
         updated_res = dict(plan.updated_resources, **self.updated_res)
