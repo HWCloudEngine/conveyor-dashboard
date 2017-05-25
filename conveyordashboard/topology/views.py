@@ -111,13 +111,7 @@ class CreateRuleView(View):
         if sg_rule_param.get('to_port', None):
             sg_rule_param['to_port'] = int(sg_rule_param['to_port'])
 
-        try:
-            rule = topology_utils.generate_rule(sg_rule_param)
-        except Exception as e:
-            LOG.exception("Create Rule : %s", e)
-            resp_data = {'status': 'failure', 'msg': str(e)}
-            return http.HttpResponse(json.dumps(resp_data),
-                                     content_type='application/json')
+        rule = topology_utils.generate_rule(sg_rule_param)
 
         def rebuild_rules(r):
             def_r = {'remote_ip_prefix': None, 'remote_group_id': None,
@@ -127,7 +121,7 @@ class CreateRuleView(View):
             return dict(def_r, **r)
         sgr = os_api.neutron.SecurityGroupRule(rebuild_rules(rule))
         rules_table = topology_tables.RulesTable(request, [sgr])
-        resp_data = {'status': 'success', 'sgr': rule,
+        resp_data = {'sgr': rule,
                      'sgr_html': rules_table.render()}
         return http.HttpResponse(json.dumps(resp_data),
                                  content_type='application/json')

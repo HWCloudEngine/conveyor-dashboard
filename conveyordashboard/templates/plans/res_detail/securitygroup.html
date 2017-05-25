@@ -33,8 +33,10 @@
     var table = "#resource_info_box table#rules";
     var add_action = "#rules__action_add_rule";
     var rm_action = "#rules__action_delete_rule";
-    open_add_operation(table, "rules", add_action);
-    open_delete_operation(table, rm_action);
+    conveyorEditPlanRes.openAddOperation(table, "rules", add_action);
+    conveyorEditPlanRes.openDeleteOperation(table, rm_action);
+{#    open_add_operation(table, "rules", add_action);#}
+{#    open_delete_operation(table, rm_action);#}
     // $("#resource_info_box select[name=sgs]").change(function(){update_sg_rules($(this).val(), "#resource_info_box div.rules");return false;})
   })
 </script>

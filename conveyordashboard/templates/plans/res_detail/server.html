@@ -32,7 +32,9 @@
     var table = "table#metadatas";
     var add_action = "#metadatas__action_add_metadata";
     var rm_action = "#metadatas__action_delete_metadata";
-    open_add_operation(table, "metadatas", add_action);
-    open_delete_operation(table, rm_action);
+    conveyorEditPlanRes.openAddOperation(table, "metadatas", add_action);
+    conveyorEditPlanRes.openDeleteOperation(table, rm_action);
+{#    open_add_operation(table, "metadatas", add_action);#}
+{#    open_delete_operation(table, rm_action);#}
   })
 </script>

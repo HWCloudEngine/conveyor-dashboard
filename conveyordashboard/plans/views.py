@@ -592,8 +592,7 @@ class ResourceDetailJsonView(View):
         data = resources.ResourceDetailFromPlan(
             request, plan_id, resource_type, resource_id,
             update_data, updated_res, is_original).render()
-        resp = {'msg': 'success',
-                'data': data,
+        resp = {'data': data,
                 'image': api.get_resource_image(resource_type, 'red')}
         return http.HttpResponse(json.dumps(resp),
                                  content_type='application/json')
