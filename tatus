@@ -1,0 +1,203 @@
+warning: LF will be replaced by CRLF in conveyordashboard/plans/forms.py.
+The file will have its original line endings in your working directory.
+warning: LF will be replaced by CRLF in conveyordashboard/plans/tables.py.
+The file will have its original line endings in your working directory.
+warning: LF will be replaced by CRLF in conveyordashboard/static/conveyordashboard/js/clone_plan_form.js.
+The file will have its original line endings in your working directory.
+warning: LF will be replaced by CRLF in conveyordashboard/static/conveyordashboard/js/conveyor.actions.plugin.js.
+The file will have its original line endings in your working directory.
+[1mdiff --git a/conveyordashboard/plans/forms.py b/conveyordashboard/plans/forms.py[m
+[1mindex 813fb27..0d6f672 100644[m
+[1m--- a/conveyordashboard/plans/forms.py[m
+[1m+++ b/conveyordashboard/plans/forms.py[m
+[36m@@ -239,8 +239,6 @@[m [mclass ClonePlan(forms.SelfHandlingForm):[m
+ [m
+ class MigratePlan(forms.SelfHandlingForm):[m
+     plan_id = forms.CharField(widget=forms.HiddenInput)[m
+[31m-    action_type = forms.CharField(widget=forms.HiddenInput,[m
+[31m-                                  initial='migrate')[m
+     is_original = forms.CharField(widget=forms.HiddenInput)[m
+ [m
+     def handle(self, request, data):[m
+[1mdiff --git a/conveyordashboard/plans/tables.py b/conveyordashboard/plans/tables.py[m
+[1mindex ce835c5..942c61d 100644[m
+[1m--- a/conveyordashboard/plans/tables.py[m
+[1m+++ b/conveyordashboard/plans/tables.py[m
+[36m@@ -203,7 +203,6 @@[m [mTASK_DISPLAY_CHOICES = ([m
+ [m
+ class PlansTable(tables.DataTable):[m
+     PLAN_STATUS_CHOICES = ([m
+[31m-        ('initiating', True),[m
+         ('available', True),[m
+         ('error', False),[m
+         ('finished', True),[m
+[1mdiff --git a/conveyordashboard/static/conveyordashboard/js/clone_plan_form.js b/conveyordashboard/static/conveyordashboard/js/clone_plan_form.js[m
+[1mindex f2b0033..434a74a 100644[m
+[1m--- a/conveyordashboard/static/conveyordashboard/js/clone_plan_form.js[m
+[1m+++ b/conveyordashboard/static/conveyordashboard/js/clone_plan_form.js[m
+[36m@@ -22,15 +22,17 @@[m [m$(function () {[m
+   function conveyorClonePlan(modal) {[m
+     var clonePlanForm = $(modal).find('#clone_plan_form');[m
+     var plan_id = $(clonePlanForm).find('[name=plan_id]').val();[m
+[31m-[m
+[31m-    if(typeof plan_id !== 'undefined') {[m
+[31m-      $(modal).find('.modal-header a.close').click(function () {[m
+[32m+[m[32m    var is_original = $(clonePlanForm).find('[name=is_original]').val();[m
+[32m+[m[32m    if(is_original) {[m
+[32m+[m[32m      if(typeof plan_id !== 'undefined') {[m
+[32m+[m[32m        $(modal).find('.modal-header a.close').click(function () {[m
+[32m+[m[32m          conveyorService.cancelPlan(plan_id);[m
+[32m+[m[32m        });[m
+[32m+[m[32m      }[m
+[32m+[m[32m      $(modal).find('.modal-footer a.cancel_clone').click(function () {[m
+         conveyorService.cancelPlan(plan_id);[m
+       });[m
+     }[m
+[31m-    $(modal).find('.modal-footer a.cancel_clone').click(function () {[m
+[31m-      conveyorService.cancelPlan(plan_id);[m
+[31m-    });[m
+   }[m
+ [m
+   var cloneFormModal = $('#clone_plan_form').parent();[m
+[1mdiff --git a/conveyordashboard/static/conveyordashboard/js/conveyor.actions.plugin.js b/conveyordashboard/static/conveyordashboard/js/conveyor.actions.plugin.js[m
+[1mindex e525313..b44b10a 100644[m
+[1m--- a/conveyordashboard/static/conveyordashboard/js/conveyor.actions.plugin.js[m
+[1m+++ b/conveyordashboard/static/conveyordashboard/js/conveyor.actions.plugin.js[m
+[36m@@ -15,7 +15,7 @@[m
+ [m
+ $(function () {[m
+   "use strict";[m
+[31m-  var rootPath = getRootPath();[m
+[32m+[m[32m  var rootPath = WEBROOT;[m
+   var conveyor_action_url = rootPath + "/conveyor/overview/row_actions";[m
+   var conveyor_table_action_url = rootPath + "/conveyor/overview/table_actions";[m
+   var conveyor_clone_url = rootPath + "/conveyor/plans/clone";[m
+[1mdiff --git a/conveyordashboard/static/conveyordashboard/js/conveyor.resource.js b/conveyordashboard/static/conveyordashboard/js/conveyor.resource.js[m
+[1mindex fbadc4e..ae3aa50 100644[m
+[1m--- a/conveyordashboard/static/conveyordashboard/js/conveyor.resource.js[m
+[1m+++ b/conveyordashboard/static/conveyordashboard/js/conveyor.resource.js[m
+[36m@@ -120,7 +120,7 @@[m [mvar conveyorResources = {[m
+           $("input.ip").each(function(){[m
+             var ori_ip = $(this).attr("data-ori");[m
+             var ip=$(this).val();[m
+[31m-            var alloc = JSON.parse($(this).attr("data-alloc"));[m
+[32m+[m[32m            var alloc = $.parseJSON($(this).attr("data-alloc"));[m
+             if(!warning: LF will be replaced by CRLF in conveyordashboard/static/conveyordashboard/js/conveyor.resource.js.
+The file will have its original line endings in your working directory.
+warning: LF will be replaced by CRLF in conveyordashboard/static/conveyordashboard/js/conveyor.utils.js.
+The file will have its original line endings in your working directory.
+warning: LF will be replaced by CRLF in conveyordashboard/static/conveyordashboard/js/edit_plan_res.js.
+The file will have its original line endings in your working directory.
+ conveyorUtil.ipCheckInCidr(alloc, ip)) {[m
+               $(this).focus();[m
+               return false;[m
+[36m@@ -263,20 +263,20 @@[m [mvar conveyorResources = {[m
+     if(chkEle.length === 0) {[m
+       return false;[m
+     }[m
+[31m-    var checked = $(chkEle).is(":checked");[m
+[31m-    if($(chkEle).attr("data-ori") != checked) {[m
+[32m+[m[32m    var checked = $(chkEle).is(':checked');[m
+[32m+[m[32m    if($(chkEle).attr('data-ori') != checked) {[m
+       dstDict[field] = checked;[m
+       return true;[m
+     }[m
+     return false;[m
+   },[m
+   getSelectData: function (field, dstDict) {[m
+[31m-    var selector = "select[name=" + field + "s]";[m
+[32m+[m[32m    var selector = 'select[name=' + field + 's]';[m
+     var inputEle = $(selector);[m
+     if(inputEle.length === 0) {[m
+       return false;[m
+     }[m
+[31m-    if($(inputEle).attr("data-ori") != $(inputEle).val()) {[m
+[32m+[m[32m    if($(inputEle).attr('data-ori') != $(inputEle).val()) {[m
+       dstDict[field] = $(inputEle).val();[m
+       return true;[m
+     }[m
+[36m@@ -292,8 +292,8 @@[m [mvar conveyorResources = {[m
+     if(slt_node.length === 0) {[m
+       return false;[m
+     }[m
+[31m-    if($(slt_node).val() != $(slt_node).attr("data-ori")) {[m
+[31m-      dstDict["id"] = $(slt_node).val();[m
+[32m+[m[32m    if($(slt_node).val() != $(slt_node).attr('data-ori')) {[m
+[32m+[m[32m      dstDict['id'] = $(slt_node).val();[m
+       return true;[m
+     }[m
+     return false;[m
+[36m@@ -307,8 +307,8 @@[m [mvar conveyorResources = {[m
+     if(typeof $(metaTable).attr('deleted_ids') != 'undefined' || $(metaTable).find('tr[data_from=client]').length) {[m
+       var metadata = [];[m
+       $(metaTable).find("tbody tr:not(.new-row):not(.empty)").each(function () {[m
+[31m-        var key = $(this).attr("data-object-id");[m
+[31m-        var value = $(this).find("td:last").text();[m
+[32m+[m[32m        var key = $(this).attr('data-object-id');[m
+[32m+[m[32m        var value = $(this).find('td:last').text();[m
+         metadata.push('"' + $.trim(key) + '":"' + $.trim(value) + '"');[m
+       });[m
+       dstDict['metadata'] = $.parseJSON("{"+metadata.join(",")+"}");[m
+[1mdiff --git a/conveyordashboard/static/conveyordashboard/js/conveyor.utils.js b/conveyordashboard/static/conveyordashboard/js/conveyor.utils.js[m
+[1mindex 8d3ec94..a7739b0 100644[m
+[1m--- a/conveyordashboard/static/conveyordashboard/js/conveyor.utils.js[m
+[1m+++ b/conveyordashboard/static/conveyordashboard/js/conveyor.utils.js[m
+[36m@@ -16,15 +16,6 @@[m
+ [m
+ "use strict";[m
+ [m
+[31m-function getRootPath() {[m
+[31m-    var strFullPath = window.document.location.href;[m
+[31m-    var strPath = window.document.location.pathname;[m
+[31m-    var pos = strFullPath.indexOf(strPath);[m
+[31m-    var prePath = strFullPath.substring(0, pos);[m
+[31m-    var postPath = strPath.substring(0, strPath.substr(1).indexOf('/') + 1);[m
+[31m-    return (prePath + postPath);[m
+[31m-}[m
+[31m-[m
+ String.prototype.isCidrV4=function () {[m
+     var re=/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$/;[m
+     return re.test(this)[m
+[1mdiff --git a/conveyordashboard/static/conveyordashboard/js/edit_plan_res.js b/conveyordashboard/static/conveyordashboard/js/edit_plan_res.js[m
+[1mindex 1d8590c..bb1cf1c 100644[m
+[1m--- a/conveyordashboard/static/conveyordashboard/js/edit_plan_res.js[m
+[1m+++ b/conveyordashboard/static/conveyordashboard/js/edit_plan_res.js[m
+[36m@@ -177,7 +177,7 @@[m [mvar conveyorEditPlanRes = {[m
+     };[m
+     var result = conveyorService.updatePlanResourceForFrontend(plan_id, postdata);[m
+     if(result) {[m
+[31m-      update_topo(JSON.parse(result.d3_data));[m
+[32m+[m[32m      update_topo($.parseJSON(result.d3_data));[m
+       self.updatePlanDeps(result.res_deps);[m
+       for(var index in result.update_resources) {[m
+         var item = result.update_resources[index];[m
+[1mdiff --git a/conveyordashboard/static/conveyordashboard/js/migrate_plan_form.js b/conveyordashboard/static/conveyordashboard/js/migrate_plan_form.js[m
+[1mindex 1af5ce9..183fc39 100644[m
+[1m--- a/conveyordashboard/static/conveyordashboard/js/migrate_plan_form.js[m
+[1m+++ b/conveyordashboard/static/conveyordashboard/js/migrate_plan_form.js[m
+[36m@@ -22,14 +22,16 @@[m [m$(function () {[m
+   function conveyorMigratePlan(modal) {[m
+     var migratePlanForm = $(modal).find('#migrate_plan_form');[m
+     var plan_id = $(migratePlanForm).find('[name=plan_id]').val();[m
+[31m-[m
+[31m-    $(modal).find('.modal-footer a.cancel_migrate').click(function () {[m
+[31m-      conveyorService.cancelPlan(plan_id);[m
+[31m-    });[m
+[31m-    if(typeof plan_id !== 'undefined') {[m
+[31m-      $(modal).find('.modal-header a.close').click(function () {[m
+[31m-        conveyorService.cancelPlan(plan_id)[m
+[32m+[m[32m    var is_original = $(migratePlanForm).find('[name=is_original]').val();[m
+[32m+[m[32m    if(is_original) {[m
+[32m+[m[32m      $(modal).find('.modal-footer a.cancel_migrate').click(function () {[m
+[32m+[m[32m        conveyorService.cancelPlan(plan_id);[m
+       });[m
+[32m+[m[32m      if(typeof plan_id !== 'undefined') {[m
+[32m+[m[32m        $(modal).find('.modal-header a.close').click(function () {[m
+[32m+[m[32m          conveyorService.cancelPlan(plan_id)[m
+[32m+[m[32m        });[m
+[32m+[m[32m      }[m
+     }[m
+   }[m
+ [m
+warning: LF will be replaced by CRLF in conveyordashboard/static/conveyordashboard/js/migrate_plan_form.js.
+The file will have its original line endings in your working directory.

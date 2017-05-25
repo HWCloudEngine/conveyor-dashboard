@@ -23,11 +23,6 @@ $(function () {
     var destinationForm = $(modal).find('#destination_form');
     var clonePlanForm = $('#clone_plan_form');
     if (clonePlanForm) {
-      // TODO(drngsl) On destination page, the 'sys_clone' checkbox does not response to click, here removing the 'themable-checkbox' class to enable it.
-      var chk_sys_clone = $(destinationForm).find('[name=sys_clone]');
-      if(chk_sys_clone.length) {
-        $(chk_sys_clone).parent().removeClass('themable-checkbox');
-      }
       $(destinationForm).find('[name=resources]').val($(clonePlanForm).find('[name=update_resource]').val());
     }
   }
