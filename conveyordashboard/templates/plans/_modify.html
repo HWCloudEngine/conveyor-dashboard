@@ -4,18 +4,16 @@
 {% load url from future %}
 {% block form_action %}{% url 'horizon:conveyor:plans:modify' plan_id %}{% endblock %}
 {% block modal-body %}
-  <script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.res.action.js' %}"></script>
-<fieldset>
-  {% include "horizon/common/_form_fields.html" %}
-</fieldset>
+  <fieldset>
+    {% include "horizon/common/_form_fields.html" %}
+  </fieldset>
   {% include "_deps_topo.html" %}
-<script>
-  $(function(){
-    "use strict";
-    $("g.node").click($node_click);
-    $("input[type=submit]").click(function () {
-      $("form#modify_form").submit();
-    })
-  });
-</script>
+  <script>
+    $(function () {
+      "use strict";
+      $("g.node").click(function () {
+        conveyorEditPlanRes.nodeClick(this);
+      });
+    });
+  </script>
 {% endblock %}

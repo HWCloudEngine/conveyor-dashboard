@@ -21,13 +21,9 @@ $(function () {
 
   function conveyorSavePlan(modal) {
     var savePlanForm = $(modal).find('#save_plan_form');
-    $(savePlanForm).find('[name=resources]').val($('#id_update_resource').val());
-    // TODO(drngsl) On destination page, the 'sys_clone' checkbox does not response to click, here removing the 'themable-checkbox' class to enable it.
-    if($('#clone_plan_form').length) {
-      var chk_sys_clone = $(savePlanForm).find('[name=sys_clone]');
-      if(chk_sys_clone.length) {
-        $(chk_sys_clone).parent().removeClass('themable-checkbox');
-      }
+    var clonePlanForm = $('#clone_plan_form');
+    if(clonePlanForm.length) {
+      $(savePlanForm).find('[name=resources]').val($(clonePlanForm).find('[name=update_resource]').val());
     }
   }
 
