@@ -155,6 +155,8 @@ class Destination(forms.SelfHandlingForm):
     plan_type = forms.CharField(widget=forms.HiddenInput)
     az = forms.ChoiceField(label=_("Target Availability Zone"),
                            required=True)
+    copy_data = forms.BooleanField(label=_("Copy Data Volume"),
+                                   required=False)
     resources = forms.CharField(widget=forms.HiddenInput,
                                 initial='[]')
 
@@ -189,8 +191,10 @@ class Destination(forms.SelfHandlingForm):
                 update_plan_resource(request, plan_id, resources)
 
                 sys_clone = data['sys_clone'] == 'True'
+                copy_data = data['copy_data'] == 'True'
                 api.export_template_and_clone(request, plan_id, zone_name,
-                                              sys_clone=sys_clone)
+                                              sys_clone=sys_clone,
+                                              copy_data=copy_data)
                 messages.success(
                     request,
                     _('Execute clone plan %s successfully.') % plan_id)
@@ -318,6 +322,8 @@ class SavePlan(forms.SelfHandlingForm):
     plan_id = forms.CharField(widget=forms.HiddenInput)
     sys_clone = forms.BooleanField(label=_("Clone System Volume"),
                                    required=False)
+    copy_data = forms.BooleanField(label=_("Copy Data Volume"),
+                                   required=False)
     resources = forms.CharField(widget=forms.HiddenInput,
                                 initial='[]')
 
@@ -325,11 +331,13 @@ class SavePlan(forms.SelfHandlingForm):
         LOG.info("Save plan with data: %s", data)
         plan_id = data['plan_id']
         sys_clone = data['sys_clone'] == 'True'
+        copy_data = data['copy_data'] == 'True'
         try:
             resources = json.loads(data['resources'])
             update_plan_resource(request, plan_id, resources)
             api.export_clone_template(request, plan_id,
-                                      sys_clone=sys_clone)
+                                      sys_clone=sys_clone,
+                                      copy_data=copy_data)
             msg = ("Save plan %s successfully." % plan_id)
             messages.success(request, msg)
             return True
