@@ -327,9 +327,22 @@ class SaveView(forms.ModalFormView):
                                   kwargs={'plan_id': self.kwargs['plan_id']})
         return super(SaveView, self).get_context_data(**kwargs)
 
+    @memoized.memoized_method
+    def get_object(self, *args, **kwargs):
+        try:
+            return api.plan_get(self.request, kwargs['plan_id'])
+        except Exception:
+            msg = _("Get plan failed.")
+            exceptions.handle(self.request, msg)
+
     def get_initial(self):
         initial = super(SaveView, self).get_initial()
-        args = {'plan_id': self.kwargs['plan_id']}
+        plan = self.get_object(**self.kwargs)
+        args = {
+            'plan_id': self.kwargs['plan_id'],
+            'sys_clone': getattr(plan, 'sys_clone', False),
+            'copy_data': getattr(plan, 'copy_data', True)
+        }
         initial.update(args)
         return initial
 
@@ -456,7 +469,9 @@ class DestinationView(forms.ModalFormView):
         initial = super(DestinationView, self).get_initial()
         plan = self.get_object(**self.kwargs)
         initial.update({'plan_id': self.kwargs['plan_id'],
-                        'plan_type': plan.plan_type})
+                        'plan_type': plan.plan_type,
+                        'sys_clone': getattr(plan, 'sys_clone', False),
+                        'copy_data': getattr(plan, 'copy_data', True)})
         return initial
 
 

@@ -6,6 +6,8 @@
     <p>{% trans "Clone All the resources of this plan to another specific availability zone." %}</p>
     <h4>{% trans "Clone System Volume" %}</h4>
     <p>{% trans "Clone the instances with it's bootable volume together." %}</p>
+    <h4>{% trans "Copy Volume Data" %}</h4>
+    <p>{% trans "Clone volume and copy the volume data together." %}</p>
   {% endifequal %}
   {% ifequal plan_type 'migrate' %}
     <h4>{% trans "Description:" %}</h4>

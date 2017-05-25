@@ -119,9 +119,9 @@ def resource_detail_from_plan(request, id, plan_id, is_original=True):
         .get_resource_detail_from_plan(id, plan_id, is_original)
 
 
-def export_clone_template(request, plan_id, sys_clone=False):
+def export_clone_template(request, plan_id, sys_clone=False, copy_data=True):
     return api.conveyorclient(request).clones.export_clone_template(
-        plan_id, sys_clone=sys_clone)
+        plan_id, sys_clone=sys_clone, copy_data=copy_data)
 
 
 def clone(request, plan_id, destination):
@@ -130,9 +130,10 @@ def clone(request, plan_id, destination):
 
 def export_template_and_clone(request, plan, destination,
                               resources={},
-                              sys_clone=False):
+                              sys_clone=False,
+                              copy_data=True):
     return api.conveyorclient(request).clones.export_template_and_clone(
-        plan, destination, resources, sys_clone
+        plan, destination, resources, sys_clone, copy_data
     )
 
 
