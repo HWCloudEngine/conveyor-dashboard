@@ -16,20 +16,26 @@
 
 "use strict";
 
-var conveyorService = conveyorService || {};
+var conveyorService = {
+  cancelPlan: function (plan_id) {
+    var result = true;
+    $.ajaxSetup({async: false});
+    $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
+    $.post(WEBROOT + "/conveyor/plans/" + plan_id + "/cancel").error(function () {
+      horizon.alert('error', gettext("Cancel Plan " + plan_id + " failed"));
+      result = false;
+    });
+    return result;
+  },
 
-conveyorService.cancelPlan = function (plan_id) {
-  $.ajaxSetup({async: false});
-  $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
-  $.post(WEBROOT + "/conveyor/plans/" + plan_id + "/cancel", function(json){
-    return json;
-  });
-};
-
-conveyorService.updatePlanResource = function (plan_id, data) {
-  $.ajaxSetup({async: false});
-  $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
-  $.post(WEBROOT + '/conveyor/plans/' + plan_id + '/update_resource', data, function (json) {
-    return json;
-  });
+  updatePlanResource: function (plan_id, data) {
+    var result = true;
+    $.ajaxSetup({async: false});
+    $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
+    $.post(WEBROOT + '/conveyor/plans/' + plan_id + '/update_resource', data).error(function () {
+      horizon.alert('error', gettext("Update plan failed"));
+      result = false;
+    });
+    return result;
+  }
 };

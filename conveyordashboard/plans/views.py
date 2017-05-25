@@ -463,15 +463,8 @@ class DestinationView(forms.ModalFormView):
 class CancelView(View):
     @staticmethod
     def post(request, **kwargs):
-        try:
-            plan_id = kwargs['plan_id']
-            api.plan_delete(request, plan_id)
-            LOG.info("Cancel plan {0} and delete it "
-                     "successfully.".format(plan_id))
-            msg = {'msg': 'success'}
-        except Exception:
-            msg = {'msg': 'err'}
-        return http.HttpResponse(json.dumps(msg),
+        api.plan_delete(request, kwargs['plan_id'])
+        return http.HttpResponse({},
                                  content_type='application/json')
 
 
@@ -575,29 +568,12 @@ class UpdateResourceView(View):
     def post(request, **kwargs):
         plan_id = kwargs['plan_id']
         POST = request.POST
-        LOG.debug("Update plan %(plan_id)s resource. kwargs=%(kw)s, "
-                  "POST=%(post)s",
-                  {'plan_id': plan_id, 'kw': kwargs, 'post': POST})
-        resp = {'result': 'Succeed'}
-        try:
-            update_res = json.JSONDecoder().decode(POST['update_resource'])
-        except Exception:
-            resp = {'result': 'Failed',
-                    'message': 'update_resources format error.'}
-            return http.HttpResponse(json.dumps(resp),
-                                     content_type='application/json')
-        try:
 
-            if update_res:
-                plan_forms.preprocess_update_resources(update_res)
-                api.update_plan_resource(request, plan_id, update_res)
-        except Exception as e:
-            LOG.error("Update plan %(plan_id)s with %(res)s resources failed."
-                      " %(error)s",
-                      {'plan_id': plan_id, 'res': update_res, 'error': e})
-            resp = {'result': 'Failed'}
-
-        return http.HttpResponse(json.dumps(resp),
+        update_res = json.JSONDecoder().decode(POST['update_resource'])
+        if update_res:
+            plan_forms.preprocess_update_resources(update_res)
+            api.update_plan_resource(request, plan_id, update_res)
+        return http.HttpResponse({},
                                  content_type='application/json')
 
 

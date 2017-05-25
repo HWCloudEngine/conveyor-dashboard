@@ -57,15 +57,8 @@
 
       $("a.btn-clone").click(function () {
         {% if plan %}
-          $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
-          var postdata = {
-            "plan_id": plan_id,
-            "update_resource": $('#id_update_resource').val()
-          };
-          $.post('{% url 'horizon:conveyor:plans:update_resource' plan.plan_id %}', postdata, function(data){
-            {# TODO(drngsl): Pop window to show the failure message or not according to result data. #}
-            console.log(data)
-          });
+          var result = conveyorService.updatePlanResource('{{ plan.plan_id }}', {"update_resource": $('#id_update_resource').val()});
+          if (! result) { return false; }
         {% else %}
           return false;
         {% endif %}

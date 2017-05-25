@@ -142,11 +142,21 @@ def preprocess_update_resources(update_resources):
                 res['rules'] = rules
 
 
+def update_plan_resource(request, plan_id, resources):
+    preprocess_update_resources(resources)
+    if len(resources) > 0:
+        LOG.info("Update plan %(plan)s with resources %(resources)s",
+                 {'plan': plan_id, 'resources': resources})
+        api.update_plan_resource(request, plan_id, resources)
+
+
 class Destination(forms.SelfHandlingForm):
     plan_id = forms.CharField(widget=forms.HiddenInput)
     plan_type = forms.CharField(widget=forms.HiddenInput)
     az = forms.ChoiceField(label=_("Target Availability Zone"),
                            required=True)
+    resources = forms.CharField(widget=forms.HiddenInput,
+                                initial='[]')
 
     def __init__(self, request, *args, **kwargs):
         super(Destination, self).__init__(request, *args, **kwargs)
@@ -175,6 +185,9 @@ class Destination(forms.SelfHandlingForm):
 
         if plan_type == constants.CLONE:
             try:
+                resources = json.loads(data['resources'])
+                update_plan_resource(request, plan_id, resources)
+
                 sys_clone = data['sys_clone'] == 'True'
                 api.export_template_and_clone(request, plan_id, zone_name,
                                               sys_clone=sys_clone)
@@ -185,8 +198,10 @@ class Destination(forms.SelfHandlingForm):
             except Exception as e:
                 LOG.error("Execute clone plan %(plan_id)s failed. %(error)s",
                           {'plan_id': plan_id, 'error': e})
+                redirect = reverse('horizon:conveyor:plans:index')
                 exceptions.handle(request,
-                                  _("Clone plan failed."))
+                                  _("Execute clone plan %s failed.") % plan_id,
+                                  redirect=redirect)
         elif plan_type == constants.MIGRATE:
             try:
                 api.migrate(request, plan_id, zone_name)
@@ -197,9 +212,11 @@ class Destination(forms.SelfHandlingForm):
             except Exception as e:
                 LOG.error("Execute migrate plan %(plan_id)s failed. %(error)s",
                           {'plan_id': plan_id, 'error': e})
+                redirect = reverse('horizon:conveyor:plans:index')
                 exceptions.handle(
                     request,
-                    _("Execute migrate plan %s failed.")% plan_id)
+                    _("Execute migrate plan %s failed.") % plan_id,
+                redirect=redirect)
         else:
             msg = _("Unsupported plan type.")
             redirect = reverse('horizon:conveyor:plan:index')
@@ -310,11 +327,7 @@ class SavePlan(forms.SelfHandlingForm):
         sys_clone = data['sys_clone'] == 'True'
         try:
             resources = json.loads(data['resources'])
-            preprocess_update_resources(resources)
-            if len(resources) > 0:
-                LOG.info("Save plan %(plan)s with resources %(resources)s",
-                         {'plan': plan_id, resources: resources})
-                api.update_plan_resource(request, plan_id, resources)
+            update_plan_resource(request, plan_id, resources)
             api.export_clone_template(request, plan_id,
                                       sys_clone=sys_clone)
             msg = ("Save plan %s successfully." % plan_id)
@@ -345,15 +358,17 @@ class ModifyPlan(forms.SelfHandlingForm):
             widget=forms.HiddenInput, initial={})
 
     def handle(self, request, data):
-        LOG.info("Modify data: %s", data)
-        update_res = json.JSONDecoder().decode(data['update_resource'])
-        preprocess_update_resources(update_res)
-        LOG.info("Get update resources for plan after preprocess. "
-                 "update_resources={}".format(update_res))
-
         plan_id = data['plan_id']
-        if len(update_res) > 0:
-            api.update_plan_resource(request, plan_id, update_res)
-        msg = ("Update plan %s successfully." % plan_id)
-        messages.success(request, msg)
-        return True
+        try:
+            resources = json.loads(data['update_resource'])
+            update_plan_resource(request, plan_id, resources)
+            msg = ("Update plan %s successfully." % plan_id)
+            messages.success(request, msg)
+            return True
+        except Exception as e:
+            LOG.error("Update plan %(plan_id) failed. %(error)s",
+                      {'plan_id': plan_id, 'error': e})
+            redirect = reverse('horizon:conveyor:plans:index')
+            exceptions.handle(request,
+                              _('Update plan %s failed') % plan_id,
+                              redirect=redirect)
