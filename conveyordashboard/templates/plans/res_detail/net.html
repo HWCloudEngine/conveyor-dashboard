@@ -11,9 +11,9 @@
 	<div class="form-group">
   		<label class="control-label">{% trans "Admin State" %}</label>
    		<div class=" ">
-			<select class="form-control" name="admin_states" data-ori="{{ data.admin_state_up }}">
-				<option name="admin_state" value="True" {% if data.admin_state_up %}selected="selected"{%endif%}>Up</option>
-				<option name="admin_state" value="False" {% if not data.admin_state_up %}selected="selected"{%endif%}>Down</option>
+			<select class="form-control" name="admin_state_ups" data-ori="{{ data.admin_state_up }}">
+				<option name="admin_state_up" value="True" {% if data.admin_state_up %}selected="selected"{%endif%}>Up</option>
+				<option name="admin_state_up" value="False" {% if not data.admin_state_up %}selected="selected"{%endif%}>Down</option>
 			</select>
 		</div>
 	</div>

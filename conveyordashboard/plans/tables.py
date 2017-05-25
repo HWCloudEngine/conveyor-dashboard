@@ -203,7 +203,6 @@ TASK_DISPLAY_CHOICES = (
 
 class PlansTable(tables.DataTable):
     PLAN_STATUS_CHOICES = (
-        ('initiating', True),
         ('available', True),
         ('error', False),
         ('finished', True),

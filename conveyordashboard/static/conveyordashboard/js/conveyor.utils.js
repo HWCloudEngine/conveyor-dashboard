@@ -16,15 +16,6 @@
 
 "use strict";
 
-function getRootPath() {
-    var strFullPath = window.document.location.href;
-    var strPath = window.document.location.pathname;
-    var pos = strFullPath.indexOf(strPath);
-    var prePath = strFullPath.substring(0, pos);
-    var postPath = strPath.substring(0, strPath.substr(1).indexOf('/') + 1);
-    return (prePath + postPath);
-}
-
 String.prototype.isCidrV4=function () {
     var re=/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$/;
     return re.test(this)
@@ -58,7 +49,7 @@ var conveyorUtil = {
     ipCheckInCidr: function (pool, ip) {
         try {
             for(var index in pool) {
-                if(this.compareIp(pool[index].start, ip) <= 0 && this.compareIp(ip, pool[index].end <= 0)) {
+                if(this.compareIp(pool[index].start, ip) <= 0 && this.compareIp(ip, pool[index].end) <= 0) {
                     return true;
                 }
             }
