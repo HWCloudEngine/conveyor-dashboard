@@ -572,6 +572,8 @@ class UpdateResourceView(View):
         update_res = json.JSONDecoder().decode(POST['update_resource'])
         if update_res:
             plan_forms.preprocess_update_resources(update_res)
+            LOG.info("Update plan %(plan)s with resources %(res)s",
+                     {'plan': plan_id, 'res': update_res})
             api.update_plan_resource(request, plan_id, update_res)
         return http.HttpResponse({},
                                  content_type='application/json')
@@ -592,8 +594,7 @@ class ResourceDetailJsonView(View):
         data = resources.ResourceDetailFromPlan(
             request, plan_id, resource_type, resource_id,
             update_data, updated_res, is_original).render()
-        resp = {'msg': 'success',
-                'data': data,
+        resp = {'data': data,
                 'image': api.get_resource_image(resource_type, 'red')}
         return http.HttpResponse(json.dumps(resp),
                                  content_type='application/json')

@@ -23,8 +23,8 @@
 
 var conveyor_container = "#conveyor_plan_topology";
 
-var diagonal = d3.svg.diagonal()
-    .projection(function(d) { return [d.y, d.x]; });
+// var diagonal = d3.svg.diagonal()
+//     .projection(function(d) { return [d.y, d.x]; });
 
 function update(){
   node = node.data(nodes, function(d) { return d.id; });

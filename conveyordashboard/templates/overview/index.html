@@ -47,13 +47,15 @@
       [id|=node--1] > td > span{margin-left: -10px!important;}
   </style>
   <link rel="stylesheet" href="{% static 'conveyordashboard/css/jquery.treeTable.css' %}"/>
-  <script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.res.action.js' %}"></script>
   <script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.js' %}"></script>
+  <script type="text/javascript" src="{% static 'conveyordashboard/js/edit_plan_res.js' %}"></script>
   <script type="text/javascript">
     $(function() {
       "use strict";
       $("#plan_deps").treeTable();
-      $("g.node").click($node_click);
+      $("g.node").click(function () {
+        conveyorEditPlanRes.nodeClick(this);
+      });
 
       $("a.btn-clone").click(function () {
         {% if plan %}

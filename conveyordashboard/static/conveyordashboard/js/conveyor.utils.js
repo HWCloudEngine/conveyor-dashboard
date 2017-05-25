@@ -58,7 +58,7 @@ var conveyorUtil = {
     ipCheckInCidr: function (pool, ip) {
         try {
             for(var index in pool) {
-                if(this.compareIp(pool[index].start, ip) <= 0 && this.compareIp(ip, pool[index].end <= 0)) {
+                if(this.compareIp(pool[index].start, ip) <= 0 && this.compareIp(ip, pool[index].end) <= 0) {
                     return true;
                 }
             }
