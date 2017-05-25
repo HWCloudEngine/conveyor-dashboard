@@ -438,7 +438,6 @@ class DestinationView(forms.ModalFormView):
             exceptions.handle(self.request, msg)
 
     def get_context_data(self, **kwargs):
-        LOG.info("Destination kwargs: %s", kwargs)
         plan = self.get_object(**self.kwargs)
         plan_type = plan.plan_type
         self.submit_label = plan_type.title()
@@ -536,32 +535,6 @@ class UpdateView(View):
         return http.HttpResponse(json.dumps(resp_data),
                                  content_type='application/json')
 
-        # (updated_resources,
-        #  dependencies,
-        #  update_resource) = planupdate.execute_return()
-        #
-        # (i_updated_resources,
-        #  i_dependencies) = resources.update_return_resource(
-        #     i_updated_resources,
-        #     updated_resources,
-        #     i_dependencies,
-        #     dependencies)
-        # LOG.info(
-        #     "i_updated_resources: %(1)s\n\ni_dependencies: %(2)s\n\n",
-        #     {'1': i_updated_resources, '2': i_dependencies})
-        #
-        # deps = dict([(key, value) for key, value in dependencies.items()
-        #              if value.get(constants.RES_ACTION_KEY,
-        #                           '') != constants.ACTION_DELETE])
-        # d3_data = topology.load_d3_data(request, plan_id, deps)
-        #
-        # resp_data = {'d3_data': d3_data,
-        #              'update_resources': update_resource.values(),
-        #              'updated_resources': i_updated_resources,
-        #              'dependencies': i_dependencies}
-        # return http.HttpResponse(json.dumps(resp_data),
-        #                          content_type='application/json')
-
 
 class UpdateResourceView(View):
     @staticmethod
@@ -572,6 +545,8 @@ class UpdateResourceView(View):
         update_res = json.JSONDecoder().decode(POST['update_resource'])
         if update_res:
             plan_forms.preprocess_update_resources(update_res)
+            LOG.info("Update plan %(plan)s with resources %(res)s",
+                     {'plan': plan_id, 'res': update_res})
             api.update_plan_resource(request, plan_id, update_res)
         return http.HttpResponse({},
                                  content_type='application/json')
@@ -592,8 +567,7 @@ class ResourceDetailJsonView(View):
         data = resources.ResourceDetailFromPlan(
             request, plan_id, resource_type, resource_id,
             update_data, updated_res, is_original).render()
-        resp = {'msg': 'success',
-                'data': data,
+        resp = {'data': data,
                 'image': api.get_resource_image(resource_type, 'red')}
         return http.HttpResponse(json.dumps(resp),
                                  content_type='application/json')

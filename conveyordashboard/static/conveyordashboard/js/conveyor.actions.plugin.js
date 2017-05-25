@@ -15,7 +15,7 @@
 
 $(function () {
   "use strict";
-  var rootPath = getRootPath();
+  var rootPath = WEBROOT;
   var conveyor_action_url = rootPath + "/conveyor/overview/row_actions";
   var conveyor_table_action_url = rootPath + "/conveyor/overview/table_actions";
   var conveyor_clone_url = rootPath + "/conveyor/plans/clone";

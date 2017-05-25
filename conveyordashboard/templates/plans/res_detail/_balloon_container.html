@@ -5,7 +5,22 @@
 $(function(){
     "use strict";
     var action;
-    for(action in cancel_actions){if($(cancel_actions[action]).length){$(cancel_actions[action]).click($hide_table_info);}}
-    for(action in save_actions){if($(save_actions[action]).length){$(save_actions[action]).click($save_table_info);}}
+    var cancel_actions = ["a.closeTopologyBalloon", "button.cancel"];
+    var save_actions = ["button.save-info"];
+    for(action in cancel_actions){
+      if($(cancel_actions[action]).length){
+        $(cancel_actions[action]).click(function () {
+          conveyorEditPlanRes.hideTableInfo();
+          return false;
+        });
+      }}
+    for(action in save_actions){
+      if($(save_actions[action]).length){
+        $(save_actions[action]).click(function () {
+          conveyorEditPlanRes.saveTableInfo();
+          return false;
+        });
+      }
+    }
 });
 </script>

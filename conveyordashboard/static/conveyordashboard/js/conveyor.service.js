@@ -37,5 +37,58 @@ var conveyorService = {
       result = false;
     });
     return result;
+  },
+
+  updatePlanResourceForFrontend: function (plan_id, data) {
+    var result = null;
+    $.ajaxSetup({async: false});
+    $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
+    $.post(WEBROOT + '/conveyor/plans/' + plan_id + '/update', data)
+      .success(function (data) {
+        result = data;
+      })
+      .error(function () {
+        horizon.alert('error', gettext("Update plan resource failed"));
+        result = false;
+      });
+    return result;
+  },
+
+  getResourceDetail: function (data) {
+    var result = null;
+    $.ajaxSetup({async: false});
+    $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
+    $.post(WEBROOT + '/conveyor/plans/get_resource_detail', data)
+      .success(function (data) {
+        result = data;
+      })
+      .error(function () {
+      horizon.alert('error', gettext('Get detail resource failed'));
+    });
+    return result;
+  },
+
+  addRuleForFrontend: function (sg_id, data) {
+    var result = null;
+    $.ajaxSetup({async: false});
+    $.get(WEBROOT + '/conveyor/plans/' +sg_id + '/add_rule/')
+      .success(function (data) {
+        result = data;
+      });
+    return result;
+  },
+
+  createSGRule: function (sg_id, data) {
+    var result = null;
+    $.ajaxSetup({async: false});
+    $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
+    $.post(WEBROOT + '/conveyor/plans/secgroup/' + sg_id + '/create_rule/', data)
+      .success(function (data) {
+        result = data;
+      })
+      .error(function () {
+      horizon.alert('error', gettext('Create security group rule failed.'));
+    });
+    return result;
   }
 };

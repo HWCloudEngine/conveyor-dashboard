@@ -22,14 +22,16 @@ $(function () {
   function conveyorMigratePlan(modal) {
     var migratePlanForm = $(modal).find('#migrate_plan_form');
     var plan_id = $(migratePlanForm).find('[name=plan_id]').val();
-
-    $(modal).find('.modal-footer a.cancel_migrate').click(function () {
-      conveyorService.cancelPlan(plan_id);
-    });
-    if(typeof plan_id !== 'undefined') {
-      $(modal).find('.modal-header a.close').click(function () {
-        conveyorService.cancelPlan(plan_id)
+    var is_original = $(migratePlanForm).find('[name=is_original]').val();
+    if($.inArray(is_original, ['True', 'true']) >= 0) {
+      $(modal).find('.modal-footer a.cancel_migrate').click(function () {
+        conveyorService.cancelPlan(plan_id);
       });
+      if(typeof plan_id !== 'undefined') {
+        $(modal).find('.modal-header a.close').click(function () {
+          conveyorService.cancelPlan(plan_id)
+        });
+      }
     }
   }
 
