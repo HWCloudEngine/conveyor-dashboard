@@ -273,6 +273,8 @@ $save_table_info = function() {
 		} else if(resource_type=="OS::Cinder::Volume") {
 			var vols_node=$("select[name=volumes]");if($(vols_node).attr("data-ori") != $(vols_node).val()){ data["id"] = $(vols_node).val();need_posted=true;}
 			var name_node=$("input#id_name");if($(name_node).attr("data-ori") != $(name_node).val()){ data["name"] = $(name_node).val();}
+			var size_node=$("input#id_size");if($(size_node).attr("data-ori") != $(size_node).val()){ data["size"] = $(size_node).val();}
+			var copy_data_node=$("input#id_copy_data"); var copy_data=false; if($(copy_data_node).is(":checked")){copy_data=true} if($(copy_data_node).attr("data-ori")!=copy_data){data["copy_data"]=copy_data}
 			var desp_node=$("#id_description"); if($(desp_node).attr("data-ori") != $(desp_node).val()){ data["description"] = $(desp_node).val(); }
 			var md_tale=$("table#metadatas");
 			if(md_tale.length){
@@ -398,7 +400,6 @@ $save_table_info = function() {
 	}
 };
 $node_click = function(){
-	console.log($(this).prop('node_name'));
 	clear_editing();
 	var plan_id = $("input#id_plan_id").val();
 	var is_original = $("div#is_original").attr("data-is_original");

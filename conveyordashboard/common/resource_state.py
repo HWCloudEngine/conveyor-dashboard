@@ -12,8 +12,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-INSTANCE_CLONE_STATE = ('SHUTOFF',)
-INSTANCE_MIGRATE_STATE = ('SHUTOFF',)
+INSTANCE_CLONE_STATE = ('SHUTOFF', 'ACTIVE')
+INSTANCE_MIGRATE_STATE = ('SHUTOFF', 'ACTIVE')
 
 VOLUME_CLONE_STATE = ('available', 'in-use')
 VOLUME_MIGRATE_STATE = ('available', 'in-use')
