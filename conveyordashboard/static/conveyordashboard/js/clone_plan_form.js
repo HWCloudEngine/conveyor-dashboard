@@ -31,14 +31,9 @@ $(function () {
     $(modal).find('.modal-footer a.cancel_clone').click(function () {
       conveyorService.cancelPlan(plan_id);
     });
-    $(modal).find('.modal-footer .btn-clone').click(function () {
-      var result = conveyorService.updatePlanResource(plan_id, {'update_resource': $(clonePlanForm).find('[name=update_resource]').val()});
-      // TODO(drngsl) if update plan resource failed, notice it to user, and not to next step.
-      // if(result.result == 'Failed') {
-      //   console.log('Update plan resource failed.');
-      //   return false
-      // }
-    });
+    // $(modal).find('.modal-footer .btn-clone').click(function () {
+    //   var result = conveyorService.updatePlanResource(plan_id, {'update_resource': $(clonePlanForm).find('[name=update_resource]').val()});
+    // });
   }
 
   var cloneFormModal = $('#clone_plan_form').parent();

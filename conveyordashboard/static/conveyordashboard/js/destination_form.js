@@ -28,22 +28,8 @@ $(function () {
       if(chk_sys_clone.length) {
         $(chk_sys_clone).parent().removeClass('themable-checkbox');
       }
-      // $(destinationForm).find('.modal-footer [type=submit]').click(function () {
-      //   $(clonePlanForm).find('[name=az]').val($(destinationForm).find('[name=az]').val());
-      //   console.log($(destinationForm).find('[name=sys_clone]').is(':checked'));
-      //   $(clonePlanForm).find('[name=sys_clone]').prop('checked', $(chk_sys_clone).is(':checked'));
-      //   console.log($(clonePlanForm).find('[name=sys_clone]').is(':checked'));
-      //   return false;
-      //   // $(clonePlanForm).submit();
-      // });
+      $(destinationForm).find('[name=resources]').val($(clonePlanForm).find('[name=update_resource]').val());
     }
-    // var migratePlanForm = $('#migrate_plan_form');
-    // if (migratePlanForm) {
-    //   $(destinationForm).find('.modal-footer [type=submit]').click(function () {
-    //     $(migratePlanForm).find('[name=az]').val($(destinationForm).find('[name=az]').val());
-    //     $(migratePlanForm).submit();
-    //   });
-    // }
   }
 
   var destinationFormModal = $('#destination_form').parent();
