@@ -11,7 +11,6 @@ ADD_INSTALLED_APPS = [
 ]
 
 ADD_JS_FILES = [
-    'conveyordashboard/js/lib/d3.v3.min.js',
     'conveyordashboard/js/lib/jquery.cookie.js',
     'conveyordashboard/js/lib/jquery.treeTable.js',
     'conveyordashboard/js/lib/json2.js',
