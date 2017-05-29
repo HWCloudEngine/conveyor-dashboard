@@ -20,8 +20,6 @@ $(function () {
   horizon.modals.addModalInitFunction(conveyorClonePlan);
 
   function conveyorClonePlan(modal) {
-    depsTreeTableAndCallTopo();
-
     var clonePlanForm = $(modal).find('#clone_plan_form');
     var plan_id = $(clonePlanForm).find('[name=plan_id]').val();
     var is_original = $(clonePlanForm).find('[name=is_original]').val();

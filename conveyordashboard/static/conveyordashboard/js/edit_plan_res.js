@@ -75,22 +75,26 @@ var conveyorEditPlanRes = {
       img_node.attr({"href": click_img, "editing": true});
     }
     if(data.data.indexOf("form-group")>-1){
-      $("#resource_info_box").html(data.data).css("display", "block");
-      $("#conveyor_plan_topology").hide();
-      $("#thumbnail").hide();
-      $("#stack_box").hide();
+      if($('.conveyor-overview').length) {
+        self.overviewPopResEditModal(node_type, node_id, data.data);
+      } else {
+        $("#resource_info_box").html(data.data).css("display", "block");
+        $("#conveyor_plan_topology").hide();
+        $("#thumbnail").hide();
+        $("#stack_box").hide();
+      }
     }
-    $("select[name='networks'],select[name='routers'],select[name='subnets'],select[name='sgs'],select[name='volumes'],select[name='volumetypes']").parent().parent().css({
+    $("select[name='networks'],select[name='routers'],select[name='subnets'],select[name='secgroups'],select[name='volumes'],select[name='volumetypes']").parent().parent().css({
         'display':'none'
     });
 
     $("#id_from_other").parent().click(function(){
         if($("#id_from_other").is(':checked')){
-            $("select[name='networks'],select[name='routers'],select[name='subnets'],select[name='sgs'],select[name='volumes'],select[name='volumetypes']").parent().parent().css({
+            $("select[name='networks'],select[name='routers'],select[name='subnets'],select[name='secgroups'],select[name='volumes'],select[name='volumetypes']").parent().parent().css({
                 'display':'block'
             });
         }else{
-            $("select[name='networks'],select[name='routers'],select[name='subnets'],select[name='sgs'],select[name='volumes'],select[name='volumetypes']").parent().parent().css({
+            $("select[name='networks'],select[name='routers'],select[name='subnets'],select[name='secgroups'],select[name='volumes'],select[name='volumetypes']").parent().parent().css({
                 'display':'none'
             });
         }
@@ -277,7 +281,7 @@ var conveyorEditPlanRes = {
             $(seletor).find("tbody").prepend('<tr class="new-row"><td class="multi_select_column"><td class="sortable normal_column"><input name="key" class="form-control" onkeydown="if(event.keyCode==13){conveyorEditPlanRes.addMetaForServer(\'table#metadatas\')}"/></td><td class="sortable normal_column"><input name="value" class="form-control" onkeydown="if(event.keyCode==13){conveyorEditPlanRes.addMetaForServer(\'table#metadatas\')}"/></td></tr>')
           }
         }else if(type == "rules"){
-          if($("#resource_info_box form#create_security_group_rule_form").length){
+          if($("form#create_security_group_rule_form").length){
             return;
           }
           var rsp = conveyorService.addRuleForFrontend($('#secgroup_wrap').attr('os_id'));
@@ -286,7 +290,11 @@ var conveyorEditPlanRes = {
             $(form).append($(form).find("div.col-sm-6:first").html()).find("div.modal-body").remove();
             $(form).find("div.modal-footer").remove();
             $(form).append("<div class=\"footer\"><div class=\"cell delete\"><div class=\"cancel btn btn-danger btn-xs\">Cancel</div><div id=\"id_add_sg_rule\" onclick='conveyorEditPlanRes.addSGRuleForSG()' class=\"add-rule btn btn-danger btn-xs\">Add</div></div></div>");
-            $("#resource_info_box div.footer").after($(form).prop("outerHTML"));
+            if($('.conveyor-overview').length) {
+              $('.modal.edit-plan-res .modal-body').append($(form).prop("outerHTML"));
+            } else {
+              $("#resource_info_box div.footer").after($(form).prop("outerHTML"));
+            }
             $("#id_rule_menu").trigger('change', $("#id_rule_menu").children().eq(1));
           }
           return false;
@@ -384,5 +392,30 @@ var conveyorEditPlanRes = {
         $("form#create_security_group_rule_form").remove();
     }
     return false;
+  },
+  overviewPopResEditModal: function (resType, resId, data) {
+    var hideModal = function (modal) {
+      $(modal).removeAttr('style').removeClass('in').removeClass('ng-scope').find('.modal-body').html('');
+      $(modal).parent().find('.modal-backdrop').remove();
+      $(modal).remove();
+    };
+    conveyorResources.prefixCss = '.modal.edit-plan-res';
+    var modal = horizon.modals.create(gettext('Edit Plan Resource: ' + resType.split('::')[2]), '', gettext('Save'));
+    $(modal).parent().append('<div class="modal-backdrop  in"></div>');
+    $(modal)
+      .css({'top': '0px', 'display': 'block'})
+      .addClass('edit-plan-res')
+      .addClass('in')
+      .addClass('ng-scope')
+      .attr({'data-backdrop': 'static', 'aria-hidden': false})
+      .find('.modal-body')
+      .html(data).find('a.closeTopologyBalloon,.footer').remove();
+    $(modal).find('.modal-footer .btn-primary').click(function () {
+      conveyorEditPlanRes.saveTableInfo();
+      hideModal(modal);
+    });
+    $(modal).find('.modal-footer .cancel, .modal-header .close').click(function () {
+      hideModal(modal);
+    });
   }
 };

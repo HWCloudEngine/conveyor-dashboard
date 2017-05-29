@@ -21,9 +21,10 @@ $(function () {
 
   function conveyorSavePlan(modal) {
     var savePlanForm = $(modal).find('#save_plan_form');
-    var clonePlanForm = $('#clone_plan_form');
-    if(clonePlanForm.length) {
-      $(savePlanForm).find('[name=resources]').val($(clonePlanForm).find('[name=update_resource]').val());
+    var migratePlanForm = $('#migrate_plan_form');
+    var updateResourcesField = $('[name=update_resource]');
+    if(updateResourcesField.length && !migratePlanForm.length) {
+      $(savePlanForm).find('[name=resources]').val($(updateResourcesField).val());
     }
   }
 

@@ -60,11 +60,6 @@ var depsTreeTableAndCallTopo = function () {
       });
     }
     $("#plan_deps").treeTable();
+    $(plan_deps_table).removeClass('hide');
   }
 };
-
-$(function () {
-  "use strict";
-
-  depsTreeTableAndCallTopo();
-});

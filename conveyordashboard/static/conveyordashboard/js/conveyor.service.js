@@ -28,17 +28,6 @@ var conveyorService = {
     return result;
   },
 
-  updatePlanResource: function (plan_id, data) {
-    var result = true;
-    $.ajaxSetup({async: false});
-    $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
-    $.post(WEBROOT + '/conveyor/plans/' + plan_id + '/update_resource', data).error(function () {
-      horizon.alert('error', gettext("Update plan failed"));
-      result = false;
-    });
-    return result;
-  },
-
   updatePlanResourceForFrontend: function (plan_id, data) {
     var result = null;
     $.ajaxSetup({async: false});

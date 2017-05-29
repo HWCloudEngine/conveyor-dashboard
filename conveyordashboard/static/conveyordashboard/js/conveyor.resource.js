@@ -204,6 +204,7 @@ var conveyorResources = {
       protocol: {type: fieldTypes.slt}
     }
   },
+  prefixCss: 'div#resource_info_box',
   processs: function (resType, resId) {
     var self = this;
     var data = {};
@@ -299,7 +300,7 @@ var conveyorResources = {
     return false;
   },
   getMetaTableData: function (field, dstDict) {
-    var metaTable = $('div#resource_info_box table#' + field + 's');
+    var metaTable = $(this.prefixCss + ' table#' + field + 's');
     if(metaTable.length == 0) {
       return false;
     }

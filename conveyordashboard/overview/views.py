@@ -119,7 +119,7 @@ class IndexView(views.HorizonTemplateView):
                 self.request,
                 topo_tables.trans_plan_deps(plan.original_dependencies),
                 plan_id=plan.plan_id,
-                plan_type=plan.plan_type)
+                plan_type=plan_type)
             context['plan_deps_table'] = plan_deps_table.render()
             context['d3_data'] = d3_data
         return context
