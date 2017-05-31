@@ -21,7 +21,7 @@
         {%for az in azs%}<option value="{{az.zoneName}}" {%ifequal availability_zone az.zoneName %}selected="selected"{%endifequal%}>{{az.zoneName}}</option>{%endfor%}
       </select>
     </div>
-    <div class="right"><a class="btn btn-default btn-sm ajax-modal btn-clone" {% if plan %} href="{% url "horizon:conveyor:plans:destination" plan.plan_id %}" {% endif %}>Clone</a></div>
+    <div class="right"><a class="btn btn-default btn-sm ajax-modal btn-clone" {% if plan %} href="{% url "horizon:conveyor:plans:destination" plan.plan_id %}" {% endif %}>{% trans "Clone" %}</a></div>
   </div>
   {% if plan %}
     <div>

@@ -1,0 +1,1286 @@
+# dengshaolin <drngsl@qq.com>, 2017. #zanata
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-05-31 08:38+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: cgroups/panel.py:23 cgroups/views.py:28
+msgid "Consistency Groups"
+msgstr "一致性组"
+
+#: cgroups/tables.py:56
+msgctxt "Current status of Consistency Group"
+msgid "Available"
+msgstr "可用"
+
+#: cgroups/tables.py:58
+msgctxt "Current status of Consistency Group"
+msgid "In-use"
+msgstr "正在使用"
+
+#: cgroups/tables.py:60
+msgctxt "Current status of Consistency Group"
+msgid "Error"
+msgstr "错误"
+
+#: cgroups/tables.py:64 instances/tables.py:138 overview/tables.py:65
+#: templates/plans/overview_items/flavor.html:2
+#: templates/plans/overview_items/floatingip.html:2
+#: templates/plans/overview_items/keypair.html:2
+#: templates/plans/overview_items/port.html:2
+#: templates/plans/overview_items/router.html:2
+#: templates/plans/overview_items/routerinterface.html:2
+#: templates/plans/overview_items/securitygroup.html:2
+#: templates/plans/overview_items/server.html:2
+#: templates/plans/overview_items/subnet.html:3
+#: templates/plans/overview_items/volume.html:2
+#: templates/plans/overview_items/volumetype.html:2
+#: templates/plans/res_detail/net.html:4
+#: templates/plans/res_detail/pool.html:4
+#: templates/plans/res_detail/subnet.html:4
+#: templates/plans/res_detail/vip.html:4
+#: templates/plans/res_detail/volume.html:5 topology/tables.py:217
+msgid "Name"
+msgstr "名称"
+
+#: cgroups/tables.py:67 templates/plans/res_detail/volume.html:16
+msgid "Description"
+msgstr "描述"
+
+#: cgroups/tables.py:70 instances/tables.py:150 stacks/tables.py:152
+msgid "Status"
+msgstr "状态"
+
+#: cgroups/tables.py:75 instances/tables.py:155
+#: templates/plans/overview_items/keypair.html:8
+#: templates/plans/overview_items/server.html:6
+#: templates/plans/overview_items/volume.html:6
+#: templates/plans/res_detail/server.html:5
+msgid "Availability Zone"
+msgstr "可用区域"
+
+#: cgroups/tables.py:77
+msgid "Volume Type(s)"
+msgstr "卷类型"
+
+#: cgroups/tables.py:84
+msgid "Volume Consistency Groups"
+msgstr "卷一致性组"
+
+#: cgroups/views.py:36
+msgid "Unable to retrieve "
+msgstr "无法检索"
+
+#: common/actions.py:34 common/actions.py:71
+msgid "Create Clone Plan"
+msgstr "创建克隆计划"
+
+#: common/actions.py:37 plans/tables.py:87
+msgid "Execute clone plan"
+msgstr "执行克隆计划"
+
+#: common/actions.py:55 common/actions.py:81
+msgid "Create Migrate Plan"
+msgstr "创建迁移计划"
+
+#: common/actions.py:58 plans/tables.py:106
+msgid "Execute migrate plan"
+msgstr "执行迁移计划"
+
+#: common/actions.py:75
+msgid "Create clone plan with selecting multi-resources"
+msgstr "选择多个资源来创建克隆计划"
+
+#: common/actions.py:85
+msgid "Create migrate plan with selecting multi-resources"
+msgstr "选择多个资源来创建迁移计划"
+
+#: floating_ips/panel.py:23 floating_ips/tables.py:47 floating_ips/views.py:27
+msgid "Floating IPs"
+msgstr "浮动IP"
+
+#: floating_ips/tables.py:35 instances/tables.py:142
+msgid "IP Address"
+msgstr "IP地址"
+
+#: floating_ips/tables.py:38
+msgid "Mapped Fixed IP Address"
+msgstr "已映射固定 IP 地址"
+
+#: floating_ips/tables.py:40
+msgid "Pool"
+msgstr "池"
+
+#: floating_ips/views.py:35
+msgid "Unable to retrieve floating IP addresses."
+msgstr "无法检索浮动 IP 地址。"
+
+#: instances/panel.py:23 instances/tables.py:170 instances/views.py:32
+msgid "Instances"
+msgstr "实例"
+
+#: instances/tables.py:49
+#, python-format
+msgid "%s GB"
+msgstr "%s GB"
+
+#: instances/tables.py:59
+msgid "Not available"
+msgstr "不可用"
+
+#: instances/tables.py:90
+msgid "Unable to retrieve flavor information "
+msgstr "无法检索flavor信息"
+
+#: instances/tables.py:98
+msgid "Unable to retrieve Network information "
+msgstr "无法检索网络信息"
+
+#: instances/tables.py:110
+msgid "Instance Name"
+msgstr "实例名称"
+
+#: instances/tables.py:111
+msgid "Status ="
+msgstr "状态 ="
+
+#: instances/tables.py:112
+msgid "Image ID ="
+msgstr "映像标识 ="
+
+#: instances/tables.py:113
+msgid "Flavor ID ="
+msgstr "flavor 标识 ="
+
+#: instances/tables.py:140
+msgid "Image Name"
+msgstr "映像名称"
+
+#: instances/tables.py:145 templates/plans/overview_items/volume.html:10
+#: templates/plans/res_detail/volume.html:11
+msgid "Size"
+msgstr "大小"
+
+#: instances/tables.py:157
+msgid "Task"
+msgstr "任务"
+
+#: instances/tables.py:164
+msgid "Power State"
+msgstr "电源状态"
+
+#: instances/views.py:49
+msgid "Unable to retrieve instances."
+msgstr "无法检索实例。"
+
+#: loadbalancers/panel.py:23
+msgid "Load Balancers"
+msgstr "负载均衡"
+
+#: loadbalancers/tables.py:35 loadbalancers/tabs.py:28
+msgid "Pools"
+msgstr "池"
+
+#: loadbalancers/tabs.py:50
+msgid "Unable to retrieve pools list."
+msgstr "无法检索池列表。"
+
+#: loadbalancers/views.py:24
+msgid "Load Balancer"
+msgstr "负载均衡器"
+
+#: networks/panel.py:23 networks/tables.py:45 networks/views.py:27
+#: templates/plans/res_detail/net.html:24
+msgid "Networks"
+msgstr "网络"
+
+#: networks/views.py:36
+msgid "Unable to retrieve network list."
+msgstr "无法检索网络列表。"
+
+#: overview/panel.py:23 overview/views.py:51 plans/tabs.py:52
+#: templates/overview/index.html:4
+msgid "Overview"
+msgstr "概况"
+
+#: overview/tables.py:57
+msgid "Actions"
+msgstr "动作"
+
+#: overview/tables.py:63
+msgid "Project ID"
+msgstr "项目标识"
+
+#: overview/tables.py:66 topology/tables.py:220
+msgid "Resource Type"
+msgstr "资源类型"
+
+#: overview/tables.py:71
+msgid "Resource"
+msgstr "资源"
+
+#: overview/views.py:65
+msgid "Unable to retrieve availability zone."
+msgstr "无法检索可用区域。"
+
+#: overview/views.py:87 plans/views.py:79
+msgid "Unable to retrieve plan list."
+msgstr "无法检索计划列表。"
+
+#: overview/views.py:111
+msgid "Create plan fialed."
+msgstr "床架计划失败"
+
+#: overview/views.py:133
+msgid "Unable to retrieve instances list."
+msgstr "无法检索实例列表。"
+
+#: plans/forms.py:42
+msgid "Plan File"
+msgstr "计划文件"
+
+#: plans/forms.py:55
+#, python-format
+msgid "Successfully imported plan: %s"
+msgstr "成功导入计划：%s"
+
+#: plans/forms.py:59
+msgid "Unable to import plan."
+msgstr "无法导入计划"
+
+#: plans/forms.py:155
+msgid "Target Availability Zone"
+msgstr "目标可用区域"
+
+#: plans/forms.py:157 plans/forms.py:251 templates/plans/_destination.html:7
+#: templates/plans/_save.html:4
+msgid "Clone System Volume"
+msgstr "克隆系统卷"
+
+#: plans/forms.py:159 plans/forms.py:253 templates/plans/_destination.html:9
+#: templates/plans/_save.html:6 templates/plans/res_detail/volume.html:48
+msgid "Copy Volume Data"
+msgstr "拷贝卷数据"
+
+#: plans/forms.py:197
+#, python-format
+msgid "Execute clone plan %s successfully."
+msgstr "执行克隆计划%s成功"
+
+#: plans/forms.py:204
+#, python-format
+msgid "Execute clone plan %s failed."
+msgstr "执行克隆计划%s失败"
+
+#: plans/forms.py:211
+#, python-format
+msgid "Execute migrate plan %s successfully."
+msgstr "执行迁移计划%s成功"
+
+#: plans/forms.py:219
+#, python-format
+msgid "Execute migrate plan %s failed."
+msgstr "执行迁移计划%s失败"
+
+#: plans/forms.py:222
+msgid "Unsupported plan type."
+msgstr "不支持的计划类型"
+
+#: plans/forms.py:277
+#, python-format
+msgid "Save plan %s failed."
+msgstr "保存计划%s失败"
+
+#: plans/forms.py:308
+#, python-format
+msgid "Update plan %s failed"
+msgstr "更新计划%s失败"
+
+#: plans/panel.py:23 plans/tables.py:251 plans/views.py:58
+#: templates/plans/index.html:4
+msgid "Plans"
+msgstr "计划"
+
+#: plans/tables.py:47
+msgid "Delete plan is not recoverable."
+msgstr "删除计划是不可恢复的"
+
+#: plans/tables.py:52
+msgid "Delete Plan"
+msgid_plural "Delete Plans"
+msgstr[0] "删除计划"
+msgstr[1] "删除计划"
+
+#: plans/tables.py:60
+msgid "Scheduled deletion of Plan"
+msgid_plural "Scheduled deletion of Plans"
+msgstr[0] "已调度删除计划"
+msgstr[1] "已调度删除计划"
+
+#: plans/tables.py:74
+msgid "Modify"
+msgstr "修改"
+
+#: plans/tables.py:84 templates/plans/_clone.html:24
+msgid "Clone"
+msgstr "克隆"
+
+msgid "clone"
+msgstr "克隆"
+
+#: plans/tables.py:103 templates/plans/_migrate.html:14
+msgid "Migrate"
+msgstr "迁移"
+
+msgid "migrate"
+msgstr "迁移"
+
+#: plans/tables.py:122 plans/views.py:400
+msgid "Import"
+msgstr "导入"
+
+#: plans/tables.py:126
+msgid "Import plan from local"
+msgstr "从本地导入计划"
+
+#: plans/tables.py:131
+msgid "Download"
+msgstr "下载"
+
+#: plans/tables.py:145
+msgid "Generate Template"
+msgid_plural "Generate Templates"
+msgstr[0] "生成模板"
+msgstr[1] "生成模板"
+
+#: plans/tables.py:153
+msgid "Generated Template"
+msgid_plural "Generated Templates"
+msgstr[0] "已生成模板"
+msgstr[1] "已生成模板"
+
+#: plans/tables.py:182
+msgctxt "Current status of plan"
+msgid "Initiating"
+msgstr "初始化中"
+
+#: plans/tables.py:183
+msgctxt "Current status of plan"
+msgid "Creating"
+msgstr "创建中"
+
+#: plans/tables.py:184
+msgctxt "Current status of plan"
+msgid "Available"
+msgstr "可用"
+
+#: plans/tables.py:185
+msgctxt "Current status of plan"
+msgid "Cloning"
+msgstr "克隆中"
+
+#: plans/tables.py:186
+msgctxt "Current status of plan"
+msgid "Migrating"
+msgstr "迁移中"
+
+#: plans/tables.py:187
+msgctxt "Current status of plan"
+msgid "Finished"
+msgstr "已完成"
+
+#: plans/tables.py:188
+msgctxt "Current status of plan"
+msgid "Deleting"
+msgstr "删除中"
+
+#: plans/tables.py:189
+msgctxt "Current status of plan"
+msgid "Deleted"
+msgstr "已删除"
+
+#: plans/tables.py:190
+msgctxt "Current status of plan"
+msgid "Expired"
+msgstr "已过期"
+
+#: plans/tables.py:191
+msgctxt "Current status of plan"
+msgid "Error"
+msgstr "错误"
+
+#: plans/tables.py:193
+msgctxt "Current status of plan"
+msgid "Error Deleting"
+msgstr "错误删除"
+
+#: plans/tables.py:199
+msgctxt "Task status of plan"
+msgid "Deploying"
+msgstr "部署中"
+
+#: plans/tables.py:200
+msgctxt "Task status of plan"
+msgid "Finished"
+msgstr "已完成"
+
+#: plans/tables.py:201
+msgctxt "Task status of plan"
+msgid "Failed"
+msgstr "失败"
+
+#: plans/tables.py:222
+msgid "Plan Id"
+msgstr "计划标识"
+
+#: plans/tables.py:223
+msgid "Plan Name"
+msgstr "计划名称"
+
+#: plans/tables.py:225 templates/plans/_detail_overview.html:10
+msgid "Plan Type"
+msgstr "计划类型"
+
+#: plans/tables.py:227
+msgid "Time since created"
+msgstr "创建以来的时间"
+
+#: plans/tables.py:232 templates/plans/_detail_overview.html:14
+msgid "Expire Time"
+msgstr "过期时间"
+
+#: plans/tables.py:235 templates/plans/_detail_overview.html:16
+msgid "Plan Status"
+msgstr "计划状态"
+
+#: plans/tables.py:240
+msgid "Task Status"
+msgstr "任务状态"
+
+#: plans/tabs.py:69
+msgid "Topology"
+msgstr "拓扑"
+
+#: plans/views.py:98
+#：msgid "Plan Details: {{ plan_id }}"
+#：msgstr ""
+
+#: plans/views.py:147
+#, python-format
+msgid "Clone Plan %s"
+msgstr "克隆计划%s"
+
+#: plans/views.py:191
+msgid "Create plan failed."
+msgstr "创建克隆计划失败"
+
+#: plans/views.py:201 plans/views.py:291 plans/views.py:385
+msgid "Unable to retrieve plan details."
+msgstr "无法检索计划详情"
+
+#: plans/views.py:225 templates/plans/migrate.html:3
+msgid "Migrate Plan"
+msgstr "迁移计划"
+
+#: plans/views.py:242
+#, python-format
+msgid "Migrate Plan %s"
+msgstr "迁移计划%s"
+
+#: plans/views.py:282
+msgid "Query string is not a correct format."
+msgstr "查询字符串格式错误。"
+
+#: plans/views.py:295
+msgid "Query string does not contain either plan_id or res ids."
+msgstr "查询字符串既不包含计划ID也不包含资源ID。"
+
+#: plans/views.py:316 templates/plans/save.html:3
+msgid "Save Plan"
+msgstr "保存计划"
+
+#: plans/views.py:318 plans/views.py:320 plans/views.py:354
+#: templates/plans/_clone.html:23 templates/plans/_migrate.html:13
+#: templates/plans/res_detail/floatingip.html:21
+#: templates/plans/res_detail/healthmonitor.html:31
+#: templates/plans/res_detail/keypair.html:18
+#: templates/plans/res_detail/listener.html:19
+#: templates/plans/res_detail/net.html:36
+#: templates/plans/res_detail/pool.html:38
+#: templates/plans/res_detail/poolmember.html:20
+#: templates/plans/res_detail/port.html:15
+#: templates/plans/res_detail/securitygroup.html:33
+#: templates/plans/res_detail/server.html:22
+#: templates/plans/res_detail/subnet.html:29
+#: templates/plans/res_detail/vip.html:21
+#: templates/plans/res_detail/volume.html:55
+#: templates/plans/res_detail/volumetype.html:17
+msgid "Save"
+msgstr "保存"
+
+#: plans/views.py:333 plans/views.py:448
+msgid "Unable to retrieve plan information."
+msgstr "无法检索计划信息。"
+
+#: plans/views.py:351 plans/views.py:357 templates/plans/modify.html:3
+msgid "Modify Plan"
+msgstr "修改计划"
+
+#: plans/views.py:397 plans/views.py:403
+msgid "Import Plan"
+msgstr "导入计划"
+
+#: plans/views.py:423
+msgid "Unable to export plan."
+msgstr "无法导出计划"
+
+#: plans/views.py:455 plans/views.py:456
+#, python-format
+msgid "%s Destination"
+msgstr "%s目标"
+
+#: security_groups/panel.py:23 security_groups/tables.py:35
+#: security_groups/views.py:26
+#: templates/plans/res_detail/securitygroup.html:19
+msgid "Security Groups"
+msgstr "安全组"
+
+#: security_groups/views.py:34 topology/views.py:84
+msgid "Unable to retrieve security groups."
+msgstr "无法检索安全组"
+
+#: stacks/panel.py:23 stacks/tables.py:160 stacks/views.py:28
+msgid "Stacks"
+msgstr "栈"
+
+#: stacks/tables.py:75
+msgctxt "current status of stack"
+msgid "Init In Progress"
+msgstr "正在初始化"
+
+#: stacks/tables.py:77
+msgctxt "current status of stack"
+msgid "Init Complete"
+msgstr "初始化完成"
+
+#: stacks/tables.py:79
+msgctxt "current status of stack"
+msgid "Init Failed"
+msgstr "初始化失败"
+
+#: stacks/tables.py:81
+msgctxt "current status of stack"
+msgid "Create In Progress"
+msgstr "正在创建"
+
+#: stacks/tables.py:83
+msgctxt "current status of stack"
+msgid "Create Complete"
+msgstr "创建完成"
+
+#: stacks/tables.py:85
+msgctxt "current status of stack"
+msgid "Create Failed"
+msgstr "创建失败"
+
+#: stacks/tables.py:87
+msgctxt "current status of stack"
+msgid "Delete In Progress"
+msgstr "正在删除"
+
+#: stacks/tables.py:89
+msgctxt "current status of stack"
+msgid "Delete Complete"
+msgstr "删除完成"
+
+#: stacks/tables.py:91
+msgctxt "current status of stack"
+msgid "Delete Failed"
+msgstr "删除失败"
+
+#: stacks/tables.py:93
+msgctxt "current status of stack"
+msgid "Update In Progress"
+msgstr "正在更新"
+
+#: stacks/tables.py:95
+msgctxt "current status of stack"
+msgid "Update Complete"
+msgstr "更新成功"
+
+#: stacks/tables.py:97
+msgctxt "current status of stack"
+msgid "Update Failed"
+msgstr "更新失败"
+
+#: stacks/tables.py:99
+msgctxt "current status of stack"
+msgid "Rollback In Progress"
+msgstr "正在回滚"
+
+#: stacks/tables.py:101
+msgctxt "current status of stack"
+msgid "Rollback Complete"
+msgstr "回滚成功"
+
+#: stacks/tables.py:103
+msgctxt "current status of stack"
+msgid "Rollback Failed"
+msgstr "回滚失败"
+
+#: stacks/tables.py:105
+msgctxt "current status of stack"
+msgid "Suspend In Progress"
+msgstr "正在挂起"
+
+#: stacks/tables.py:107
+msgctxt "current status of stack"
+msgid "Suspend Complete"
+msgstr "挂起成功"
+
+#: stacks/tables.py:109
+msgctxt "current status of stack"
+msgid "Suspend Failed"
+msgstr "挂起失败"
+
+#: stacks/tables.py:111
+msgctxt "current status of stack"
+msgid "Resume In Progress"
+msgstr "正在恢复中"
+
+#: stacks/tables.py:113
+msgctxt "current status of stack"
+msgid "Resume Complete"
+msgstr "恢复完成"
+
+#: stacks/tables.py:115
+msgctxt "current status of stack"
+msgid "Resume Failed"
+msgstr "恢复失败"
+
+#: stacks/tables.py:117
+msgctxt "current status of stack"
+msgid "Adopt In Progress"
+msgstr "正在启用配置"
+
+#: stacks/tables.py:119
+msgctxt "current status of stack"
+msgid "Adopt Complete"
+msgstr "配置成功"
+
+#: stacks/tables.py:121
+msgctxt "current status of stack"
+msgid "Adopt Failed"
+msgstr "配置失败"
+
+#: stacks/tables.py:123
+msgctxt "current status of stack"
+msgid "Snapshot In Progress"
+msgstr "正在生成快照"
+
+#: stacks/tables.py:125
+msgctxt "current status of stack"
+msgid "Snapshot Complete"
+msgstr "快照完成"
+
+#: stacks/tables.py:127
+msgctxt "current status of stack"
+msgid "Snapshot Failed"
+msgstr "快照失败"
+
+#: stacks/tables.py:129
+msgctxt "current status of stack"
+msgid "Check In Progress"
+msgstr "正在检查"
+
+#: stacks/tables.py:131
+msgctxt "current status of stack"
+msgid "Check Complete"
+msgstr "检查成功"
+
+#: stacks/tables.py:133
+msgctxt "current status of stack"
+msgid "Check Failed"
+msgstr "检查失败"
+
+#: stacks/tables.py:136
+msgid "Stack Name"
+msgstr "堆栈名称"
+
+#: stacks/tables.py:139
+msgid "Created"
+msgstr "已创建"
+
+#: stacks/tables.py:143
+msgid "Updated"
+msgstr "已更新"
+
+#: stacks/views.py:37
+msgid "Unable to retrieve stacks."
+msgstr "无法检索堆栈。"
+
+#: templates/plans/_clone.html:22 templates/plans/_migrate.html:12
+#: templates/plans/res_detail/floatingip.html:20
+#: templates/plans/res_detail/healthmonitor.html:30
+#: templates/plans/res_detail/keypair.html:17
+#: templates/plans/res_detail/listener.html:18
+#: templates/plans/res_detail/net.html:35
+#: templates/plans/res_detail/pool.html:37
+#: templates/plans/res_detail/poolmember.html:19
+#: templates/plans/res_detail/port.html:14
+#: templates/plans/res_detail/securitygroup.html:32
+#: templates/plans/res_detail/server.html:21
+#: templates/plans/res_detail/subnet.html:28
+#: templates/plans/res_detail/vip.html:20
+#: templates/plans/res_detail/volume.html:54
+#: templates/plans/res_detail/volumetype.html:16
+msgid "Cancel"
+msgstr "取消"
+
+#: templates/plans/_destination.html:5 templates/plans/_destination.html:13
+#: templates/plans/_import.html:6
+msgid "Description:"
+msgstr "描述："
+
+#: templates/plans/_destination.html:6
+msgid ""
+"Clone All the resources of this plan to another specific availability zone."
+msgstr "克隆当前计划的所有资源到指定的可用区域"
+
+#: templates/plans/_destination.html:8 templates/plans/_save.html:5
+msgid "Clone the instances with it's bootable volume together."
+msgstr "克隆虚拟机不同克隆虚拟机的系统卷"
+
+#: templates/plans/_destination.html:10 templates/plans/_save.html:7
+msgid "Clone volume and copy the volume data together."
+msgstr "卷数据随卷一起拷贝"
+
+#: templates/plans/_destination.html:14
+msgid ""
+"Migrate All the resources of this plan to another specific availability zone."
+msgstr "迁移当前计划的所有资源到指定的可用区域"
+
+#: templates/plans/_detail_overview.html:3
+msgid "Plan Overview"
+msgstr "计划概况"
+
+#: templates/plans/_detail_overview.html:5
+msgid "Information"
+msgstr "信息"
+
+#: templates/plans/_detail_overview.html:8
+msgid "ID"
+msgstr "标识"
+
+#: templates/plans/_detail_overview.html:12
+msgid "Create Time"
+msgstr "创建时间"
+
+#: templates/plans/_detail_overview.html:23
+msgid "Original Resources"
+msgstr "原始资源"
+
+#: templates/plans/_detail_overview.html:24
+#: templates/plans/_detail_overview.html:37
+msgid " open"
+msgstr "打开"
+
+#: templates/plans/_detail_overview.html:24
+#: templates/plans/_detail_overview.html:37
+#: templates/plans/overview_items/itemtmpl.html:4
+msgid "Close"
+msgstr "关闭"
+
+#: templates/plans/_detail_overview.html:36
+msgid "Updated Resources"
+msgstr "更新后资源"
+
+#: templates/plans/_import.html:7
+msgid "Import Plan from local plan template file."
+msgstr "从本地计划模板文件导入计划"
+
+#: templates/plans/clone.html:3
+msgid "Plan Topology"
+msgstr "计划拓扑"
+
+#: templates/plans/destination.html:3
+msgid "Destination"
+msgstr "描述"
+
+#: templates/plans/detail.html:3
+msgid "Plan Details"
+msgstr "计划详情"
+
+#: templates/plans/import.html:3
+msgid "Import Clone Plan"
+msgstr "导入克隆计划"
+
+#: templates/plans/overview_items/flavor.html:4
+#: templates/plans/overview_items/floatingip.html:4
+#: templates/plans/overview_items/router.html:4
+#: templates/plans/overview_items/routerinterface.html:4
+#: templates/plans/overview_items/volumetype.html:4
+#: templates/plans/res_detail/flavor.html:6
+msgid "RAM"
+msgstr "内存"
+
+#: templates/plans/overview_items/flavor.html:6
+#: templates/plans/overview_items/floatingip.html:6
+#: templates/plans/overview_items/router.html:6
+#: templates/plans/overview_items/routerinterface.html:6
+#: templates/plans/overview_items/volumetype.html:6
+msgid "VCPUS"
+msgstr "VCPUS"
+
+#: templates/plans/overview_items/flavor.html:8
+#: templates/plans/overview_items/floatingip.html:8
+#: templates/plans/overview_items/router.html:8
+#: templates/plans/overview_items/routerinterface.html:8
+#: templates/plans/overview_items/volumetype.html:8
+#: templates/plans/res_detail/flavor.html:8
+msgid "Disk"
+msgstr "磁盘"
+
+#: templates/plans/overview_items/flavor.html:10
+#: templates/plans/overview_items/floatingip.html:10
+#: templates/plans/overview_items/router.html:10
+#: templates/plans/overview_items/routerinterface.html:10
+#: templates/plans/overview_items/volumetype.html:10
+msgid "Is Public"
+msgstr "是否公有"
+
+#: templates/plans/overview_items/flavor.html:12
+#: templates/plans/overview_items/floatingip.html:12
+#: templates/plans/overview_items/router.html:12
+#: templates/plans/overview_items/routerinterface.html:12
+#: templates/plans/overview_items/volumetype.html:12
+msgid "RXTX Factor"
+msgstr "RX/TX 因子"
+
+#: templates/plans/overview_items/itemtmpl.html:4
+msgid "open"
+msgstr "打开"
+
+#: templates/plans/overview_items/keypair.html:4
+#: templates/plans/overview_items/server.html:4
+msgid "Id"
+msgstr "标识"
+
+#: templates/plans/overview_items/keypair.html:6
+#: templates/plans/overview_items/volume.html:4
+#: templates/plans/res_detail/healthmonitor.html:7 topology/forms.py:120
+#: topology/forms.py:127
+msgid "Type"
+msgstr "类型"
+
+#: templates/plans/overview_items/port.html:4
+msgid "Fixed Ips"
+msgstr "固定IP"
+
+#: templates/plans/overview_items/securitygroup.html:4
+#: templates/plans/res_detail/securitygroup.html:6
+msgid "Rules"
+msgstr "规则"
+
+#: templates/plans/overview_items/securitygroup.html:9 topology/forms.py:53
+#: topology/forms.py:58 topology/forms.py:59 topology/forms.py:60
+#: topology/forms.py:61 topology/forms.py:62 topology/forms.py:63
+#: topology/forms.py:64 topology/tables.py:148
+msgid "Direction"
+msgstr "方向"
+
+#: templates/plans/overview_items/securitygroup.html:10 topology/forms.py:177
+#: topology/forms.py:185 topology/tables.py:151
+msgid "Ether Type"
+msgstr "以太网类型"
+
+#: templates/plans/overview_items/securitygroup.html:11
+msgid "IP Protocal"
+msgstr "IP协议"
+
+#: templates/plans/overview_items/securitygroup.html:12 topology/forms.py:79
+#: topology/tables.py:156
+msgid "Port Range"
+msgstr "端口范围"
+
+#: templates/plans/overview_items/securitygroup.html:13 topology/tables.py:158
+msgid "Remote IP Prefix"
+msgstr "远程 IP 前缀"
+
+#: templates/plans/overview_items/securitygroup.html:14
+msgid "Remote Security Group"
+msgstr "远端安全组"
+
+#: templates/plans/overview_items/subnet.html:5
+msgid "Network Id"
+msgstr "网络标识"
+
+#: templates/plans/overview_items/subnet.html:7 topology/forms.py:143
+#: topology/forms.py:155 topology/forms.py:166
+msgid "CIDR"
+msgstr "CIDR"
+
+#: templates/plans/overview_items/subnet.html:9
+msgid "Gateway"
+msgstr "网关"
+
+#: templates/plans/overview_items/subnet.html:11
+#: templates/plans/res_detail/subnet.html:9
+msgid "Allocation Pools"
+msgstr "分配池"
+
+#: templates/plans/overview_items/subnet.html:19
+msgid "IP Version"
+msgstr "IP版本"
+
+#: templates/plans/overview_items/subnet.html:22
+msgid "DNS Nameservers"
+msgstr "DNS 名称服务器"
+
+#: templates/plans/overview_items/subnet.html:25
+#: templates/plans/res_detail/subnet.html:11
+msgid "Host Routes"
+msgstr "主机路由"
+
+#: templates/plans/overview_items/subnet.html:28
+msgid "Enable dhcp"
+msgstr "启用 DHCP"
+
+#: templates/plans/overview_items/volume.html:8
+msgid "Volume Type"
+msgstr "卷类型"
+
+#: templates/plans/res_detail/flavor.html:7
+msgid "VCPUs"
+msgstr "VCPUs"
+
+#: templates/plans/res_detail/floatingip.html:6
+msgid "Floating Ip"
+msgstr "浮动IP"
+
+#: templates/plans/res_detail/healthmonitor.html:4
+msgid "Delay"
+msgstr "延迟"
+
+#: templates/plans/res_detail/healthmonitor.html:5
+msgid "Max Retries"
+msgstr "最大尝试次数"
+
+#: templates/plans/res_detail/healthmonitor.html:17
+msgid "Timeout"
+msgstr "超时"
+
+#: templates/plans/res_detail/healthmonitor.html:19
+#: templates/plans/res_detail/net.html:12
+#: templates/plans/res_detail/pool.html:26
+#: templates/plans/res_detail/poolmember.html:8
+#: templates/plans/res_detail/vip.html:9
+msgid "Admin State"
+msgstr "管理状态"
+
+#: templates/plans/res_detail/keypair.html:5
+msgid "Key Pair"
+msgstr "密钥对"
+
+#: templates/plans/res_detail/listener.html:4
+#: templates/plans/res_detail/poolmember.html:4
+#: templates/plans/res_detail/vip.html:7
+msgid "Protocol Port"
+msgstr "协议端口"
+
+#: templates/plans/res_detail/listener.html:6
+#: templates/plans/res_detail/pool.html:6
+msgid "Protocol"
+msgstr "协议"
+
+#: templates/plans/res_detail/net.html:5
+msgid "Router External"
+msgstr "外部路由"
+
+#: templates/plans/res_detail/net.html:7
+msgid "Segmentation ID"
+msgstr "分段标识"
+
+#: templates/plans/res_detail/net.html:8
+msgid "Network Type"
+msgstr "网络类型"
+
+#: templates/plans/res_detail/net.html:10
+msgid "Physical Network"
+msgstr "物理网络"
+
+#: templates/plans/res_detail/pool.html:16
+msgid "Load Balancing Method"
+msgstr "负载均衡方式"
+
+#: templates/plans/res_detail/poolmember.html:5
+#: templates/plans/res_detail/vip.html:6
+msgid "Address"
+msgstr "地址"
+
+#: templates/plans/res_detail/poolmember.html:6
+msgid "Weight"
+msgstr "权重"
+
+#: templates/plans/res_detail/port.html:6 topology/forms.py:78
+#: topology/forms.py:87 topology/forms.py:94
+msgid "Port"
+msgstr "端口"
+
+#: templates/plans/res_detail/qos.html:5
+msgid "Specs"
+msgstr "规范"
+
+#: templates/plans/res_detail/server.html:9
+msgid "Script Data"
+msgstr "脚本数据"
+
+#: templates/plans/res_detail/server.html:14
+#: templates/plans/res_detail/volume.html:22 topology/tables.py:70
+msgid "Metadata"
+msgstr "元数据"
+
+#: templates/plans/res_detail/subnet.html:5
+msgid "Network Address"
+msgstr "网地址"
+
+#: templates/plans/res_detail/subnet.html:6
+msgid "Gateway IP"
+msgstr "网关IP"
+
+#: templates/plans/res_detail/subnet.html:10
+msgid "DNS Name Servers"
+msgstr "DNS名称服务器"
+
+#: templates/plans/res_detail/subnet.html:15
+msgid "Subnets"
+msgstr "子网"
+
+#: templates/plans/res_detail/vip.html:5
+msgid "Connection Limit"
+msgstr "连接限制"
+
+#: templates/plans/res_detail/volume.html:35 volumes/panel.py:23
+#: volumes/tables.py:68 volumes/views.py:27
+msgid "Volumes"
+msgstr "卷"
+
+#: templates/plans/res_detail/volumetype.html:6
+msgid "Volume Types"
+msgstr "卷类型"
+
+#: templates/topology/add_rule.html:3 topology/tables.py:77
+#: topology/views.py:51 topology/views.py:58
+msgid "Add Rule"
+msgstr "添加规则"
+
+#: topology/forms.py:32
+msgid "Not a valid ICMP type"
+msgstr "不是一个合法的ICMP类型"
+
+#: topology/forms.py:39
+msgid "Not a valid ICMP code"
+msgstr "不是一个合法的ICMP编码"
+
+#: topology/forms.py:44
+msgid "Rule"
+msgstr "规则"
+
+#: topology/forms.py:68 topology/forms.py:74 topology/tables.py:153
+msgid "IP Protocol"
+msgstr "IP协议"
+
+#: topology/forms.py:69
+msgid "Enter an integer value between 0 and 255."
+msgstr "输入大于 0 且小于 255 的整数值"
+
+#: topology/forms.py:77 topology/forms.py:84 topology/forms.py:85
+msgid "Open Port"
+msgstr "打开端口"
+
+#: topology/forms.py:89 topology/forms.py:100 topology/forms.py:111
+msgid "Enter an integer value between 1 and 65535."
+msgstr "输入大于 1 且小于 65535 的整数值"
+
+#: topology/forms.py:98 topology/forms.py:105
+msgid "From Port"
+msgstr "起始端口号"
+
+#: topology/forms.py:109 topology/forms.py:116
+msgid "To Port"
+msgstr "终止端口号"
+
+#: topology/forms.py:131 topology/forms.py:138
+msgid "Code"
+msgstr "编码"
+
+#: topology/forms.py:142
+msgid "Remote"
+msgstr "远程"
+
+#: topology/forms.py:144 topology/forms.py:168
+msgid "Security Group"
+msgstr "安全组"
+
+#: topology/forms.py:145
+msgid ""
+"To specify an allowed IP range, select &quot;CIDR&quot;. To allow access "
+"from all members of another security group select &quot;Security Group&quot;."
+msgstr ""
+"选择 &quot;CIDR&quot; 以指定允许来访的 IP 地址范围。要允许来自另一安全组所有"
+"成员的访问，请选择 &quot;安全组&quot;。"
+
+#: topology/forms.py:158
+msgid "Classless Inter-Domain Routing (e.g. 192.168.0.0/24, or 2001:db8::/128)"
+msgstr "无类别域间路由标记（例如，192.168.0.0/24 或 2001:db8::/128）"
+
+#: topology/forms.py:173
+msgid "Security "
+msgstr "安全"
+
+#: topology/forms.py:179
+msgid "IPv4"
+msgstr "IPv4"
+
+#: topology/forms.py:180
+msgid "IPv6"
+msgstr "IPv6"
+
+#: topology/forms.py:195
+msgid "No security groups available"
+msgstr "无可用安全组"
+
+#: topology/forms.py:204
+msgid "Custom TCP Rule"
+msgstr "定制 TCP 规则"
+
+#: topology/forms.py:205
+msgid "Custom UDP Rule"
+msgstr "定制 UDP 规则"
+
+#: topology/forms.py:206
+msgid "Custom ICMP Rule"
+msgstr "定制 ICMP 规则"
+
+#: topology/forms.py:208
+msgid "Other Protocol"
+msgstr "其他协议"
+
+#: topology/forms.py:213 topology/tables.py:93
+msgid "Ingress"
+msgstr "入口"
+
+#: topology/forms.py:214 topology/tables.py:95
+msgid "Egress"
+msgstr "出口"
+
+#: topology/forms.py:233 topology/utils.py:28
+msgid "ICMP code is provided but ICMP type is missing."
+msgstr "已提供 ICMP 代码，但缺少 ICMP 类型。"
+
+#: topology/forms.py:236
+msgid "The ICMP type not in range (-1, 255)"
+msgstr "ICMP 类型不在 (-1, 255) 范围内"
+
+#: topology/forms.py:239
+msgid "The ICMP code not in range (-1, 255)"
+msgstr "ICMP 代码不在 (-1, 255) 范围内 "
+
+#: topology/forms.py:259 topology/utils.py:50
+msgid "The specified port is invalid."
+msgstr "指定端口不可用。"
+
+#: topology/forms.py:264 topology/utils.py:55
+msgid "The \"from\" port number is invalid."
+msgstr "起始端口号无效。"
+
+#: topology/forms.py:267 topology/utils.py:58
+msgid "The \"to\" port number is invalid."
+msgstr "终止端口号不合法。"
+
+#: topology/forms.py:270 topology/utils.py:61
+msgid ""
+"The \"to\" port number must be greater than or equal to the \"from\" port "
+"number."
+msgstr "结束端口号必须大于或者等于起始端口号。"
+
+#: topology/forms.py:327 topology/utils.py:114
+msgid "CIDR must be specified."
+msgstr "必须指定 CIDR。"
+
+#: topology/forms.py:360
+msgid "Unable to add rule to security group."
+msgstr "无法为安全组添加规则。"
+
+#: topology/tables.py:37 topology/views.py:55
+msgid "Add"
+msgstr "添加"
+
+#: topology/tables.py:44
+msgid "Delete"
+msgstr "删除"
+
+#: topology/tables.py:52
+msgid "Add Metadata"
+msgstr "添加元数据"
+
+#: topology/tables.py:58
+msgid "Delete Metadata"
+msgstr "删除元数据"
+
+#: topology/tables.py:64
+msgid "Key"
+msgstr "键"
+
+#: topology/tables.py:66
+msgid "Value"
+msgstr "值"
+
+#: topology/tables.py:87
+msgid "Delete Rule"
+msgstr "删除规则"
+
+#: topology/tables.py:100 topology/tables.py:123
+msgid "Any"
+msgstr "任何"
+
+#: topology/tables.py:160
+msgid "Remote Security"
+msgstr "远端安全组"
+
+#: topology/tables.py:171
+msgid "Security Group Rules"
+msgstr "安全组规则"
+
+#: topology/tables.py:178
+msgid "Local Topology"
+msgstr "局部拓扑"
+
+#: topology/tables.py:196
+msgid "Global Topology"
+msgstr "全局拓扑"
+
+#: topology/tables.py:218
+msgid "Resource ID"
+msgstr "资源标识"
+
+#: topology/tables.py:228
+msgid "Plan Deps"
+msgstr "计划依赖"
+
+#: topology/views.py:91
+#, python-format
+msgid "%s (current)"
+msgstr "%s（当前）"
+
+#: volumes/views.py:35
+msgid "Unable to retrieve volumes list."
+msgstr "无法检索卷列表"
