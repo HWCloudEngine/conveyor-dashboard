@@ -47,7 +47,6 @@ LOG = logging.getLogger(__name__)
 
 def trans_plan_deps(plan_deps):
     deps = []
-    LOG.info("plan_deps: %s", plan_deps)
     for dep in plan_deps.values():
         deps.append(models.Resource(dep))
     return deps
@@ -128,12 +127,10 @@ class DetailView(tabs.TabView):
 class CloneView(forms.ModalFormView):
     form_class = plan_forms.ClonePlan
     form_id = 'clone_plan_form'
-    modal_header = _("Plan Topology")
     template_name = 'plans/clone.html'
     context_object_name = 'plan'
     submit_url = reverse_lazy("horizon:conveyor:plans:clone")
     success_url = reverse_lazy("horizon:conveyor:plans:index")
-    page_title = _("Plan Topology")
 
     def _init_data(self):
         plan = getattr(self, 'plan', None)
@@ -147,7 +144,7 @@ class CloneView(forms.ModalFormView):
         plan = getattr(self, 'plan')
         is_original = getattr(self, 'is_original')
 
-        self.modal_header = 'Clone Plan ' + plan.plan_id
+        self.modal_header = _('Clone Plan %s') % plan.plan_id
         base_url = reverse('horizon:conveyor:plans:clone')
         params = urlencode({'plan_id': plan.plan_id})
         self.submit_url = '?'.join([base_url, params])
@@ -205,7 +202,8 @@ class CloneView(forms.ModalFormView):
                 exceptions.handle(self.request, msg)
                 return None, None
 
-        msg = _("Query string does not contain either plan_id or res ids.")
+        msg = _("Query string does not contain either plan_id or "
+                "resource ids.")
         exceptions.handle(self.request, msg)
 
     def get_initial(self):
@@ -241,7 +239,7 @@ class MigrateView(forms.ModalFormView):
         plan = getattr(self, 'plan')
         is_original = getattr(self, 'is_original')
 
-        self.modal_header = 'Migrate Plan ' + plan.plan_id
+        self.modal_header = _('Migrate Plan %s') % plan.plan_id
         base_url = reverse('horizon:conveyor:plans:migrate')
         params = urlencode({'plan_id': plan.plan_id})
         self.submit_url = '?'.join([base_url, params])
@@ -332,7 +330,7 @@ class SaveView(forms.ModalFormView):
         try:
             return api.plan_get(self.request, kwargs['plan_id'])
         except Exception:
-            msg = _("Get plan failed.")
+            msg = _("Unable to retrieve plan information.")
             exceptions.handle(self.request, msg)
 
     def get_initial(self):
@@ -356,7 +354,7 @@ class ModifyView(forms.ModalFormView):
     submit_label = _("Save")
     submit_url = reverse_lazy("horizon:conveyor:plans:modify")
     success_url = reverse_lazy("horizon:conveyor:plans:index")
-    page_title = _("Modify")
+    page_title = _("Modify Plan")
 
     def get_context_data(self, **kwargs):
         context = super(ModifyView, self).get_context_data(**kwargs)
@@ -447,15 +445,15 @@ class DestinationView(forms.ModalFormView):
         try:
             return api.plan_get(self.request, kwargs['plan_id'])
         except Exception:
-            msg = _("Get plan failed.")
+            msg = _("Unable to retrieve plan information.")
             exceptions.handle(self.request, msg)
 
     def get_context_data(self, **kwargs):
         plan = self.get_object(**self.kwargs)
         plan_type = plan.plan_type
         self.submit_label = plan_type.title()
-        self.modal_header = '%s Destination' % self.submit_label
-        self.page_title = '%s Destination' % self.submit_label
+        self.modal_header = _('%s Destination') % self.submit_label
+        self.page_title = _('%s Destination') % self.submit_label
         submit_url = 'horizon:conveyor:plans:destination'
         self.submit_url = reverse(submit_url,
                                   kwargs={'plan_id': plan.plan_id})

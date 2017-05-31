@@ -14,6 +14,7 @@
 from django.core.urlresolvers import reverse
 from django.template.defaultfilters import title  # noqa
 from django.utils.http import urlencode
+from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ungettext_lazy
 
@@ -43,7 +44,7 @@ class DeletePlan(tables.DeleteAction):
     name = 'delete'
     classes = ("btn-default", "btn-danger",)
     icon = 'remove'
-    help_text = _("Delete clone plan is not recoverable.")
+    help_text = _("Delete plan is not recoverable.")
 
     @staticmethod
     def action_present(count):
@@ -56,13 +57,12 @@ class DeletePlan(tables.DeleteAction):
     @staticmethod
     def action_past(count):
         return ungettext_lazy(
-            u"Scheduled deleting of Clone Plan",
-            u"Scheduled deleting of Clone Plan",
+            u"Scheduled deletion of Plan",
+            u"Scheduled deletion of Plans",
             count
         )
 
-    def allowed(self, request, instance=None):
-        """Allow terminate action if instance not currently being deleted."""
+    def allowed(self, request, plan=None):
         return True
 
     def action(self, request, obj_id):
@@ -123,7 +123,7 @@ class ImportPlan(tables.LinkAction):
     url = 'horizon:conveyor:plans:import'
     icon = 'upload'
     classes = ("ajax-modal", "btn-default", "btn-import")
-    help_text = _("Import clone plan from local")
+    help_text = _("Import plan from local")
 
 
 class ExportPlan(tables.LinkAction):
@@ -150,8 +150,8 @@ class GenerateTemplate(tables.BatchAction):
     @staticmethod
     def action_past(count):
         return ungettext_lazy(
-            u"Generate Template",
-            u"Generate Templates",
+            u"Generated Template",
+            u"Generated Templates",
             count
         )
 
@@ -179,25 +179,26 @@ class PlanFilterAction(tables.FilterAction):
 
 
 STATUS_DISPLAY_CHOICES = (
-    ("initiating", "Initiating"),
-    ("creating", "Creating"),
-    ("available", "Available"),
-    ("cloning", "Cloning"),
-    ("migrating", "Migrating"),
-    ("finished", "Finished"),
-    ("deleting", "Deleting"),
-    ("deleted", "Deleted"),
-    ("expired", "Expired"),
-    ("error", "Error"),
-    ("error_deleting", "error_deleting")
+    ("initiating", pgettext_lazy("Current status of plan", u"Initiating")),
+    ("creating", pgettext_lazy("Current status of plan", u"Creating")),
+    ("available", pgettext_lazy("Current status of plan", u"Available")),
+    ("cloning", pgettext_lazy("Current status of plan", u"Cloning")),
+    ("migrating", pgettext_lazy("Current status of plan", u"Migrating")),
+    ("finished", pgettext_lazy("Current status of plan", u"Finished")),
+    ("deleting", pgettext_lazy("Current status of plan", u"Deleting")),
+    ("deleted", pgettext_lazy("Current status of plan", u"Deleted")),
+    ("expired", pgettext_lazy("Current status of plan", u"Expired")),
+    ("error", pgettext_lazy("Current status of plan", u"Error")),
+    ("error_deleting",
+     pgettext_lazy("Current status of plan", u"Error Deleting")),
 )
 
 TASK_DISPLAY_NONE = "None"
 
 TASK_DISPLAY_CHOICES = (
-    ("deploying", "Deploying"),
-    ("finished", "Finished"),
-    ("failed", "Failed"),
+    ("deploying", pgettext_lazy("Task status of plan", u"Deploying")),
+    ("finished", pgettext_lazy("Task status of plan", u"Finished")),
+    ("failed", pgettext_lazy("Task status of plan", u"Failed")),
 )
 
 

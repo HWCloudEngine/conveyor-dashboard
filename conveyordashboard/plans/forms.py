@@ -50,14 +50,13 @@ class ImportPlan(forms.SelfHandlingForm):
         try:
             plan_file = request.FILES['plan_upload']
             template = plan_file.read()
-            LOG.info("Plan template\n{0}".format(template))
             api.create_plan_by_template(request, template)
             messages.success(request,
                              _("Successfully imported plan: %s")
                              % data['plan_upload'].name)
             return True
         except Exception:
-            msg = _("Unable to import clone plan.")
+            msg = _("Unable to import plan.")
             redirect = reverse('horizon:conveyor:plans:index')
             exceptions.handle(request, msg, redirect=redirect)
 
