@@ -119,6 +119,11 @@ def resource_detail_from_plan(request, id, plan_id, is_original=True):
         .get_resource_detail_from_plan(id, plan_id, is_original)
 
 
+def get_plan_resource_availability_zones(request, plan_id):
+    return api.conveyorclient(request).plans\
+        .get_plan_resource_availability_zones(plan_id)
+
+
 def export_clone_template(request, plan_id, sys_clone=False, copy_data=True):
     return api.conveyorclient(request).clones.export_clone_template(
         plan_id, sys_clone=sys_clone, copy_data=copy_data)

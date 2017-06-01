@@ -448,6 +448,16 @@ class DestinationView(forms.ModalFormView):
             msg = _("Unable to retrieve plan information.")
             exceptions.handle(self.request, msg)
 
+    @memoized.memoized_method
+    def get_plan_res_azs(self, plan):
+        try:
+            plan_res_azs = api.get_plan_resource_availability_zones(
+                self.request, plan)
+            return plan_res_azs or []
+        except Exception:
+            msg = _("Unable to retrieve availability_zone for plan resource.")
+            exceptions.handle(self.request, msg)
+
     def get_context_data(self, **kwargs):
         plan = self.get_object(**self.kwargs)
         plan_type = plan.plan_type
@@ -460,16 +470,31 @@ class DestinationView(forms.ModalFormView):
         context = super(DestinationView,
                         self).get_context_data(**kwargs)
         context['plan_type'] = plan_type
+
+        res_azs = self.get_plan_res_azs(plan.plan_id)
+        context['destination_az'] = plan_tables.DestinationAZTable(
+            self.request,
+            [models.Resource({'availability_zone': az}) for az in res_azs])
+        try:
+            availability_zones = api.availability_zone_list(self.request)
+        except Exception:
+            availability_zones = []
+            exceptions.handle(self.request,
+                              _("Unable to retrieve availability zones."))
+        context['availability_zones'] = json.dumps(
+            [az.zoneName for az in availability_zones])
         return context
 
     def get_initial(self):
-        initial = super(DestinationView, self).get_initial()
         plan = self.get_object(**self.kwargs)
-        initial.update({'plan_id': self.kwargs['plan_id'],
-                        'plan_type': plan.plan_type,
-                        'sys_clone': getattr(plan, 'sys_clone', False),
-                        'copy_data': getattr(plan, 'copy_data', True)})
-        return initial
+        res_azs = self.get_plan_res_azs(plan.plan_id)
+        return {
+            'plan_id': self.kwargs['plan_id'],
+            'plan_type': plan.plan_type,
+            'sys_clone': getattr(plan, 'sys_clone', False),
+            'copy_data': getattr(plan, 'copy_data', True),
+            'src_azs': res_azs
+        }
 
 
 class CancelView(View):
