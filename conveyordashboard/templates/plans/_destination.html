@@ -1,16 +1,36 @@
 {% extends "horizon/common/_modal_form.html" %}
 {% load i18n %}
-{% block modal-body-right %}
-  {% ifequal plan_type 'clone' %}
-    <h4>{% trans "Description:" %}</h4>
-    <p>{% trans "Clone All the resources of this plan to another specific availability zone." %}</p>
-    <h4>{% trans "Clone System Volume" %}</h4>
-    <p>{% trans "Clone the instances with it's bootable volume together." %}</p>
-    <h4>{% trans "Copy Volume Data" %}</h4>
-    <p>{% trans "Clone volume and copy the volume data together." %}</p>
-  {% endifequal %}
-  {% ifequal plan_type 'migrate' %}
-    <h4>{% trans "Description:" %}</h4>
-    <p>{% trans "Migrate All the resources of this plan to another specific availability zone." %}</p>
-  {% endifequal %}
+
+{% block modal-body %}
+  <h4>{% trans "Target Availability Zone" %}</h4>
+  {{ destination_az.render }}
+  <fieldset>
+    {% include "horizon/common/_form_fields.html" %}
+  </fieldset>
+  <script>
+    $(function () {
+      "use strict";
+      var sltEle = $('<select class="form-control"></select>');
+      $.each({{ availability_zones|safe }}, function (index, az) {
+        $(sltEle).append('<option value=' + az + '>' + az + '</option>')
+      });
+      $.each($('table#destination_az tbody tr'), function () {
+        $(this).find('td').eq(2).empty().append($(sltEle).clone());
+      });
+    });
+  </script>
 {% endblock %}
+{#{% block modal-body-right %}#}
+{#  {% ifequal plan_type 'clone' %}#}
+{#    <h4>{% trans "Description:" %}</h4>#}
+{#    <p>{% trans "Clone All the resources of this plan to another specific availability zone." %}</p>#}
+{#    <h4>{% trans "Clone System Volume" %}</h4>#}
+{#    <p>{% trans "Clone the instances with it's bootable volume together." %}</p>#}
+{#    <h4>{% trans "Copy Volume Data" %}</h4>#}
+{#    <p>{% trans "Clone volume and copy the volume data together." %}</p>#}
+{#  {% endifequal %}#}
+{#  {% ifequal plan_type 'migrate' %}#}
+{#    <h4>{% trans "Description:" %}</h4>#}
+{#    <p>{% trans "Migrate All the resources of this plan to another specific availability zone." %}</p>#}
+{#  {% endifequal %}#}
+{#{% endblock %}#}
