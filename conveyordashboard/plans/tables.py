@@ -11,6 +11,7 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+
 from django.core.urlresolvers import reverse
 from django.template.defaultfilters import title  # noqa
 from django.utils.http import urlencode
@@ -24,6 +25,7 @@ from horizon.utils import filters
 from oslo_log import log as logging
 
 from conveyordashboard.api import api
+from conveyordashboard.common import utils
 
 LOG = logging.getLogger(__name__)
 
@@ -243,7 +245,6 @@ class PlansTable(tables.DataTable):
     task_status = tables.Column("task_status",
                                 verbose_name=_("Task Status"),
                                 status=True,
-                                empty_value=TASK_DISPLAY_NONE,
                                 status_choices=TASK_STATUS_CHOICES,
                                 display_choices=TASK_DISPLAY_CHOICES)
 
@@ -258,3 +259,23 @@ class PlansTable(tables.DataTable):
         row_class = UpdateRow
         row_actions = (ClonePlan, MigratePlan, GenerateTemplate,
                        ModifyPlan, ExportPlan, DeletePlan,)
+
+
+def get_src_az_md5(availability_zone):
+    return utils.md5(availability_zone.availability_zone)
+
+
+class DestinationAZTable(tables.DataTable):
+    src_az = tables.Column('availability_zone',
+                           verbose_name=_("Source Availability Zone"))
+    src_az_md5 = tables.Column(get_src_az_md5, hidden=True)
+    dst_az = tables.Column('destination_availability_zone',
+                           empty_value="",
+                           verbose_name=_("Destination Availability Zone"))
+
+    def get_object_id(self, obj):
+        return obj.availability_zone
+
+    class Meta(object):
+        name = 'destination_az'
+        verbose_name = _("Destination Availability Zone")

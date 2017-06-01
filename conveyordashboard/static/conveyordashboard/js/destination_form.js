@@ -27,10 +27,19 @@ $(function () {
       $(destinationForm).find('[name=resources]').val($(updateResourcesField).val());
     }
 
-    if (!$(destinationForm).find('.modal-body .col-sm-6').eq(0).find('.form-group').length) {
-      $(destinationForm).find('.modal-body .col-sm-6').eq(1).remove();
-      $(destinationForm).find('.modal-body').append("<p>" + gettext("No need to provide 'availability_zone', 'sys_clone' or 'copy_data' option") + "</p>")
+    if (!$(destinationForm).find('.modal-body').find('.form-group').length) {
+      $(destinationForm).find('.modal-body').empty().append("<p>" + gettext("No need to provide 'availability_zone', 'sys_clone' or 'copy_data' option") + "</p>")
     }
+
+    $('table#destination_az tbody tr').each(function () {
+      var srcAZ = $(this).attr('data-object-id');
+      var srcAZmd5 = $(this).find('td').eq(1).text();
+      var destinationAZ = $(this).find('td').eq(2).find('select');
+      $(destinationForm).find('[md5=' + srcAZmd5 + ']').val($(destinationAZ).val());
+      $(destinationAZ).change(function () {
+        $(destinationForm).find('[md5=' + srcAZmd5 + ']').val($(this).val());
+      });
+    });
   }
 
   var destinationFormModal = $('#destination_form').parent();
