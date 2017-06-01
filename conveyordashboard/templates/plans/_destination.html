@@ -1,12 +1,21 @@
 {% extends "horizon/common/_modal_form.html" %}
 {% load i18n %}
-{% block modal-body-right %}
-  <h4>{% trans "Description:" %}</h4>
-  {% ifequal plan_type 'clone' %}
-    <p>{% trans "Clone action will clone all rsources of this plan to another specific availability zone." %}</p>
-  {% endifequal %}
-  {% ifequal plan_type 'migrate' %}
-    <p>{% trans "Migrate action will migrate all rsources of this plan to another specific availability zone." %}</p>
-  {% endifequal %}
-  <p>{% trans "you are able to provide options like 'clone sys volume' or 'copy volume data' for this plan." %}</p>
+{% block modal-body %}
+  <h4>{% trans "Target Availability Zone" %}</h4>
+  {{ destination_az.render }}
+  <fieldset>
+    {% include "horizon/common/_form_fields.html" %}
+  </fieldset>
+  <script>
+    $(function () {
+      "use strict";
+      var sltEle = $('<select class="form-control"></select>');
+      $.each({{ availability_zones|safe }}, function (index, az) {
+        $(sltEle).append('<option value=' + az + '>' + az + '</option>')
+      });
+      $.each($('table#destination_az tbody tr'), function () {
+        $(this).find('td').eq(2).empty().append($(sltEle).clone());
+      });
+    });
+  </script>
 {% endblock %}
