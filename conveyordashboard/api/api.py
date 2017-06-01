@@ -98,6 +98,11 @@ def create_plan_by_template(request, template):
     return api.conveyorclient(request).plans.create_plan_by_template(template)
 
 
+def list_plan_resource_availability_zones(request, plan_id):
+    return api.conveyorclient(request).plans\
+        .list_plan_resource_availability_zones(plan_id)
+
+
 def resource_list(request, resource_type, search_opts=None):
     if not search_opts:
         search_opts = {}

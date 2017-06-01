@@ -408,6 +408,8 @@ var conveyorEditPlanRes = {
       .addClass('in')
       .addClass('ng-scope')
       .attr({'data-backdrop': 'static', 'aria-hidden': false})
+      .find('.modal-content')
+      .draggable()
       .find('.modal-body')
       .html(data).find('a.closeTopologyBalloon,.footer').remove();
     $(modal).find('.modal-footer .btn-primary').click(function () {

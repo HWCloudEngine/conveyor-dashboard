@@ -29,6 +29,7 @@ from oslo_log import log as logging
 
 from conveyordashboard.api import api
 from conveyordashboard.common import constants
+from conveyordashboard.common import utils
 
 TAG_RES_TYPE = constants.TAG_RES_TYPE
 
@@ -149,8 +150,8 @@ def update_plan_resource(request, plan_id, resources):
 class Destination(forms.SelfHandlingForm):
     plan_id = forms.CharField(widget=forms.HiddenInput)
     plan_type = forms.CharField(widget=forms.HiddenInput)
-    az = forms.ChoiceField(label=_("Target Availability Zone"),
-                           required=True)
+    # az = forms.ChoiceField(label=_("Target Availability Zone"),
+    #                        required=True)
     sys_clone = forms.BooleanField(label=_("Clone System Volume"),
                                    required=False)
     copy_data = forms.BooleanField(label=_("Copy Volume Data"),
@@ -164,29 +165,34 @@ class Destination(forms.SelfHandlingForm):
             self.fields['resources'] = forms.CharField(
                 widget=forms.HiddenInput, initial='[]')
 
-        try:
-            zones = api.availability_zone_list(request)
-        except Exception:
-            zones = []
-            exceptions.handle(request,
-                              _("Unable to retrieve availability zones."))
-
-        zone_list = [(zone.zoneName, zone.zoneName)
-                     for zone in zones if zone.zoneState['available']]
-
-        self.fields["az"].choices = dict.fromkeys(zone_list).keys()
+        src_azs = initial.get('src_azs')
+        for src_az in src_azs:
+            self.fields[src_az] = forms.CharField(
+                widget=forms.HiddenInput(attrs={'md5': utils.md5(src_az)}),
+                initial=src_az)
 
     def handle(self, request, data):
         plan_id = data['plan_id']
         plan_type = data['plan_type']
-        zone_name = data['az']
+
+        destination = {}
+        try:
+            src_azs = api.list_plan_resource_availability_zones(request,
+                                                                plan_id)
+            for src_az in src_azs:
+                destination[src_az] = data[src_az]
+        except Exception as e:
+            LOG.error("Get destination map from data %s failed. %s", data, e)
+            exceptions.handle(request,
+                              _("Get destination map failed."),
+                              redirect=reverse('horizon:conveyor:plans:index'))
 
         if plan_type == constants.CLONE:
             try:
                 resources = json.loads(data['resources'])
                 update_plan_resource(request, plan_id, resources)
 
-                api.export_template_and_clone(request, plan_id, zone_name,
+                api.export_template_and_clone(request, plan_id, destination,
                                               sys_clone=data['sys_clone'],
                                               copy_data=data['copy_data'])
                 messages.success(
@@ -202,7 +208,7 @@ class Destination(forms.SelfHandlingForm):
                                   redirect=redirect)
         elif plan_type == constants.MIGRATE:
             try:
-                api.migrate(request, plan_id, zone_name)
+                api.migrate(request, plan_id, destination)
                 messages.success(
                     request,
                     _('Execute migrate plan %s successfully.') % plan_id)

@@ -26,6 +26,15 @@ $(function () {
     if (updateResourcesField.length && !migratePlanForm.length) {
       $(destinationForm).find('[name=resources]').val($(updateResourcesField).val());
     }
+    $('table#destination_az tbody tr').each(function () {
+      var srcAZ = $(this).attr('data-object-id');
+      var srcAZmd5 = $(this).find('td').eq(1).text();
+      var destinationAZ = $(this).find('td').eq(2).find('select');
+      $(destinationForm).find('[md5=' + srcAZmd5 + ']').val($(destinationAZ).val());
+      $(destinationAZ).change(function () {
+        $(destinationForm).find('[md5=' + srcAZmd5 + ']').val($(this).val());
+      });
+    });
   }
 
   var destinationFormModal = $('#destination_form').parent();
