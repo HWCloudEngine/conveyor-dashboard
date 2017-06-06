@@ -1,11 +1,9 @@
 {% load i18n %}
 <dt>{% trans "Name" %}</dt>
-<dd>{{ propers.name }}</dd>
-<dt>{% trans "Type" %}</dt>
-<dd>{{ propers.type }}</dd>
+<dd>{{ propers.name|default:_("None") }}</dd>
 <dt>{% trans "Availability Zone" %}</dt>
 <dd>{{ propers.availability_zone }}</dd>
 <dt>{% trans "Volume Type" %}</dt>
-<dd>{{ propers.volume_type }}</dd>
+<dd>{{ propers.volume_type|default:_("Unknown") }}</dd>
 <dt>{% trans "Size" %}</dt>
 <dd>{{ propers.size }} GB</dd>

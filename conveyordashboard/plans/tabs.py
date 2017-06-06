@@ -11,14 +11,17 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-import uuid
+
+import collections
 
 from django.template import loader
 from django.utils.translation import ugettext_lazy as _
 from horizon import tabs
 from oslo_log import log as logging
+from oslo_utils import uuidutils
 
 from conveyordashboard.api import api
+from conveyordashboard.common import constants
 from conveyordashboard.topology import topology
 
 OVERVIEW_ITEMS_DIR = 'plans/overview_items/'
@@ -27,9 +30,30 @@ OVERVIEW_ITEMTEMPL_PATH = 'plans/overview_items/itemtmpl.html'
 LOG = logging.getLogger(__name__)
 
 
-def render_overview_html(plan):
-    overview_html = {}
-    for template_name, data in plan.items():
+def render_overview_html(request, res_dict):
+    try:
+        res_dict = sorted(res_dict.iteritems(), key=lambda i: i[1]['type'])
+    except Exception:
+        pass
+
+    overview_html = collections.OrderedDict()
+    for (template_name, data) in res_dict:
+        res_type = data['type']
+        if res_type == constants.NEUTRON_NET:
+            value_specs = data['properties'].get('value_specs', {})
+            if value_specs:
+                for k, v in value_specs.items():
+                    if ':' in k:
+                        nk = k.replace(':', '__')
+                        value_specs[nk] = v
+        elif res_type == constants.NEUTRON_FLOATINGIP:
+            fid = data['id']
+            fip = api.resource_detail(request,
+                                      constants.NEUTRON_FLOATINGIP, fid)
+            LOG.info('fip: %s', fip)
+            data['properties']['floating_ip_address'] \
+                = fip['floating_ip_address']
+
         type = data['type']
         image = api.get_resource_image(type)
         template_html = ''.join([OVERVIEW_ITEMS_DIR,
@@ -37,14 +61,16 @@ def render_overview_html(plan):
                                  '.html'])
         params = data.pop('parameters')
         propers = data.pop('properties')
+        context = {
+            'template_html': template_html,
+            'image': image,
+            'type': uuidutils.generate_uuid(),
+            'data': data,
+            'params': params,
+            'propers': propers
+        }
         overview_html[template_name] = \
-            loader.render_to_string(OVERVIEW_ITEMTEMPL_PATH,
-                                    {'template_html': template_html,
-                                     'image': image,
-                                     'type': str(uuid.uuid4()),
-                                     'data': data,
-                                     'params': params,
-                                     'propers': propers})
+            loader.render_to_string(OVERVIEW_ITEMTEMPL_PATH, context)
     return overview_html
 
 
@@ -61,8 +87,8 @@ class OverviewTab(tabs.Tab):
         plan.updated_resources = updated_resources_html
         return {"plan": plan}
 
-    def get_render_html(self, plan):
-        return render_overview_html(plan)
+    def get_render_html(self, res_dict):
+        return render_overview_html(self.request, res_dict)
 
 
 class TopologyTab(tabs.Tab):
