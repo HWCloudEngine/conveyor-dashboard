@@ -1,5 +1,7 @@
 {% load i18n %}
 <dt>{% trans "Name" %}</dt>
-<dd>{{ propers.name }}</dd>
+<dd>{{ propers.name|default:_("None") }}</dd>
 <dt>{% trans "Fixed Ips" %}</dt>
-<dd>{{ propers.fixed_ips.ip_address }}</dd>
+{% for ip in propers.fixed_ips %}
+  <dd>{{ ip.ip_address }}</dd>
+{% endfor %}

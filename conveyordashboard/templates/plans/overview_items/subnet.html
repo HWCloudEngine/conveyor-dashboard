@@ -1,29 +1,27 @@
 {% load i18n %}
 {% load static %}
 <dt>{% trans "Name" %}</dt>
-<dd>{{ propers.name }}</dd>
-<dt>{% trans "Network Id" %}</dt>
-<dd>{{ propers.network_id }}</dd>
+<dd>{{ propers.name|default:_("None") }}</dd>
 <dt>{% trans "CIDR" %}</dt>
 <dd>{{ propers.cidr }}</dd>
 <dt>{% trans "Gateway" %}</dt>
 <dd>{{ propers.gateway_ip }}</dd>
 <dt>{% trans "Allocation Pools" %}</dt>
 <dd id="allocation_pools">
-	<ul>
-		{% for item in propers.allocation_pools %}
-		<li>Start: {{ item.start }}&nbsp;&nbsp;End: {{ item.end }}</li>
-		{% endfor %}
-	</ul>
+  <ul>
+    {% for item in propers.allocation_pools %}
+      <li>{% trans "Start:" %} {{ item.start }}&nbsp;&nbsp;{% trans "End:" %} {{ item.end }}</li>
+    {% endfor %}
+  </ul>
 </dd>
 <dt>{% trans "IP Version" %}</dt>
 <dd>{{ propers.ip_version }}</dd>
 {% if propers.dns_nameservers %}
-<dt>{% trans "DNS Nameservers" %}</dt>
-<dd>{{ propers.dns_nameservers }}</dd>
+  <dt>{% trans "DNS Nameservers" %}</dt>
+  <dd>{{ propers.dns_nameservers }}</dd>
 {% endif %} {% if propers.host_routes %}
-<dt>{% trans "Host Routes" %}</dt>
-<dd>{{ propers.host_routes }}</dd>
+  <dt>{% trans "Host Routes" %}</dt>
+  <dd>{{ propers.host_routes }}</dd>
 {% endif %}
 <dt>{% trans "Enable dhcp" %}</dt>
 <dd>{{ propers.enable_dhcp }}</dd>
