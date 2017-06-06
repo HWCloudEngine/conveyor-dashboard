@@ -4,10 +4,8 @@ img.plan_item_img {
 	margin-right: 10px;
 }
 
-div.close_open_item {
-	float: right;
-	cursor: pointer;
-	margin-top: 8px;
+.drc {
+	margin-left: 20px;
 }
 
 .hide {

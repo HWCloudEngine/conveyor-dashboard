@@ -1,8 +1,7 @@
 {% load i18n %}
 <h5>
-	<img class="plan_item_img" src="{{ image }}" />{{ data.name }}
-	<div class="close_open_item" item_id="{{ type }}" open_text="{% trans "open" %}" close_text="{% trans "Close" %}">{% trans "Close" %}</div>
+  <span class="fa fa-chevron-down" item_id="{{ type }}"></span>
+  <img class="plan_item_img" src="{{ image }}"/>{{ data.name }}
 </h5>
-<hr class="header_rule" />
-<dl class="dl-horizontal" id="{{ type }}">{% include template_html %}
-</dl>
+<hr class="header_rule"/>
+<dl class="dl-horizontal" id="{{ type }}">{% include template_html %}</dl>
