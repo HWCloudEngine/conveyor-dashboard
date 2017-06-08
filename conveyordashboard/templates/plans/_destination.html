@@ -1,16 +1,12 @@
 {% extends "horizon/common/_modal_form.html" %}
 {% load i18n %}
 {% block modal-body-right %}
+  <h4>{% trans "Description:" %}</h4>
   {% ifequal plan_type 'clone' %}
-    <h4>{% trans "Description:" %}</h4>
-    <p>{% trans "Clone All the resources of this plan to another specific availability zone." %}</p>
-    <h4>{% trans "Clone System Volume" %}</h4>
-    <p>{% trans "Clone the instances with it's bootable volume together." %}</p>
-    <h4>{% trans "Copy Volume Data" %}</h4>
-    <p>{% trans "Clone volume and copy the volume data together." %}</p>
+    <p>{% trans "Clone action will clone all rsources of this plan to another specific availability zone." %}</p>
   {% endifequal %}
   {% ifequal plan_type 'migrate' %}
-    <h4>{% trans "Description:" %}</h4>
-    <p>{% trans "Migrate All the resources of this plan to another specific availability zone." %}</p>
+    <p>{% trans "Migrate action will migrate all rsources of this plan to another specific availability zone." %}</p>
   {% endifequal %}
+  <p>{% trans "For a plan, you may be able to provide options like 'clone sys volume' or 'copy volume data'" %}</p>
 {% endblock %}

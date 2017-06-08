@@ -18,6 +18,7 @@ from horizon import exceptions
 from horizon import tables
 
 from conveyordashboard.api import api
+from conveyordashboard.common import resource_state
 from conveyordashboard.networks import tables as network_tables
 
 
@@ -31,6 +32,7 @@ class IndexView(tables.DataTableView):
         try:
             nets = api.net_list_for_tenant(self.request,
                                            self.request.user.tenant_id)
+            nets = filter(self._status_filter, nets)
         except Exception:
             exceptions.handle(self.request,
                               _("Unable to retrieve network list."))
@@ -45,3 +47,8 @@ class IndexView(tables.DataTableView):
                 if filter_field and filter_string:
                     filters[filter_field] = filter_string
         return filters
+
+    def _status_filter(self, net):
+        status = net.status
+        return status in resource_state.NET_CLONE_STATE \
+            or status in resource_state.NET_MIGRATE_STATE

@@ -205,7 +205,7 @@ var conveyorResources = {
     }
   },
   prefixCss: 'div#resource_info_box',
-  processs: function (resType, resId) {
+  process: function (resType, resId) {
     var self = this;
     var data = {};
     var needPosted = false;

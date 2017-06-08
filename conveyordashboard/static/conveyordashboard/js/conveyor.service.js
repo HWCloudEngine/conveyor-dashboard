@@ -32,7 +32,7 @@ var conveyorService = {
     var result = null;
     $.ajaxSetup({async: false});
     $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
-    $.post(WEBROOT + '/conveyor/plans/' + plan_id + '/update', data)
+    $.post(WEBROOT + '/conveyor/plans/' + plan_id + '/update_plan_resource', data)
       .success(function (data) {
         result = data;
       })

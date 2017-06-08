@@ -323,25 +323,31 @@ class SaveView(forms.ModalFormView):
         submit_url = 'horizon:conveyor:plans:save'
         self.submit_url = reverse(submit_url,
                                   kwargs={'plan_id': self.kwargs['plan_id']})
-        return super(SaveView, self).get_context_data(**kwargs)
+        context = super(SaveView, self).get_context_data(**kwargs)
+        context.update(self._show_filter(self.get_object()))
+        return context
 
     @memoized.memoized_method
     def get_object(self, *args, **kwargs):
         try:
-            return api.plan_get(self.request, kwargs['plan_id'])
-        except Exception:
+            return api.plan_get(self.request, self.kwargs['plan_id'])
+        except Exception as e:
+            LOG.error("Unable to retrieve plan information. %s", e)
             msg = _("Unable to retrieve plan information.")
             exceptions.handle(self.request, msg)
 
+    @memoized.memoized_method
+    def _show_filter(self, plan):
+        return show_filter(plan)
+
     def get_initial(self):
-        initial = super(SaveView, self).get_initial()
         plan = self.get_object(**self.kwargs)
-        args = {
+        initial = {
             'plan_id': self.kwargs['plan_id'],
             'sys_clone': getattr(plan, 'sys_clone', False),
             'copy_data': getattr(plan, 'copy_data', True)
         }
-        initial.update(args)
+        initial.update(show_filter(plan))
         return initial
 
 
@@ -433,6 +439,33 @@ class ExportView(View):
         return response
 
 
+def show_filter(plan):
+    plan_type = plan.plan_type
+    if plan_type == constants.CLONE:
+        deps = plan.updated_dependencies
+    else:
+        deps = plan.original_dependencies
+
+    show_az = False
+    show_sys_clone = False
+    show_copy_data = False
+    for dep in deps.values():
+        res_type = dep['type']
+        if res_type == constants.NOVA_SERVER:
+            show_az = True
+            show_sys_clone = True
+            show_copy_data = True
+            break
+        elif res_type == constants.CINDER_VOLUME:
+            show_az = True
+            show_copy_data = True
+    return {
+        'show_az': show_az,
+        'show_sys_clone': show_sys_clone,
+        'show_copy_data': show_copy_data
+    }
+
+
 class DestinationView(forms.ModalFormView):
     form_class = plan_forms.Destination
     form_id = 'destination_form'
@@ -443,10 +476,14 @@ class DestinationView(forms.ModalFormView):
     @memoized.memoized_method
     def get_object(self, *args, **kwargs):
         try:
-            return api.plan_get(self.request, kwargs['plan_id'])
+            return api.plan_get(self.request, self.kwargs['plan_id'])
         except Exception:
             msg = _("Unable to retrieve plan information.")
             exceptions.handle(self.request, msg)
+
+    @memoized.memoized_method
+    def _show_filter(self, plan):
+        return show_filter(plan)
 
     def get_context_data(self, **kwargs):
         plan = self.get_object(**self.kwargs)
@@ -460,15 +497,19 @@ class DestinationView(forms.ModalFormView):
         context = super(DestinationView,
                         self).get_context_data(**kwargs)
         context['plan_type'] = plan_type
+        context.update(self._show_filter(self.get_object()))
+        LOG.info("context: %s", context)
         return context
 
     def get_initial(self):
-        initial = super(DestinationView, self).get_initial()
         plan = self.get_object(**self.kwargs)
-        initial.update({'plan_id': self.kwargs['plan_id'],
-                        'plan_type': plan.plan_type,
-                        'sys_clone': getattr(plan, 'sys_clone', False),
-                        'copy_data': getattr(plan, 'copy_data', True)})
+        initial = {
+            'plan_id': self.kwargs['plan_id'],
+            'plan_type': plan.plan_type,
+            'sys_clone': getattr(plan, 'sys_clone', False),
+            'copy_data': getattr(plan, 'copy_data', True)
+        }
+        initial.update(show_filter(plan))
         return initial
 
 
@@ -480,7 +521,7 @@ class CancelView(View):
                                  content_type='application/json')
 
 
-class UpdateView(View):
+class UpdatePlanResourceView(View):
     @staticmethod
     def post(request, **kwargs):
         plan_id = kwargs['plan_id']

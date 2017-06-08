@@ -130,7 +130,7 @@ var conveyorEditPlanRes = {
       self.isUpdating = true;
       var resource_type = $(self.tag_detailinfo_div).attr("resource_type");
       var resource_id = $(self.tag_detailinfo_div).attr("resource_id");
-      var result = conveyorResources.processs(resource_type, resource_id);
+      var result = conveyorResources.process(resource_type, resource_id);
       var data = result.data;
       if(Object.keys(data).length){
         data['resource_type'] = resource_type;

@@ -76,7 +76,8 @@ class ModifyPlan(tables.LinkAction):
     classes = ("ajax-modal",)
 
     def allowed(self, request, plan):
-        return plan.plan_status in ALLOW_MODIFY_STATUS
+        return (plan.plan_type == 'clone'
+                and plan.plan_status in ALLOW_MODIFY_STATUS)
 
 
 class ClonePlan(tables.LinkAction):
@@ -217,10 +218,9 @@ class PlansTable(tables.DataTable):
     # is an ID, and correlating that at production scale using our current
     # techniques isn't practical. It can be added back in when we have names
     # returned in a practical manner by the API.
-    plan_id = tables.Column("plan_id",
-                            link="horizon:conveyor:plans:detail",
-                            verbose_name=_("Plan Id"))
-    plan_name = tables.Column("plan_name", verbose_name=_("Plan Name"))
+    plan_name = tables.Column("plan_name",
+                              link="horizon:conveyor:plans:detail",
+                              verbose_name=_("Plan Name"))
     plan_type = tables.Column("plan_type",
                               verbose_name=_("Plan Type"))
     created = tables.Column("created_at",

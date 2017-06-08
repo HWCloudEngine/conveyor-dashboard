@@ -23,8 +23,13 @@ $(function () {
     var savePlanForm = $(modal).find('#save_plan_form');
     var migratePlanForm = $('#migrate_plan_form');
     var updateResourcesField = $('[name=update_resource]');
-    if(updateResourcesField.length && !migratePlanForm.length) {
+    if (updateResourcesField.length && !migratePlanForm.length) {
       $(savePlanForm).find('[name=resources]').val($(updateResourcesField).val());
+    }
+
+    if (!$(savePlanForm).find('.modal-body .col-sm-6').eq(0).find('.form-group').length) {
+      $(savePlanForm).find('.modal-body .col-sm-6').eq(1).remove();
+      $(savePlanForm).find('.modal-body').append("<p>" + gettext("No need to provide 'sys_clone' or 'copy_data' option") + "</p>")
     }
   }
 
