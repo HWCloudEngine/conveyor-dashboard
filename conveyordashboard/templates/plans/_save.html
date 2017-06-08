@@ -1,8 +1,7 @@
 {% extends "horizon/common/_modal_form.html" %}
 {% load i18n %}
 {% block modal-body-right %}
-    <h4>{% trans "Clone System Volume" %}</h4>
-    <p>{% trans "Clone the instances with it's bootable volume together." %}</p>
-    <h4>{% trans "Copy Volume Data" %}</h4>
-    <p>{% trans "Clone volume and copy the volume data together." %}</p>
+  <h3>{% trans "Description" %}</h3>
+  <p>{% trans "Save action will save all resources that you edited." %}</p>
+  <p>{% trans "You could also provide 'sys_clone' and 'copy_data' option for this plan." %}</p>
 {% endblock %}

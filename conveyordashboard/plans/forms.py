@@ -164,31 +164,44 @@ class Destination(forms.SelfHandlingForm):
             self.fields['resources'] = forms.CharField(
                 widget=forms.HiddenInput, initial='[]')
 
-        try:
-            zones = api.availability_zone_list(request)
-        except Exception:
-            zones = []
-            exceptions.handle(request,
-                              _("Unable to retrieve availability zones."))
+        if not initial.get('show_az'):
+            del self.fields['az']
+        else:
+            try:
+                zones = api.availability_zone_list(request)
+            except Exception:
+                zones = []
+                exceptions.handle(request,
+                                  _("Unable to retrieve availability zones."))
 
-        zone_list = [(zone.zoneName, zone.zoneName)
-                     for zone in zones if zone.zoneState['available']]
+            zone_list = [(zone.zoneName, zone.zoneName)
+                         for zone in zones if zone.zoneState['available']]
 
-        self.fields["az"].choices = dict.fromkeys(zone_list).keys()
+            self.fields["az"].choices = dict.fromkeys(zone_list).keys()
+        if not initial.get('show_sys_clone'):
+            del self.fields['sys_clone']
+        if not initial.get('show_copy_data'):
+            del self.fields['copy_data']
 
     def handle(self, request, data):
         plan_id = data['plan_id']
         plan_type = data['plan_type']
-        zone_name = data['az']
+        zone_name = data.get('az', None)
 
         if plan_type == constants.CLONE:
             try:
                 resources = json.loads(data['resources'])
-                update_plan_resource(request, plan_id, resources)
+                preprocess_update_resources(resources)
+
+                kwargs = {}
+                if 'sys_clone' in data:
+                    kwargs['sys_clone'] = data['sys_clone']
+                if 'copy_data' in data:
+                    kwargs['copy_data'] = data['copy_data']
 
                 api.export_template_and_clone(request, plan_id, zone_name,
-                                              sys_clone=data['sys_clone'],
-                                              copy_data=data['copy_data'])
+                                              resources=resources,
+                                              **kwargs)
                 messages.success(
                     request,
                     _('Execute clone plan %s successfully.') % plan_id)
@@ -253,15 +266,27 @@ class SavePlan(forms.SelfHandlingForm):
     resources = forms.CharField(widget=forms.HiddenInput,
                                 initial='[]')
 
+    def __init__(self, request, *args, **kwargs):
+        super(SavePlan, self).__init__(request, *args, **kwargs)
+        initial = kwargs.get('initial', {})
+
+        if not initial.get('show_sys_clone'):
+            del self.fields['sys_clone']
+        if not initial.get('show_copy_data'):
+            del self.fields['copy_data']
+
     def handle(self, request, data):
         LOG.info("Save plan with data: %s", data)
         plan_id = data['plan_id']
         try:
             resources = json.loads(data['resources'])
             update_plan_resource(request, plan_id, resources)
-            api.export_clone_template(request, plan_id,
-                                      sys_clone=data['sys_clone'],
-                                      copy_data=data['copy_data'])
+            kwargs = {}
+            if 'sys_clone' in data:
+                kwargs['sys_clone'] = data['sys_clone']
+            if'copy_data' in data:
+                kwargs['copy_data'] = data['copy_data']
+            api.export_clone_template(request, plan_id, **kwargs)
             msg = ("Save plan %s successfully." % plan_id)
             messages.success(request, msg)
             return True
