@@ -20,15 +20,26 @@ from openstack_dashboard.dashboards.project.networks import tables \
     as net_tables
 
 from conveyordashboard.common import actions as common_actions
+from conveyordashboard.common import resource_state
 from conveyordashboard.common import constants as consts
 
 
 class CloneNetwork(common_actions.CreateClonePlan):
-    """"""
+    def allowed(self, request, net=None):
+        if not net:
+            return False
+        if net.status not in resource_state.NET_CLONE_STATE:
+            return False
+        return True
 
 
 class MigrateNetwork(common_actions.CreateMigratePlan):
-    """"""
+    def allowed(self, request, net=None):
+        if not net:
+            return False
+        if net.status not in resource_state.NET_MIGRATE_STATE:
+            return False
+        return True
 
 
 class NetworksFilterAction(tables.FilterAction):

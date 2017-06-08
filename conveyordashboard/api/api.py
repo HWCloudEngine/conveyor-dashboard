@@ -98,6 +98,11 @@ def create_plan_by_template(request, template):
     return api.conveyorclient(request).plans.create_plan_by_template(template)
 
 
+def resource_detail_from_plan(request, id, plan_id, is_original=True):
+    return api.conveyorclient(request).plans\
+        .get_resource_detail_from_plan(id, plan_id, is_original)
+
+
 def resource_list(request, resource_type, search_opts=None):
     if not search_opts:
         search_opts = {}
@@ -114,22 +119,13 @@ def resource_detail(request, res_type, res_id):
                                                                      res_id)
 
 
-def resource_detail_from_plan(request, id, plan_id, is_original=True):
-    return api.conveyorclient(request).resources\
-        .get_resource_detail_from_plan(id, plan_id, is_original)
-
-
 def export_clone_template(request, plan_id, sys_clone=False, copy_data=True):
     return api.conveyorclient(request).clones.export_clone_template(
         plan_id, sys_clone=sys_clone, copy_data=copy_data)
 
 
-def clone(request, plan_id, destination):
-    return api.conveyorclient(request).clones.clone(plan_id, destination)
-
-
 def export_template_and_clone(request, plan, destination,
-                              resources={},
+                              resources=[],
                               sys_clone=False,
                               copy_data=True):
     return api.conveyorclient(request).clones.export_template_and_clone(

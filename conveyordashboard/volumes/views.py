@@ -18,6 +18,7 @@ from horizon import exceptions
 from horizon import tables
 
 from conveyordashboard.api import api
+from conveyordashboard.common import resource_state
 from conveyordashboard.volumes import tables as volume_tables
 
 
@@ -30,10 +31,15 @@ class IndexView(tables.DataTableView):
         volumes = []
         try:
             volumes = api.volume_list(self.request)
+            volumes = filter(self._status_filter, volumes)
         except Exception:
             exceptions.handle(self.request,
                               _("Unable to retrieve volumes list."))
         return volumes
+
+    def _status_filter(self, volume):
+        return volume.status in resource_state.VOLUME_CLONE_STATE \
+               or volume.status in resource_state.VOLUME_MIGRATE_STATE
 
     def get_filters(self, filters):
         filter_action = self.table._meta._filter_action

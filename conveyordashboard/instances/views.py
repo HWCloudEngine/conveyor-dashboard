@@ -21,6 +21,7 @@ from oslo_log import log as logging
 
 from conveyordashboard.api import api
 from conveyordashboard.common import constants as consts
+from conveyordashboard.common import resource_state
 from conveyordashboard.instances import tables as inst_tables
 
 LOG = logging.getLogger(__name__)
@@ -42,6 +43,7 @@ class IndexView(tables.DataTableView):
         try:
             instances, self._more = api.server_list(self.request,
                                                     search_opts=search_opts)
+            instances = filter(self._status_filter, instances)
         except Exception:
             self._more = False
             instances = []
@@ -49,16 +51,6 @@ class IndexView(tables.DataTableView):
                               _("Unable to retrieve instances."))
 
         if instances:
-            # try:
-            #     os_api.network.servers_update_addresses(self.request,
-            #                                             instances)
-            # except Exception:
-            #     exceptions.handle(
-            #         self.request,
-            #         message=_("Unable to retrieve IP addresses "
-            #                   "from Neutron."),
-            #         ignore=True)
-
             try:
                 flavors = api.resource_list(self.request, consts.NOVA_FLAVOR)
             except Exception:
@@ -108,3 +100,7 @@ class IndexView(tables.DataTableView):
                 if filter_field and filter_string:
                     filters[filter_field] = filter_string
         return filters
+
+    def _status_filter(self, instance):
+        return instance.status in resource_state.INSTANCE_CLONE_STATE \
+               or instance.status in resource_state.INSTANCE_MIGRATE_STATE

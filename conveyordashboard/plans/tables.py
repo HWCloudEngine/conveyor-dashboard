@@ -76,7 +76,8 @@ class ModifyPlan(tables.LinkAction):
     classes = ("ajax-modal",)
 
     def allowed(self, request, plan):
-        return plan.plan_status in ALLOW_MODIFY_STATUS
+        return (plan.plan_type == 'clone'
+                and plan.plan_status in ALLOW_MODIFY_STATUS)
 
 
 class ClonePlan(tables.LinkAction):
