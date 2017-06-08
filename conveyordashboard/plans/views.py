@@ -480,7 +480,7 @@ class CancelView(View):
                                  content_type='application/json')
 
 
-class UpdateView(View):
+class UpdatePlanResourceView(View):
     @staticmethod
     def post(request, **kwargs):
         plan_id = kwargs['plan_id']

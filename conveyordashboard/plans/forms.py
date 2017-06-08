@@ -184,9 +184,10 @@ class Destination(forms.SelfHandlingForm):
         if plan_type == constants.CLONE:
             try:
                 resources = json.loads(data['resources'])
-                update_plan_resource(request, plan_id, resources)
+                preprocess_update_resources(resources)
 
                 api.export_template_and_clone(request, plan_id, zone_name,
+                                              resources=resources,
                                               sys_clone=data['sys_clone'],
                                               copy_data=data['copy_data'])
                 messages.success(

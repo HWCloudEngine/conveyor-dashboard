@@ -129,7 +129,7 @@ def clone(request, plan_id, destination):
 
 
 def export_template_and_clone(request, plan, destination,
-                              resources={},
+                              resources=[],
                               sys_clone=False,
                               copy_data=True):
     return api.conveyorclient(request).clones.export_template_and_clone(
