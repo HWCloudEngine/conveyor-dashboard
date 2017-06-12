@@ -107,7 +107,7 @@ def preprocess_update_resources(update_resources):
                 nameservers = [ns.strip()
                                for ns in res['dns_nameservers'].split('\n')
                                if ns.strip()]
-                res['dns_nameserver'] = nameservers
+                res['dns_nameservers'] = nameservers
         elif res[TAG_RES_TYPE] == constants.NEUTRON_NET:
             if 'value_specs' in res:
                 val_specs = res['value_specs']
