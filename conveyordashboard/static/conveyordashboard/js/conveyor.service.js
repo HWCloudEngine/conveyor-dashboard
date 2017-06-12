@@ -52,15 +52,15 @@ var conveyorService = {
         result = data;
       })
       .error(function () {
-      horizon.alert('error', gettext('Get detail resource failed'));
-    });
+        horizon.alert('error', gettext('Get detail resource failed'));
+      });
     return result;
   },
 
   addRuleForFrontend: function (sg_id, data) {
     var result = null;
     $.ajaxSetup({async: false});
-    $.get(WEBROOT + '/conveyor/plans/' +sg_id + '/add_rule/')
+    $.get(WEBROOT + '/conveyor/plans/secgroup/add_rule/?security_group_id=' + sg_id)
       .success(function (data) {
         result = data;
       });
@@ -71,7 +71,7 @@ var conveyorService = {
     var result = null;
     $.ajaxSetup({async: false});
     $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
-    $.post(WEBROOT + '/conveyor/plans/secgroup/' + sg_id + '/create_rule/', data)
+    $.post(WEBROOT + '/conveyor/plans/secgroup/create_rule/', data)
       .success(function (data) {
         result = data;
       })
