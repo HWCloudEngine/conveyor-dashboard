@@ -217,7 +217,7 @@ def net_list(request, search_opts=None):
 def net_list_for_tenant(request, tenant_id, search_opts=None):
     nets = net_list(request, search_opts)
     return [os_api.neutron.Network(n.__dict__) for n in nets
-            if n.tenant_id == tenant_id]
+            if n.shared or n.tenant_id == tenant_id]
 
 
 def subnet_list_for_tenant(request, tenant_id, search_opts=None):

@@ -1,22 +1,39 @@
 {% load i18n %}
 <div class="contentBody detailInfoCon" resource_id="{{ resource_id }}" resource_type="{{ resource_type }}">
-	{%if data.name%}<div class="form-group header">{{ data.name }}</div>{%endif%}
-	<div class="form-group"><label class="control-label">{% trans "Protocol Port" %}</label><div class=" "><input class="form-control" id="id_protocol_port" name="protocol_port" type="number" data-ori="{{ data.protocol_port }}" value="{{ data.protocol_port }}"></div></div>
-	<div class="form-group"><label class="control-label">{% trans "Address" %}</label><div class=" "><input class="form-control" id="id_address" name="address" type="text" data-ori="{{ data.address }}" value="{{ data.address }}"></div></div>
-	<div class="form-group"><label class="control-label">{% trans "Weight" %}</label><div class=" "><input class="form-control" id="id_weight" name="weight" type="text" data-ori="{{ data.weight }}" value="{{ data.weight }}"></div></div>
-	<div class="form-group">
-		<label class="control-label">{% trans "Admin State" %}</label>
-		<div class=" ">
-			<select class="form-control" name="admin_state_ups" data-ori="{{data.admin_state_up}}">
-				<option name="admin_state_up" value="True" {%ifequal data.admin_state_up "True" %} selected="selected"{%endifequal%}>Up</option>
-				<option name="admin_state_up" value="False" {%ifequal data.admin_state_up "False" %} selected="selected"{%endifequal%}>Down</option>
-			</select>
-		</div>
-	</div>
-</div>
-<div class="footer">
-	<div class="cell delete">
-		<button class="cancel btn btn-danger btn-xs">{% trans "Cancel" %}</button>
-		<button class="save-info btn btn-danger btn-xs">{% trans "Save" %}</button>
-	</div>
+  {%if data.name%}
+    <div class="form-group">
+      <label class="control-label">{% trans "Name" %}</label>
+      <div class=" ">{{ data.name }}</div>
+    </div>
+  {%endif%}
+  <div class="form-group">
+    <label class="control-label">{% trans "Protocol Port" %}</label>
+    <div class>
+      <input class="form-control" id="id_protocol_port" name="protocol_port" type="number"
+             data-ori="{{ data.protocol_port }}" value="{{ data.protocol_port }}">
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="control-label">{% trans "Address" %}</label>
+    <div class>
+      <input class="form-control" id="id_address" name="address" type="text"
+             data-ori="{{ data.address }}" value="{{ data.address }}">
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="control-label">{% trans "Weight" %}</label>
+    <div class>
+      <input class="form-control" id="id_weight" name="weight" type="text"
+             data-ori="{{ data.weight }}" value="{{ data.weight }}">
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="control-label">{% trans "Admin State" %}</label>
+    <div class>
+      <select class="form-control" name="admin_state_ups" data-ori="{{data.admin_state_up}}">
+        <option name="admin_state_up" value="True" {%ifequal data.admin_state_up "True" %} selected="selected"{%endifequal%}>Up</option>
+        <option name="admin_state_up" value="False" {%ifequal data.admin_state_up "False" %} selected="selected"{%endifequal%}>Down</option>
+      </select>
+    </div>
+  </div>
 </div>
