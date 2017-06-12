@@ -98,6 +98,13 @@ def search_dependent_items(dependencies,
     return searched_ids
 
 
+def is_in(arr, key, value):
+    for res in arr:
+        if getattr(res, key) == value:
+            return True
+    return False
+
+
 class ResourceDetailFromPlan(object):
     container = 'plans/res_detail/_balloon_container.html'
 
@@ -163,12 +170,17 @@ class ResourceDetailFromPlan(object):
             for dep_volume in dep_volumes:
                 if updated_res[dep_volume]['id'] in volumes:
                     del volumes[updated_res[dep_volume]['id']]
-            props['volumes'] = volumes.values()
+            vols = volumes.values()
+            if not is_in(vols, 'id', context['id']):
+                vols.append({'id': context['id'], 'name': ''})
+            props['volumes'] = vols
 
         return loader.render_to_string(self.container, context)
 
     def _render_volumetype(self, context):
         vts = api.resource_list(self.request, consts.CINDER_VOL_TYPE)
+        if not is_in(vts, 'id', context['id']):
+            vts.append({'id': context['id'], 'name': ''})
         context['data']['volumetypes'] = vts
         return loader.render_to_string(self.container, context)
 
@@ -224,9 +236,10 @@ class ResourceDetailFromPlan(object):
             for dep_network in dep_networks:
                 if updated_res[dep_network]['id'] in networks:
                     del networks[updated_res[dep_network]['id']]
-            LOG.warning("net_data: %s", context)
-            LOG.info('networks: %s', [n.__dict__ for n in networks.values()])
-            context['data']['networks'] = networks.values()
+            nets = networks.values()
+            if not is_in(nets, 'id', context['id']):
+                nets.append({'id': context['id'], 'name': ''})
+            context['data']['networks'] = nets
         return loader.render_to_string(self.container, context)
 
     def _render_subnet(self, context):
@@ -275,7 +288,10 @@ class ResourceDetailFromPlan(object):
             for dep_subnet in dep_subnets:
                 if updated_res[dep_subnet]['id'] in subnets:
                     del subnets[updated_res[dep_subnet]['id']]
-            properties['subnets'] = subnets.values()
+            subnets = subnets.values()
+            if not is_in(subnets, 'id', context['id']):
+                subnets.append({'id': context['id'], 'name': ''})
+            properties['subnets'] = subnets
 
         return loader.render_to_string(self.container, context)
 
@@ -363,6 +379,8 @@ class ResourceDetailFromPlan(object):
         if len(dep_servers):
             tenant_id = self.request.user.tenant_id
             secgroups = api.sg_list(self.request, tenant_id)
+            if not is_in(secgroups, 'id', context['id']):
+                secgroups.append({'id': context['id'], 'name': ''})
             context['data']['secgroups'] = secgroups
 
         return loader.render_to_string(self.container, context)
@@ -391,6 +409,8 @@ class ResourceDetailFromPlan(object):
             fips = api.resource_list(self.request, self.res_type)
             fips = [fip for fip in fips
                     if fip.status == 'DOWN' or fip.id == fip_id]
+            if not is_in(fips, 'id', context['id']):
+                fips.append({'id': context['id'], 'floating_ip_address': ''})
             context['data']['fips'] = fips
         return loader.render_to_string(self.container, context)
 
@@ -404,7 +424,7 @@ class ResourceDetailFromPlan(object):
                                                      self.res_id,
                                                      self.plan_id,
                                                      self.is_original)
-        LOG.info("Render id: %s\n type: %s \nresource %s \nupdate_data %s",
+        LOG.info("Render id: %s\ntype: %s \nresource %s \nupdate_data %s",
                  self.res_id, self.res_type, resource, self.update_data)
         self.res = resource
 
@@ -419,8 +439,7 @@ class ResourceDetailFromPlan(object):
                    'template_name': template_name,
                    'resource_type': self.res_type,
                    'resource_id': self.res_id,
-                   'id': (resource.get('id', None)
-                          or resource['extra_properties']['id']),
+                   'id': resource.get('id', ''),
                    'data': resource_detail}
 
         if hasattr(self, method):
