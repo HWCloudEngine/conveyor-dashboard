@@ -1,4 +1,9 @@
 {% load i18n %}
 <div class="contentBody detailInfoCon" resource_id="{{ resource_id }}" resource_type="{{ resource_type }}">
-	{% if data.name %}<div class="form-group header"><label class="control-label">{{ data.name }}</label></div>{% endif %}
+  {%if data.name%}
+    <div class="form-group">
+      <label class="control-label">{% trans "Name" %}</label>
+      <div class=" ">{{ data.name }}</div>
+    </div>
+  {%endif%}
 </div>

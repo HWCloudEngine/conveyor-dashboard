@@ -1,6 +1,11 @@
 {% load i18n %}
 <div class="contentBody detailInfoCon" resource_id="{{ resource_id }}" resource_type="{{ resource_type }}">
-	{%if data.name%}<div class="form-group header">{{ data.name }}</div>{%endif%}
+  {%if data.name%}
+    <div class="form-group">
+      <label class="control-label">{% trans "Name" %}</label>
+      <div class=" ">{{ data.name }}</div>
+    </div>
+  {%endif%}
 	<div class="form-group"><label class="control-label">{% trans "Name" %}</label><div class=" "><input class="form-control" id="id_name" name="name" type="text" data-ori="{{ data.name }}" value="{{ data.name }}"></div></div>
     <div class="form-group">
         <label class="control-label">{% trans "Protocol" %}</label>
@@ -31,10 +36,4 @@
             </select>
         </div>
     </div>
-</div>
-<div class="footer">
-	<div class="cell delete">
-		<button class="cancel btn btn-danger btn-xs">{% trans "Cancel" %}</button>
-		<button class="save-info btn btn-danger btn-xs">{% trans "Save" %}</button>
-	</div>
 </div>
