@@ -1,38 +1,64 @@
 {% load i18n %}
 <div class="contentBody detailInfoCon" resource_id="{{ resource_id }}" resource_type="{{ resource_type }}"  data-id="{{id}}">
-	<div class="form-group header">{{ data.name }}</div>
-	<div class="form-group"><label class="control-label">{% trans "Name" %}</label><div class=" "><input class="form-control" id="id_name" name="name" type="text" data-ori="{{ data.name }}" value="{{ data.name }}"></div></div>
-	<div class="form-group hide"><label class="control-label">{% trans "Router External" %}</label><div class=" "><input class="form-control" id="id_router_external" name="router_external" type="text" value="{{data.value_specs.router_external}}"></div></div>
-  <!--
-  	<div class="form-group"><label class="control-label">{% trans "Segmentation ID" %}</label><div class=" "><input class="form-control" id="id_segmentation_id" name="segmentation_id" type="text" data-ori="{{data.value_specs.segmentation_id}}" value="{{data.value_specs.segmentation_id}}"></div></div>
-	<div class="form-group"><label class="control-label">{% trans "Network Type" %}</label><div class=" "><input class="form-control" id="id_network_type" name="network_type" type="text" data-ori="{{data.value_specs.network_type}}" value="{{data.value_specs.network_type}}"></div></div>
-	-->
-	{%if data.value_specs.physical_network %}<div class="form-group"><label class="control-label">{% trans "Physical Network" %}</label><div class=" "><input class="form-control" id="id_physical_network" name="physical_network" type="text" data-ori="{{data.value_specs.physical_network}}" value="{{data.value_specs.physical_network}}"></div></div>{%endif%}
 	<div class="form-group">
-  		<label class="control-label">{% trans "Admin State" %}</label>
-   		<div class=" ">
-			<select class="form-control" name="admin_state_ups" data-ori="{{ data.admin_state_up }}">
-				<option name="admin_state_up" value="True" {% if data.admin_state_up %}selected="selected"{%endif%}>Up</option>
-				<option name="admin_state_up" value="False" {% if not data.admin_state_up %}selected="selected"{%endif%}>Down</option>
-			</select>
-		</div>
-	</div>
-	<div class="form-group "><div class=""><div class="checkbox"><label><input {% if data.shared%}checked="checked"{%endif%} id="id_shared" name="shared" type="checkbox"><span>Shared</span></label></div></div></div>
-	{%if data.networks%}
-	<div class="form-group "><div class=""><div class="checkbox"><label><input {% if data.from_other%}checked="checked"{%endif%} id="id_from_other" name="from_other" type="checkbox"><span>Select from Other Networks</span></label></div></div></div>
-	<div class="form-group ">
-  		<label class="control-label">{% trans "Networks" %}</label>
-   		<div class=" ">
-			<select class="form-control" name="networks" data-ori="{{ id }}">
-			{% for network in data.networks %}<option name="network" value="{{ network.id }}" {%ifequal id network.id %}selected="selected"{%endifequal%}>{{ network.name }} {{ network.id }}</option>{% endfor %}
-			</select>
-		</div>
-	</div>
-	{%endif%}
-</div>
-<div class="footer">
-	<div class="cell delete">
-		<button class="cancel btn btn-danger btn-xs">{% trans "Cancel" %}</button>
-		<button class="save-info btn btn-danger btn-xs">{% trans "Save" %}</button>
-	</div>
+    <label class="control-label">{% trans "Name" %}</label>
+    <div class>
+      <input class="form-control" id="id_name" name="name" type="text" data-ori="{{ data.name }}" value="{{ data.name }}">
+    </div>
+  </div>
+  <div class="form-group hide">
+    <label class="control-label">{% trans "Router External" %}</label>
+    <div clasa>
+      <input class="form-control" id="id_router_external" name="router_external" type="text" value="{{data.value_specs.router_external}}">
+    </div>
+  </div>
+{#  <div class="form-group"><label class="control-label">{% trans "Segmentation ID" %}</label><div class=" "><input class="form-control" id="id_segmentation_id" name="segmentation_id" type="text" data-ori="{{data.value_specs.segmentation_id}}" value="{{data.value_specs.segmentation_id}}"></div></div>#}
+{#	<div class="form-group"><label class="control-label">{% trans "Network Type" %}</label><div class=" "><input class="form-control" id="id_network_type" name="network_type" type="text" data-ori="{{data.value_specs.network_type}}" value="{{data.value_specs.network_type}}"></div></div>#}
+	{%if data.value_specs.physical_network %}
+    <div class="form-group">
+      <label class="control-label">{% trans "Physical Network" %}</label>
+      <div class>
+        <input class="form-control" id="id_physical_network" name="physical_network" type="text" data-ori="{{data.value_specs.physical_network}}" value="{{data.value_specs.physical_network}}">
+      </div>
+    </div>
+  {%endif%}
+  <div class="form-group">
+    <label class="control-label">{% trans "Admin State" %}</label>
+    <div class>
+      <select class="form-control" name="admin_state_ups" data-ori="{{ data.admin_state_up }}">
+        <option name="admin_state_up" value="True" {% if data.admin_state_up %}selected="selected"{%endif%}>Up</option>
+        <option name="admin_state_up" value="False" {% if not data.admin_state_up %}selected="selected"{%endif%}>Down</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class>
+      <div class="checkbox">
+        <label>
+          <input {% if data.shared%}checked="checked"{%endif%} id="id_shared" name="shared" type="checkbox">
+          <span>{% trans "Shared" %}</span>
+        </label>
+      </div>
+    </div>
+  </div>
+  {%if data.networks%}
+    <div class="form-group">
+      <div class>
+        <div class="checkbox">
+          <label>
+            <input {% if data.from_other%}checked="checked"{%endif%} id="id_from_other" name="from_other" type="checkbox">
+            <span>{% trans "Select from Other Networks" %}</span>
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="form-group ">
+      <label class="control-label">{% trans "Networks" %}</label>
+      <div class>
+        <select class="form-control" name="networks" data-ori="{{ id }}">
+          {% for network in data.networks %}<option name="network" value="{{ network.id }}" {%ifequal id network.id %}selected="selected"{%endifequal%}>{{ network.name }} {{ network.id }}</option>{% endfor %}
+        </select>
+      </div>
+    </div>
+  {%endif%}
 </div>

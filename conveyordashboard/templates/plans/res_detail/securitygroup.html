@@ -1,6 +1,11 @@
 {% load i18n %}
 <div class="contentBody detailInfoCon" resource_id="{{ resource_id }}" resource_type="{{ resource_type }}" id="secgroup_wrap" os_id="{{ id }}">
-  <div class="form-group header">{{ data.name }}</div>
+  {%if data.name%}
+    <div class="form-group">
+      <label class="control-label">{% trans "Name" %}</label>
+      <div class=" ">{{ data.name }}</div>
+    </div>
+  {%endif%}
   {% if rules_table %}
     <div class="form-group rules">
       <label class="control-label" id="id_sgrs" changed="false" data-ori="{{ data.rules }}">{% trans "Rules" %}</label>
@@ -9,9 +14,12 @@
   {% endif %}
   {% if data.secgroups %}
     <div class="form-group ">
-      <div class="">
+      <div class>
         <div class="checkbox">
-          <label><input {% if data.from_other %}checked="checked"{% endif %} id="id_from_other" name="from_other" type="checkbox"><span>Select from Other Security Groups</span></label>
+          <label>
+            <input {% if data.from_other %}checked="checked"{% endif %} id="id_from_other" name="from_other" type="checkbox">
+            <span>{% trans "Select from Other Security Groups" %}</span>
+          </label>
         </div>
       </div>
     </div>
@@ -26,20 +34,14 @@
       </div>
     </div>
   {% endif %}
-</div>
-<div class="footer">
-  <div class="cell delete">
-    <button class="cancel btn btn-danger btn-xs">{% trans "Cancel" %}</button>
-    <button class="save-info btn btn-danger btn-xs" del_rule_ids="">{% trans "Save" %}</button>
-  </div>
-</div>
 <script>
   $(function () {
     "use strict";
-    var table = "#resource_info_box table#rules";
+    var table = "form table#rules";
     var add_action = "#rules__action_add_rule";
     var rm_action = "#rules__action_delete_rule";
     conveyorEditPlanRes.openAddOperation(table, "rules", add_action);
     conveyorEditPlanRes.openDeleteOperation(table, rm_action);
   })
 </script>
+</div>

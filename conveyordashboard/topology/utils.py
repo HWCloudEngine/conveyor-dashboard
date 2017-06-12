@@ -96,6 +96,7 @@ def _clean_rule_menu(cleaned_data):
 
 def generate_rule(rule_param):
     _clean_rule_menu(rule_param)
+
     remote = rule_param.get("remote")
     if remote == "cidr":
         rule_param['security_group'] = None
@@ -122,9 +123,8 @@ def generate_rule(rule_param):
     rule = {}
     rule['id'] = str(uuid.uuid4())
     rule['direction'] = rule_param['direction']
+    rule['ethertype'] = rule_param['ethertype']
     rule['protocol'] = rule_param['ip_protocol']
-    rule['port_range_min'] = rule_param['from_port']
-    rule['port_range_max'] = rule_param['to_port']
 
     rule['remote_group_id'] = rule_param['security_group']
     rule['remote_ip_prefix'] = rule_param['cidr']

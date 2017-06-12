@@ -21,7 +21,6 @@ var fieldTypes = {
   chk: 'checkbox',
   slt: 'select',
   sfo: 'selectFromOther',
-  meta: 'metadata',
   spec: 'spe'
 };
 
@@ -29,7 +28,7 @@ var conveyorResources = {
   resources: {
     'OS::Nova::Server': {
       user_data: {fieldType: fieldTypes.ipt},
-      metadata: {fieldType: fieldTypes.meta}
+      metadata: {fieldType: fieldTypes.ipt}
     },
     'OS::Nova::KeyPair': {
       keypairs: {fieldType: fieldTypes.sfo}
@@ -40,7 +39,7 @@ var conveyorResources = {
       descript: {fieldType: fieldTypes.ipt},
       copy_data: {fieldType: fieldTypes.chk},
       volumes: {fieldType: fieldTypes.sfo},
-      metadata: {fieldType: fieldTypes.meta}
+      metadata: {fieldType: fieldTypes.ipt}
     },
     'OS::Cinder::VolumeType': {
       volumetypes: {fieldType: fieldTypes.sfo}
@@ -151,7 +150,7 @@ var conveyorResources = {
           var sgr_node = $("#id_sgrs");
           if(sgr_node.length){
             var rules = $(sgr_node).attr("data-ori");
-            var t_rules = $("div#resource_info_box table#rules");
+            var t_rules = $('.modal table#rules');
             if($(t_rules).length){
               if(typeof($(t_rules).attr("deleted_ids"))!="undefined"){
                 var json_rs = $.parseJSON(rules);
@@ -232,8 +231,6 @@ var conveyorResources = {
         self.getSelectData(field, data);
       } else if (value.fieldType == fieldTypes.sfo) {
         if(self.getDataFromExisted(field, data)) {needPosted = true;}
-      } else if (value.fieldType == fieldTypes.meta) {
-        self.getMetaTableData(field, data);
       } else if(value.fieldType == fieldTypes.spec) {
         value.specFunc(field, data);
       }
@@ -295,24 +292,6 @@ var conveyorResources = {
     }
     if($(slt_node).val() != $(slt_node).attr('data-ori')) {
       dstDict['id'] = $(slt_node).val();
-      return true;
-    }
-    return false;
-  },
-  getMetaTableData: function (field, dstDict) {
-    var metaTable = $(this.prefixCss + ' table#' + field + 's');
-    if(metaTable.length == 0) {
-      return false;
-    }
-
-    if(typeof $(metaTable).attr('deleted_ids') != 'undefined' || $(metaTable).find('tr[data_from=client]').length) {
-      var metadata = [];
-      $(metaTable).find("tbody tr:not(.new-row):not(.empty)").each(function () {
-        var key = $(this).attr('data-object-id');
-        var value = $(this).find('td:last').text();
-        metadata.push('"' + $.trim(key) + '":"' + $.trim(value) + '"');
-      });
-      dstDict['metadata'] = $.parseJSON("{"+metadata.join(",")+"}");
       return true;
     }
     return false;

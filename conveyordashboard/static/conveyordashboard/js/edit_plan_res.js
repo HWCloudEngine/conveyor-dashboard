@@ -74,16 +74,7 @@ var conveyorEditPlanRes = {
       img_node.attr("ori-href", img_node.attr("href"));
       img_node.attr({"href": click_img, "editing": true});
     }
-    if(data.data.indexOf("form-group")>-1){
-      if($('.conveyor-overview').length) {
-        self.overviewPopResEditModal(node_type, node_id, data.data);
-      } else {
-        $("#resource_info_box").html(data.data).css("display", "block");
-        $("#conveyor_plan_topology").hide();
-        $("#thumbnail").hide();
-        $("#stack_box").hide();
-      }
-    }
+    self.overviewPopResEditModal(node_type, node_id, data.data);
     $("select[name='networks'],select[name='routers'],select[name='subnets'],select[name='secgroups'],select[name='volumes'],select[name='volumetypes']").parent().parent().css({
         'display':'none'
     });
@@ -114,14 +105,6 @@ var conveyorEditPlanRes = {
       }
     }
     return {};
-  },
-  hideTableInfo: function () {
-    $(this.tag_table_info).html("");
-    $(this.tag_table_info).css("display", "none");
-    $("#conveyor_plan_topology").show();
-    $("#thumbnail").show();
-    this.clearEditing();
-    return false;
   },
   saveTableInfo: function () {
     var self = this;
@@ -276,31 +259,31 @@ var conveyorEditPlanRes = {
     var self = this;
     if($(addActionSelector).length){
       $(addActionSelector).click(function(){
-        if(type == "metadatas"){
-          if(!$(seletor).find("tr.new-row").length){
-            $(seletor).find("tbody").prepend('<tr class="new-row"><td class="multi_select_column"><td class="sortable normal_column"><input name="key" class="form-control" onkeydown="if(event.keyCode==13){conveyorEditPlanRes.addMetaForServer(\'table#metadatas\')}"/></td><td class="sortable normal_column"><input name="value" class="form-control" onkeydown="if(event.keyCode==13){conveyorEditPlanRes.addMetaForServer(\'table#metadatas\')}"/></td></tr>')
-          }
-        }else if(type == "rules"){
+        if(type == "rules"){
           if($("form#create_security_group_rule_form").length){
             return;
           }
           var rsp = conveyorService.addRuleForFrontend($('#secgroup_wrap').attr('os_id'));
-          if(rsp){
-            var form = $(rsp).find("form#create_security_group_rule_form");
-            $(form).append($(form).find("div.col-sm-6:first").html()).find("div.modal-body").remove();
-            $(form).find("div.modal-footer").remove();
-            $(form).append("<div class=\"footer\"><div class=\"cell delete\"><div class=\"cancel btn btn-danger btn-xs\">Cancel</div><div id=\"id_add_sg_rule\" onclick='conveyorEditPlanRes.addSGRuleForSG()' class=\"add-rule btn btn-danger btn-xs\">Add</div></div></div>");
-            if($('.conveyor-overview').length) {
-              $('.modal.edit-plan-res .modal-body').append($(form).prop("outerHTML"));
-            } else {
-              $("#resource_info_box div.footer").after($(form).prop("outerHTML"));
-            }
-            $("#id_rule_menu").trigger('change', $("#id_rule_menu").children().eq(1));
-          }
+          conveyorEditPlanRes.popAddRuleModalForm(rsp, 'create_security_group_rule_form', conveyorEditPlanRes.addSGRuleForSG);
           return false;
         }
       });
     }
+  },
+  popAddRuleModalForm: function (formHtml, formId, submitCall) {
+    var form = $(formHtml).find('form#' + formId);
+    var content =  $(form).parent();
+    var title = $(content).find('.modal-header .modal-title').text();
+    var submitLabel = $(content).find('.modal-footer [type=submit]').val();
+    var modal = horizon.modals.create(title, '', submitLabel);
+    $(modal).find('.modal-body')
+      .html($(form).find('.modal-body').prop("innerHTML"));
+    $(modal).find('.modal-footer .btn-primary').click(function () {
+      submitCall();
+      $(modal).find('.modal-footer .cancel').click();
+    });
+    $(modal).modal();
+    $("#id_rule_menu").trigger('change', $("#id_rule_menu").children().eq(1));
   },
   /* For resource detail. All to delete some items for property with type of list
    * of detail resource.
@@ -347,23 +330,6 @@ var conveyorEditPlanRes = {
     });
     if(!$(delActionSelector).hasClass("disabled")){$(delActionSelector).addClass("disabled");}
   },
-  /* For resource detail. Add an new metadata item for instance metadata property.
-   * params:
-   * selector: js selector of metadata table.*/
-  addMetaForServer: function (selector) {
-    var in_key = $(selector).find("tbody tr.new-row input[name=key]");
-    var in_value = $(selector).find("input[name=value]");
-    var key = $(in_key).val();
-    var value = $(in_value).val();
-    if(key==""){$(in_key).focus();return;}
-    if(value==""){$(in_value).focus();return;}
-    var row = '<tr data_from="client" data-object-id="' + key + '" id="metadatas__row__' + key + '">'
-          + '<td class="multi_select_column"><input class="table-row-multi-select" name="object_ids" type="checkbox" value="' + key + '"></td>'
-          + '<td class="sortable normal_column">' + key + '</td>'
-          + '<td class="sortable normal_column">' + value + '</td></tr>';
-    $(selector).find("tr.new-row").remove();
-    $(selector).find("tbody").prepend(row);
-  },
   addSGRuleForSG: function () {
     var secgroup_rule = {
       'rule_menu': $("select#id_rule_menu").val(),
@@ -389,33 +355,21 @@ var conveyorEditPlanRes = {
         ori_rs.push(sgr);
         $(sgrs_node).attr({"data-ori": JSON.stringify(ori_rs), "changed": true});
         $("table#rules tbody").append($(result.sgr_html).find("tbody tr").prop("outerHTML"));
-        $("form#create_security_group_rule_form").remove();
+        conveyorEditPlanRes.openDeleteOperation('form table#rules', '#rules__action_delete_rule');
     }
     return false;
   },
   overviewPopResEditModal: function (resType, resId, data) {
-    var hideModal = function (modal) {
-      $(modal).removeAttr('style').removeClass('in').removeClass('ng-scope').find('.modal-body').html('');
-      $(modal).parent().find('.modal-backdrop').remove();
-      $(modal).remove();
-    };
     conveyorResources.prefixCss = '.modal.edit-plan-res';
     var modal = horizon.modals.create(gettext('Edit Plan Resource: ' + resType.split('::')[2]), '', gettext('Save'));
-    $(modal).parent().append('<div class="modal-backdrop  in"></div>');
     $(modal)
-      .css({'top': '0px', 'display': 'block'})
       .addClass('edit-plan-res')
-      .addClass('in')
-      .addClass('ng-scope')
-      .attr({'data-backdrop': 'static', 'aria-hidden': false})
       .find('.modal-body')
-      .html(data).find('a.closeTopologyBalloon,.footer').remove();
+      .html(data);
     $(modal).find('.modal-footer .btn-primary').click(function () {
       conveyorEditPlanRes.saveTableInfo();
-      hideModal(modal);
+      $(modal).find('.modal-footer .cancel').click();
     });
-    $(modal).find('.modal-footer .cancel, .modal-header .close').click(function () {
-      hideModal(modal);
-    });
+    $(modal).modal();
   }
 };
