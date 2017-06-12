@@ -14,7 +14,6 @@
 
 import json
 
-from django.core.urlresolvers import reverse
 from django import http
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import View
@@ -22,7 +21,6 @@ from django.views.generic import View
 from horizon import exceptions
 from horizon import forms
 from openstack_dashboard import api as os_api
-from openstack_dashboard.utils import filters
 from oslo_log import log as logging
 
 from conveyordashboard.api import api
@@ -57,21 +55,6 @@ class AddRuleView(forms.ModalFormView):
     url = "horizon:conveyor:plans:index"
     page_title = _("Add Rule")
 
-    def get_success_url(self):
-        return reverse(self.url)
-
-    def get_context_data(self, **kwargs):
-        context = super(AddRuleView, self).get_context_data(**kwargs)
-        LOG.info("request Type: %s", self.request.is_ajax())
-        context["security_group_id"] = self.kwargs['security_group_id']
-        args = (self.kwargs['security_group_id'],)
-        context['submit_url'] = reverse(self.submit_url, args=args)
-        context['cancel_url'] = reverse(self.url)
-        return context
-
-    def get_initial(self):
-        return {'id': self.kwargs['security_group_id']}
-
     def get_form_kwargs(self):
         kwargs = super(AddRuleView, self).get_form_kwargs()
 
@@ -83,10 +66,11 @@ class AddRuleView(forms.ModalFormView):
             exceptions.handle(self.request,
                               _("Unable to retrieve security groups."))
 
+        curr_sg_id = self.request.GET.get('security_group_id', '')
+
         security_groups = []
         for group in groups:
-            if group.id == filters.get_int_or_uuid(
-                    self.kwargs['security_group_id']):
+            if group.id == curr_sg_id:
                 security_groups.append((group.id,
                                         _("%s (current)") % group.name))
             else:
@@ -99,10 +83,7 @@ class CreateRuleView(View):
     @staticmethod
     def post(request, **kwargs):
         POST = request.POST
-        LOG.info("CreateRuleView: {0} {1}".format(request.POST, kwargs))
         sg_rule_param = json.JSONDecoder().decode(POST['secgroup_rule'])
-        LOG.info("sg_rule_param: %s", sg_rule_param)
-        LOG.info("sg_rule_param after clean: %s", sg_rule_param)
 
         if sg_rule_param.get('port', None):
             sg_rule_param['port'] = int(sg_rule_param['port'])

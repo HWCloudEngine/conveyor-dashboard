@@ -16,11 +16,9 @@ import netaddr
 from oslo_utils import netutils
 
 from django.conf import settings
-from django.core.urlresolvers import reverse
 from django.forms import ValidationError  # noqa
 from django.utils.translation import ugettext_lazy as _
 
-from horizon import exceptions
 from horizon import forms
 from horizon.utils import validators as utils_validators
 
@@ -40,7 +38,6 @@ def validate_icmp_code_range(icmp_code):
 
 
 class AddRule(forms.SelfHandlingForm):
-    id = forms.CharField(widget=forms.HiddenInput())
     rule_menu = forms.ChoiceField(label=_('Rule'),
                                   widget=forms.Select(attrs={
                                       'class': 'switchable',
@@ -335,27 +332,4 @@ class AddRule(forms.SelfHandlingForm):
         return cleaned_data
 
     def handle(self, request, data):
-        redirect = reverse("horizon:project:access_and_security:"
-                           "security_groups:detail", args=[data['id']])
-        try:
-            return None
-            # rule = api.network.security_group_rule_create(
-            #     request,
-            #     filters.get_int_or_uuid(data['id']),
-            #     data['direction'],
-            #     data['ethertype'],
-            #     data['ip_protocol'],
-            #     data['from_port'],
-            #     data['to_port'],
-            #     data['cidr'],
-            #     data['security_group'])
-            # messages.success(request,
-            #                  _('Successfully added rule: %s')
-            #                  % six.text_type(rule))
-            # return rule
-        except exceptions.Conflict as error:
-            exceptions.handle(request, error, redirect=redirect)
-        except Exception:
-            exceptions.handle(request,
-                              _('Unable to add rule to security group.'),
-                              redirect=redirect)
+        return True

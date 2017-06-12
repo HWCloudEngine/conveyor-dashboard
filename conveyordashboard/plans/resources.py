@@ -25,7 +25,6 @@ from oslo_utils import strutils
 from openstack_dashboard import api as os_api
 
 from conveyordashboard.api import api
-from conveyordashboard.api import models
 from conveyordashboard.common import constants as consts
 from conveyordashboard.topology import tables as topology_tables
 
@@ -98,6 +97,13 @@ def search_dependent_items(dependencies,
     return searched_ids
 
 
+def is_in(arr, key, value):
+    for res in arr:
+        if getattr(res, key) == value:
+            return True
+    return False
+
+
 class ResourceDetailFromPlan(object):
     container = 'plans/res_detail/_balloon_container.html'
 
@@ -114,17 +120,16 @@ class ResourceDetailFromPlan(object):
         self.is_original = is_original
 
     def _render_server(self, context):
-        resource_detail = context['data']
+        props = context['data']
         if 'user_data' not in self.update_data:
-            if resource_detail.get('user_data', None):
-                resource_detail['user_data'] = \
-                    base64.b64decode(resource_detail['user_data']
+            if props.get('user_data', None):
+                props['user_data'] = \
+                    base64.b64decode(props['user_data']
                                      .encode('utf-8'))
-        metadata = resource_detail.get('metadata', {})
-        metadata = [models.Metadata({'key': key, 'value': value})
-                    for key, value in metadata.items()]
-        md_table = topology_tables.MetadataTable(self.request, metadata)
-        context['metadata'] = md_table.render()
+        metadata = props.get('metadata', {})
+        if isinstance(metadata, dict):
+            props['metadata'] = '\n'.join(['%s=%s' % (k, v)
+                                           for k, v in metadata.items()])
         return loader.render_to_string(self.container, context)
 
     def _render_keypair(self, context):
@@ -136,10 +141,9 @@ class ResourceDetailFromPlan(object):
     def _render_volume(self, context):
         props = context['data']
         metadata = props.get('metadata', {})
-        metadata = [models.Metadata({'key': key, 'value': value})
-                    for key, value in metadata.items()]
-        md_table = topology_tables.MetadataTable(self.request, metadata)
-        context['metadata'] = md_table.render()
+        if isinstance(metadata, dict):
+            props['metadata'] = '\n'.join(['%s=%s' % (k, v)
+                                           for k, v in metadata.items()])
 
         if 'copy_data' not in props:
             props['copy_data'] = self.res.get('extra_properties',
@@ -163,19 +167,24 @@ class ResourceDetailFromPlan(object):
             for dep_volume in dep_volumes:
                 if updated_res[dep_volume]['id'] in volumes:
                     del volumes[updated_res[dep_volume]['id']]
-            props['volumes'] = volumes.values()
+            vols = volumes.values()
+            if not is_in(vols, 'id', context['id']):
+                vols.insert(0, {'id': context['id'], 'name': ''})
+            props['volumes'] = vols
 
         return loader.render_to_string(self.container, context)
 
     def _render_volumetype(self, context):
         vts = api.resource_list(self.request, consts.CINDER_VOL_TYPE)
+        if not is_in(vts, 'id', context['id']):
+            vts.append({'id': context['id'], 'name': ''})
         context['data']['volumetypes'] = vts
         return loader.render_to_string(self.container, context)
 
     def _render_qos(self, context):
         props = context['data']
         specs = '\n'.join(['%s=%s' % (k, v)
-                           for k, v in props['specs'].items()])
+                           for k, v in props.get('specs', {}).items()])
         props['specs'] = specs
         return loader.render_to_string(self.container, context)
 
@@ -224,9 +233,10 @@ class ResourceDetailFromPlan(object):
             for dep_network in dep_networks:
                 if updated_res[dep_network]['id'] in networks:
                     del networks[updated_res[dep_network]['id']]
-            LOG.warning("net_data: %s", context)
-            LOG.info('networks: %s', [n.__dict__ for n in networks.values()])
-            context['data']['networks'] = networks.values()
+            nets = networks.values()
+            if not is_in(nets, 'id', context['id']):
+                nets.insert(0, {'id': context['id'], 'name': ''})
+            context['data']['networks'] = nets
         return loader.render_to_string(self.container, context)
 
     def _render_subnet(self, context):
@@ -275,7 +285,10 @@ class ResourceDetailFromPlan(object):
             for dep_subnet in dep_subnets:
                 if updated_res[dep_subnet]['id'] in subnets:
                     del subnets[updated_res[dep_subnet]['id']]
-            properties['subnets'] = subnets.values()
+            subnets = subnets.values()
+            if not is_in(subnets, 'id', context['id']):
+                subnets.insert(0, {'id': context['id'], 'name': ''})
+            properties['subnets'] = subnets
 
         return loader.render_to_string(self.container, context)
 
@@ -363,6 +376,8 @@ class ResourceDetailFromPlan(object):
         if len(dep_servers):
             tenant_id = self.request.user.tenant_id
             secgroups = api.sg_list(self.request, tenant_id)
+            if not is_in(secgroups, 'id', context['id']):
+                secgroups.insert(0, {'id': context['id'], 'name': ''})
             context['data']['secgroups'] = secgroups
 
         return loader.render_to_string(self.container, context)
@@ -379,11 +394,9 @@ class ResourceDetailFromPlan(object):
         plan = api.plan_get(self.request, self.plan_id)
         dependencies = plan.updated_dependencies
         rebuild_dependencies(dependencies)
-        LOG.info("rebuild deps: %s", dependencies)
         dep_servers = search_dependent_items(dependencies,
                                              [self.res_id],
                                              'server')
-        LOG.info("Search dep_servers %s for floating ip", dep_servers)
         # If current topology doesn't contain Server, then deny user to
         # select floating ip from existed items.
         if len(dep_servers):
@@ -391,6 +404,9 @@ class ResourceDetailFromPlan(object):
             fips = api.resource_list(self.request, self.res_type)
             fips = [fip for fip in fips
                     if fip.status == 'DOWN' or fip.id == fip_id]
+            if not is_in(fips, 'id', context['id']):
+                fips.insert(0,
+                            {'id': context['id'], 'floating_ip_address': ''})
             context['data']['fips'] = fips
         return loader.render_to_string(self.container, context)
 
@@ -404,7 +420,7 @@ class ResourceDetailFromPlan(object):
                                                      self.res_id,
                                                      self.plan_id,
                                                      self.is_original)
-        LOG.info("Render id: %s\n type: %s \nresource %s \nupdate_data %s",
+        LOG.info("Render id: %s\ntype: %s \nresource %s \nupdate_data %s",
                  self.res_id, self.res_type, resource, self.update_data)
         self.res = resource
 
@@ -419,8 +435,7 @@ class ResourceDetailFromPlan(object):
                    'template_name': template_name,
                    'resource_type': self.res_type,
                    'resource_id': self.res_id,
-                   'id': (resource.get('id', None)
-                          or resource['extra_properties']['id']),
+                   'id': resource.get('id', ''),
                    'data': resource_detail}
 
         if hasattr(self, method):
@@ -429,18 +444,29 @@ class ResourceDetailFromPlan(object):
         return loader.render_to_string(self.container, context)
 
 
-def get_attr(obj, key):
+def get_attr(obj, key, default=None):
     try:
-        return obj[key]
+        return obj.get(key, default)
     except (TypeError, KeyError):
-        return getattr(obj, key)
+            return getattr(obj, key, default)
 
 
 def generate_template_name():
     return str(uuid.uuid4())[:12]
 
 
-def build_volumetype(vt, template_name=None, props=None, deps=None):
+def build_volumetype(vt, template_name=None,
+                     properties=None, dependencies=None):
+    """Build OS::Cinder::VolumeType resource and dependency.
+
+    :param qos: The volume_type dict or object.
+    :param template_name: The name in template.
+    :param properties: The extra properties.
+                       This will cover the existed in volume_type
+    :param dependencies: The extra deps.
+                         This will cover the existed in volume_type
+    :return: volume_type resource and dependency
+    """
     if not template_name:
         template_name = generate_template_name()
 
@@ -450,14 +476,19 @@ def build_volumetype(vt, template_name=None, props=None, deps=None):
         'id': vt_id,
         'type': consts.CINDER_VOL_TYPE,
         'name': template_name,
-        'properties': {},
+        'properties': {
+            'name': get_attr(vt, 'name')
+        },
         'extra_properties': {
             'id': vt_id
         },
         'parameters': {}
     }
-    if props is not None and isinstance(props, dict):
-        res['properties'].update(props)
+    extra_specs = get_attr(vt, 'extra_specs')
+    if extra_specs:
+        res['properties']['metadata'] = extra_specs
+    if properties is not None and isinstance(properties, dict):
+        res['properties'].update(properties)
 
     dep = {
         'name_in_template': template_name,
@@ -466,12 +497,20 @@ def build_volumetype(vt, template_name=None, props=None, deps=None):
         'id': vt_id,
         'name': name
     }
-    if deps is not None and isinstance(deps, list):
-        dep['dependencies'].extend(deps)
+    if dependencies is not None and isinstance(dependencies, list):
+        dep['dependencies'].extend(dependencies)
     return res, dep
 
 
-def build_qos(qos, template_name=None, props=None, deps=None):
+def build_qos(qos, template_name=None, properties=None, dependencies=None):
+    """Build OS::Cinder::Qos resource and dependency.
+
+    :param qos: The Qos dict or object.
+    :param template_name: The name in template.
+    :param properties: The extra properties. This will cover the existed in qos
+    :param dependencies: The extra deps. This will cover the existed in qos
+    :return: Qos resource and dependency
+    """
     if not template_name:
         template_name = generate_template_name()
 
@@ -482,13 +521,16 @@ def build_qos(qos, template_name=None, props=None, deps=None):
         'id': qos_id,
         'type': consts.CINDER_QOS,
         'name': template_name,
-        'properties': {},
+        'properties': {
+            'name': get_attr(qos, 'name'),
+            'specs': get_attr(qos, 'specs', {})
+        },
         'extra_properties': {
             'id': qos_id
         }
     }
-    if props is not None and isinstance(props, dict):
-        res['properties'].update(props)
+    if properties is not None and isinstance(properties, dict):
+        res['properties'].update(properties)
 
     dep = {
         'name_in_template': template_name,
@@ -497,8 +539,8 @@ def build_qos(qos, template_name=None, props=None, deps=None):
         'id': qos_id,
         'name': name
     }
-    if deps is not None and isinstance(deps, list):
-        dep['dependencies'].extend(deps)
+    if dependencies is not None and isinstance(dependencies, list):
+        dep['dependencies'].extend(dependencies)
     return res, dep
 
 
@@ -536,18 +578,17 @@ class PlanUpdate(object):
             res_type = self.res_type
         if not dep_type:
             dependent_type = DEPENDENCY_UPDATE_MAPPING.get(res_type, [])
+        elif isinstance(dep_type, six.string_types):
+            dependent_type = [dep_type]
         else:
             dependent_type = dep_type
-            pass
         if excepts is None:
             excepts = []
-        LOG.info(
-            "Get dependent items.\nresource_type={0}\nresource_id={1}\n"
-            "dep_type={3}\nexcepts={2}\n"
-            .format(res_type,
-                    res_id,
-                    dep_type,
-                    excepts))
+        LOG.info("Get dependent items.\nresource_type=%(res_type)s\n"
+                 "resource_id=%(res_id)s\ndep_type=%(dep_type)s\n"
+                 "excepts=%(excepts)s",
+                 {'res_type': res_type, 'res_id': res_id,
+                  'dep_type': dependent_type, 'excepts': excepts})
 
         dependent_items = {}
 
@@ -562,8 +603,7 @@ class PlanUpdate(object):
                          or key in this_res['dependencies']) \
                     and key not in excepts:
                 dependent_items[key] = value
-        LOG.info("Get dependent items.\ndependent_items={0}\n"
-                 .format(dependent_items))
+        LOG.info("Get dependent items.%s\n", dependent_items)
         return dependent_items
 
     def execute(self, data):
@@ -597,6 +637,12 @@ class PlanUpdate(object):
         return items
 
     def _check_existed_from_deps(self, os_res_id):
+        """Check the given OpenStack resource uuid already exists in
+        dependencies.
+        :param os_res_id: The OpenStack resource uuid.
+        :return: (False, None) or (True, existed_item)
+        :rtype: tuple
+        """
         item = None
         for k, v in self.dependencies.items():
             if v['id'] == os_res_id:
@@ -652,7 +698,7 @@ class PlanUpdate(object):
                          'id': new_id}})
 
     def _update_volume_with_vt(self, new_vol, dep_items):
-        LOG.debug("Update volume with volume type.")
+        LOG.info("Update volume with volume type.")
         if len(dep_items) == 0:
             return
 
@@ -813,7 +859,7 @@ class PlanUpdate(object):
                         self.execute(data)
 
     def _update_volume_without_vt(self, new_vol):
-        LOG.debug("Update volume without volume type.")
+        LOG.info("Update volume without volume type.")
         res_id = self.res_id
         if new_vol['volume_type']:
             vts = api.resource_list(self.request, consts.CINDER_VOL_TYPE)
@@ -822,6 +868,8 @@ class PlanUpdate(object):
                 if vt.name == new_vol['volume_type']:
                     new_vt = vt
                     break
+            # TODO(drngsl) If there is not any matched volume_type, return.
+            # Here not raise exception.
             if new_vt is None:
                 return
 
@@ -894,8 +942,8 @@ class PlanUpdate(object):
 
                 # Add new volume type.
                 vt_res, vt_dep = build_volumetype(new_vt,
-                                                  props=vt_props,
-                                                  deps=vt_deps)
+                                                  properties=vt_props,
+                                                  dependencies=vt_deps)
                 vt_tmpl_name = vt_dep['name_in_template']
                 vt_res.update({ACTION_KEY: ACTION_ADD})
                 self.updated_resources[vt_tmpl_name] = vt_res
@@ -914,7 +962,7 @@ class PlanUpdate(object):
                 self.dependencies[res_id]['dependencies'].append(vt_tmpl_name)
 
     def _update_volume(self):
-        LOG.debug("Update volume.")
+        LOG.info("Update volume.")
         data = self.data
         res_id = self.res_id
         res_type = self.res_type
@@ -931,7 +979,7 @@ class PlanUpdate(object):
             'properties': {
                 'name': new_vol['display_name'],
                 'size': new_vol['size'],
-                'description': new_vol['display_description'],
+                # 'description': new_vol['display_description'],
                 'metadata': new_vol['volume_metadata']
             }
         }
@@ -1024,7 +1072,7 @@ class PlanUpdate(object):
         pass
 
     def _update_volumetype_with_qos(self, vt, dep_items):
-        LOG.debug("Update volume type with qos.")
+        LOG.info("Update volume type with qos.")
         data = self.data
         vt_id = data['id']
         res_id = self.res_id
@@ -1120,7 +1168,7 @@ class PlanUpdate(object):
                         self.execute(data)
 
     def _update_volumetype_without_qos(self, vt):
-        LOG.debug("Update volume type without qos.")
+        LOG.info("Update volume type without qos.")
         res_id = self.res_id
         qos_id = vt['qos_specs_id']
         if qos_id:
@@ -1158,7 +1206,7 @@ class PlanUpdate(object):
         pass
 
     def _update_volumetype(self):
-        LOG.debug("Update volume type.")
+        LOG.info("Update volume type.")
         data = self.data
         res_id = self.res_id
         res_type = self.res_type
@@ -1272,7 +1320,7 @@ class PlanUpdate(object):
                 return self._update_volumetype_without_qos(new_vt)
 
     def _update_qos_from_volume_type(self):
-        LOG.debug("Update qos from volume type.")
+        LOG.info("Update qos from volume type.")
         res_id = self.res_id
         res_type = self.res_type
         this_res = self.updated_resources[res_id]
@@ -1314,7 +1362,7 @@ class PlanUpdate(object):
         update_data = {'id': qos['id'],
                        TAG_UPDATED: True,
                        'properties': {'name': qos['name'],
-                                      'spec': qos.get('spec', {})}}
+                                      'specs': qos.get('specs', {})}}
         this_res.update(update_data)
         self.dependencies[res_id].update({'id': qos['id'],
                                           'name': qos['name']})
@@ -1326,7 +1374,7 @@ class PlanUpdate(object):
         self.update_resource.update(update_data)
 
     def _update_qos(self):
-        LOG.debug("Update qos.")
+        LOG.info("Update qos.")
 
         this_res = self.updated_resources[self.res_id]
         if this_res.get(TAG_UPDATED, None):
@@ -1345,7 +1393,7 @@ class PlanUpdate(object):
             update_data = {'id': qos_id,
                            TAG_UPDATED: True,
                            'properties': {'name': new_qos['name'],
-                                          'spec': new_qos['specs']}}
+                                          'specs': new_qos['specs']}}
             this_res.update(update_data)
             self.dependencies[res_id].update({'id': qos_id,
                                               'name': new_qos['name']})

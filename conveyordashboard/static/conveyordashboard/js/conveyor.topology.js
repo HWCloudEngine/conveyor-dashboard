@@ -70,15 +70,6 @@ function drawLink(d) {
   return "M" + d.source.x + "," + d.source.y + "L" + d.target.x + "," + d.target.y;
 }
 
-
-function set_in_progress(stack, nodes) {
-  if (stack.in_progress === true) { in_progress = true; }
-  for (var i = 0; i < nodes.length; i++) {
-    var d = nodes[i];
-    if (d.in_progress === true){ in_progress = true; return false; }
-  }
-}
-
 function findNode(id) {
   for (var i = 0; i < nodes.length; i++) {
     if (nodes[i].id === id){ return nodes[i]; }
@@ -210,74 +201,6 @@ function build_reverse_links(node){
   }
 }
 
-function ajax_poll(poll_time){
-  setTimeout(function() {
-    $.getJSON(ajax_url, function(json) {
-      //update d3 data element
-      $("#d3_data").attr("data-d3_data", JSON.stringify(json));
-
-      //update stack
-      $("#stack_box").html(json.environment.info_box);
-      set_in_progress(json.environment, json.nodes);
-      needs_update = false;
-
-      //Check Remove nodes
-      remove_nodes(nodes, json.nodes);
-
-      //Check for updates and new nodes
-      json.nodes.forEach(function(d){
-        var current_node = findNode(d.id);
-        //Check if node already exists
-        if (current_node) {
-          //Node already exists, just update it
-          current_node.status = d.status;
-
-          //Status has changed, image should be updated
-          if (current_node.image !== d.image){
-            current_node.image = d.image;
-            var this_image = d3.select("#image_"+current_node.id);
-            this_image
-              .transition()
-              .attr("x", function(d) { return d.image_x + 5; })
-              .duration(100)
-              .transition()
-              .attr("x", function(d) { return d.image_x - 5; })
-              .duration(100)
-              .transition()
-              .attr("x", function(d) { return d.image_x + 5; })
-              .duration(100)
-              .transition()
-              .attr("x", function(d) { return d.image_x - 5; })
-              .duration(100)
-              .transition()
-              .attr("xlink:href", d.image)
-              .transition()
-              .attr("x", function(d) { return d.image_x; })
-              .duration(100)
-              .ease("bounce");
-          }
-
-          //Status has changed, update info_box
-          current_node.info_box = d.info_box;
-
-        } else {
-          addNode(d);
-          build_links();
-        }
-      });
-
-      //if any updates needed, do update now
-      if (needs_update === true){
-        update();
-      }
-    });
-    //if no nodes still in progress, slow AJAX polling
-    if (in_progress === false) { poll_time = 30000; }
-    else { poll_time = 3000; }
-    ajax_poll(poll_time);
-  }, poll_time);
-}
-
 function update_node_name(id, name) {
   node = findNode(id);
   node.name = name;
@@ -314,28 +237,6 @@ function update_topo(json){
       if (current_node) {
         //Node already exists, just update it
         current_node.status = d.status;
-        // var need_rebuild_link=false;
-        // if(current_node.required_by.length !== d.required_by.length){
-        //   need_rebuild_link=true;
-        // }
-        // else{
-        //   var not_in=true;
-        //   for(var i=0;i<d.required_by.length;i++){
-        //     for(var j=0;j<current_node.required_by.length;j++){
-        //       if(d.required_by[i]===current_node.required_by[j]){
-        //         not_in=false;
-        //       }
-        //     }
-        //   }
-        //   if(not_in){need_rebuild_link=true;}
-        // }
-        // if(need_rebuild_link){
-        //   console.log('redraw node: '+d.id);
-        //   remove_links(d.id);
-        //   current_node.required_by=d.required_by;
-        //   for(var j=0;j<current_node.required_by.length;j++){console.log(d.id+' new quired_by '+current_node.required_by[j])}
-        //   build_link(current_node);
-        // }
 
         //Status has changed, image should be updated
         if (current_node.image !== d.image){
@@ -374,88 +275,10 @@ function update_topo(json){
     if (needs_update === true){
       update();
     }
-    if($("input[name=clone][type=submit]").length){$("g.node").click($node_click);}
-}
-
-function redraw_topo(ajax_url){
-  $.getJSON(ajax_url, function(json) {
-    //update d3 data element
-    $("#d3_data").attr("data-d3_data", JSON.stringify(json));
-    //update stack
-    $("#stack_box").html(json.environment.info_box);
-    set_in_progress(json.environment, json.nodes);
-    needs_update = false;
-
-    //Check Remove nodes
-    remove_nodes(nodes, json.nodes);
-
-    //Check for updates and new nodes
-
-    var nID=[];
-    $("#thumbnail circle").each(function(i,e){
-      $(this).css("fill","black");
-      var id=$(this).attr("id");
-      nID.push(id);
-    });
-
-    json.nodes.forEach(function(d){
-      if(nID.toString().indexOf(d.id)>-1){
-        $("#thumbnail circle").each(function(i,e){
-          if($(this).attr("id")==d.id){
-            $(this).css("fill","red");
-          }
-        });
-      }
-
-      var current_node = findNode(d.id);
-      //Check if node already exists
-      if (current_node) {
-        //Node already exists, just update it
-        current_node.status = d.status;
-
-        //Status has changed, image should be updated
-        if (current_node.image !== d.image){
-          current_node.image = d.image;
-          var this_image = d3.select("#image_"+current_node.id);
-          this_image
-            .transition()
-            .attr("x", function(d) { return d.image_x + 5; })
-            .duration(100)
-            .transition()
-            .attr("x", function(d) { return d.image_x - 5; })
-            .duration(100)
-            .transition()
-            .attr("x", function(d) { return d.image_x + 5; })
-            .duration(100)
-            .transition()
-            .attr("x", function(d) { return d.image_x - 5; })
-            .duration(100)
-            .transition()
-            .attr("xlink:href", d.image)
-            .transition()
-            .attr("x", function(d) { return d.image_x; })
-            .duration(100)
-            .ease("bounce");
-        }
-
-        //Status has changed, update info_box
-        current_node.info_box = d.info_box;
-
-      } else {
-        addNode(d);
-        build_links();
-      }
-    });
-    //if any updates needed, do update now
-    if (needs_update === true){
-      update();
-    }
-    if($("input[name=clone][type=submit]").length){$("g.node").click($node_click);}
-  });
 }
 
 if ($(conveyor_container).length){
-  var width = $(conveyor_container).width()
+  var width = $(conveyor_container).width();
   if (width === 0) { width = 700;}
   var height = 500,
     //ajax_url = 'clone/get_d3_data',
@@ -501,16 +324,6 @@ if ($(conveyor_container).length){
 
   //Load initial Stack box
   $("#stack_box").html(graph.environment.info_box);
-
-  //On Page load, set Action In Progress
-  var in_progress = false;
-  set_in_progress(graph.environment, node);
-
-  //If status is In Progress, start AJAX polling
-  var poll_time = 0;
-  if (in_progress === true) { poll_time = 3000; }
-  else { poll_time = 30000; }
-  //ajax_poll(poll_time);
 
   //thumbnail
   var thumbnailNodes=[];

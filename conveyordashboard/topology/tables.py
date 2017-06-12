@@ -47,31 +47,6 @@ class DeleteAction(tables.LinkAction):
     url = "javascript:void(0);"
 
 
-class CreateMetadata(CreateAction):
-    name = 'add_metadata'
-    verbose_name = _("Add Metadata")
-    classes = ("btn-add-metadata",)
-
-
-class DeleteMetadata(DeleteAction):
-    name = 'delete_metadata'
-    verbose_name = _("Delete Metadata")
-    classes = ("btn-delete-metadata", "disabled",)
-
-
-class MetadataTable(tables.DataTable):
-    key = tables.Column('key',
-                        verbose_name=_("Key"))
-    value = tables.Column('value',
-                          verbose_name=_("Value"))
-
-    class Meta(object):
-        name = 'metadatas'
-        verbose_name = _("Metadata")
-        footer = False
-        table_actions = (CreateMetadata, DeleteMetadata,)
-
-
 class CreateRule(CreateAction):
     name = 'add_rule'
     verbose_name = _("Add Rule")

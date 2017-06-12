@@ -67,7 +67,8 @@ def preprocess_update_resources(update_resources):
             res[constants.RES_ACTION_KEY] = constants.ACTION_EDIT
 
     for res in update_resources:
-        if res[TAG_RES_TYPE] == constants.NOVA_SERVER:
+        res_type = res[TAG_RES_TYPE]
+        if res_type == constants.NOVA_SERVER:
             if res.get('user_data', None):
                 user_data = res['user_data']
                 if six.PY3:
@@ -82,7 +83,20 @@ def preprocess_update_resources(update_resources):
                         pass
                 user_data = base64.b64encode(user_data).decode('utf-8')
                 res['user_data'] = user_data
-        elif res[TAG_RES_TYPE] == constants.NEUTRON_SUBNET:
+            if res.get('metadata', None):
+                meta = [dict(zip(['k', 'v'], item.strip().split('=')))
+                        for item in res['metadata'].split('\n')
+                        if item.strip()]
+                res['metadata'] = dict((i['k'], i.get('v', '')) for i in meta)
+        elif res_type == constants.CINDER_VOLUME:
+            if res.get('metadata', None):
+                meta = [dict(zip(['k', 'v'], item.strip().split('=')))
+                        for item in res['metadata'].split('\n')
+                        if item.strip()]
+                res['metadata'] = dict((i['k'], i.get('v', '')) for i in meta)
+            if 'size' in res:
+                res['size'] = int(res['size'])
+        elif res_type == constants.NEUTRON_SUBNET:
             res.pop('from_network_id', None)
             if 'no_gateway' in res:
                 if res['no_gateway']:
@@ -107,8 +121,8 @@ def preprocess_update_resources(update_resources):
                 nameservers = [ns.strip()
                                for ns in res['dns_nameservers'].split('\n')
                                if ns.strip()]
-                res['dns_nameserver'] = nameservers
-        elif res[TAG_RES_TYPE] == constants.NEUTRON_NET:
+                res['dns_nameservers'] = nameservers
+        elif res_type == constants.NEUTRON_NET:
             if 'value_specs' in res:
                 val_specs = res['value_specs']
                 specs = {}
@@ -128,7 +142,7 @@ def preprocess_update_resources(update_resources):
             if 'admin_state_up' in res:
                 res['admin_state_up'] \
                     = strutils.bool_from_string(res['admin_state_up'])
-        elif res[TAG_RES_TYPE] == constants.NEUTRON_SECGROUP:
+        elif res_type == constants.NEUTRON_SECGROUP:
             if 'rules' in res:
                 rules = res['rules']
                 if isinstance(rules, six.string_types):
@@ -323,7 +337,7 @@ class ModifyPlan(forms.SelfHandlingForm):
             messages.success(request, msg)
             return True
         except Exception as e:
-            LOG.error("Update plan %(plan_id) failed. %(error)s",
+            LOG.error("Update plan %(plan_id)s failed. %(error)s",
                       {'plan_id': plan_id, 'error': e})
             redirect = reverse('horizon:conveyor:plans:index')
             exceptions.handle(request,

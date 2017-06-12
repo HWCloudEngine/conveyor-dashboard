@@ -536,7 +536,7 @@ class UpdatePlanResourceView(View):
 
         # Dependenies
         i_dependencies = json.JSONDecoder().decode(POST['dependencies'])
-        dependencies = plan.original_dependencies
+        dependencies = plan.updated_dependencies
         dependencies.update(i_dependencies)
 
         data = json.JSONDecoder().decode(POST['data'])

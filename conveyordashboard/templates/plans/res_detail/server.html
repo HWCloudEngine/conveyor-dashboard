@@ -1,34 +1,31 @@
 {% load i18n %}
 <div class="contentBody detailInfoCon" resource_id="{{ resource_id }}" resource_type="{{ resource_type }}" data-id="{{ id }}">
-  <div class="form-group header">{{ data.name }}</div>
+  {% if data.name %}
+    <div class="form-group">
+      <label class="control-label">{% trans "Name" %}</label>
+      <div class>{{ data.name }}</div>
+    </div>
+  {% endif %}
   <div class="form-group">
     <label class="control-label">{% trans "Availability Zone" %}</label>
-    <div class=" ">{{ data.availability_zone }}</div>
+    <div class>{{ data.availability_zone }}</div>
   </div>
   <div class="form-group">
     <label class="control-label">{% trans "Script Data" %}</label>
-    <div class=" "><textarea id="id_user_data" class="form-control" data-ori="{{ data.user_data }}" cols="40" rows="5">{{ data.user_data }}</textarea></div>
-  </div>
-  {% if metadata %}
-    <div class="form-group">
-      <label class="control-label">{% trans "Metadata" %}</label>
-      {{ metadata }}
+    <div class>
+      <textarea id="id_user_data" class="form-control" cols="40" rows="5"
+                data-ori="{{ data.user_data }}">{{ data.user_data }}</textarea>
     </div>
-  {% endif %}
-</div>
-<div class="footer">
-  <div class="cell delete">
-    <button class="cancel btn btn-danger btn-xs">{% trans "Cancel" %}</button>
-    <button class="save-info btn btn-danger btn-xs">{% trans "Save" %}</button>
+  </div>
+  <div class="form-group">
+    <label class="control-label">{% trans "Metadata" %}</label>
+    <span class="help-icon" data-toggle="tooltip" data-placement="top" title=""
+          data-original-title="{% trans "Each entry is key=value , and one entry per line." %}">
+      <span class="fa fa-question-circle"></span>
+    </span>
+    <div class>
+      <textarea id="id_metadata" class="form-control" cols="40" rows="5"
+                data-ori="{{ data.metadata }}">{{ data.metadata }}</textarea>
+    </div>
   </div>
 </div>
-<script>
-  $(function () {
-    "use strict";
-    var table = "table#metadatas";
-    var add_action = "#metadatas__action_add_metadata";
-    var rm_action = "#metadatas__action_delete_metadata";
-    conveyorEditPlanRes.openAddOperation(table, "metadatas", add_action);
-    conveyorEditPlanRes.openDeleteOperation(table, rm_action);
-  })
-</script>
