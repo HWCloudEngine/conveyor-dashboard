@@ -1,21 +1,26 @@
 {% load i18n %}
 <div class="contentBody detailInfoCon" resource_id="{{ resource_id }}" resource_type="{{ resource_type }}">
-	{%if data.name%}<div class="form-group header">{{ data.name }}</div>{%endif%}
-	<div class="form-group"><label class="control-label">{% trans "Protocol Port" %}</label><div class=" "><input class="form-control" id="id_protocol_port" name="protocol_port" type="number" data-ori="{{ data.protocol_port }}" value="{{ data.protocol_port }}"></div></div>
-	<div class="form-group">
-		<label class="control-label">{% trans "Protocol" %}</label>
-		<div class=" ">
-			<select class="form-control" name="protocols" data-ori="{{ data.protocol }}">
-				<option name="protocol" value="HTTP" {%ifequal data.protocol "HTTP" %}selected="selected"{%endifequal%}>HTTP</option>
-				<option name="protocol" value="HTTPS" {%ifequal data.protocol "HTTPS" %}selected="selected"{%endifequal%}>HTTPS</option>
-				<option name="protocol" value="TCP" {%ifequal data.protocol "TCP" %}selected="selected"{%endifequal%}>TCP</option>
-			</select>
-		</div>
-	</div>
-</div>
-<div class="footer">
-	<div class="cell delete">
-		<button class="cancel btn btn-danger btn-xs">{% trans "Cancel" %}</button>
-		<button class="save-info btn btn-danger btn-xs">{% trans "Save" %}</button>
-	</div>
+  {%if data.name%}
+    <div class="form-group">
+      <label class="control-label">{% trans "Name" %}</label>
+      <div class=" ">{{ data.name }}</div>
+    </div>
+  {%endif%}
+  <div class="form-group">
+    <label class="control-label">{% trans "Protocol Port" %}</label>
+    <div class>
+      <input class="form-control" id="id_protocol_port" name="protocol_port" type="number"
+             data-ori="{{ data.protocol_port }}" value="{{ data.protocol_port }}">
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="control-label">{% trans "Protocol" %}</label>
+    <div class>
+      <select class="form-control" name="protocols" data-ori="{{ data.protocol }}">
+        <option name="protocol" value="HTTP" {%ifequal data.protocol "HTTP" %}selected="selected"{%endifequal%}>HTTP</option>
+        <option name="protocol" value="HTTPS" {%ifequal data.protocol "HTTPS" %}selected="selected"{%endifequal%}>HTTPS</option>
+        <option name="protocol" value="TCP" {%ifequal data.protocol "TCP" %}selected="selected"{%endifequal%}>TCP</option>
+      </select>
+    </div>
+  </div>
 </div>

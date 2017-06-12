@@ -34,7 +34,7 @@ class IndexView(tables.DataTableView):
     def get_data(self):
         pools = []
         try:
-            request = self.tab_group.request
+            request = self.request
             pools = api.resource_list(request, consts.NEUTRON_POOL)[0].pools
             pools = [os_api.lbaas.Pool(p) for p in pools]
             fips = None
@@ -49,8 +49,8 @@ class IndexView(tables.DataTableView):
                         pool.vip.fip = vip_fip[0]
             pools = filter(self._status_filter, pools)
         except Exception:
-            exceptions.handle(self.tab_group.request,
-                              _('Unable to retrieve pool        s list.'))
+            exceptions.handle(self.request,
+                              _('Unable to retrieve pools list.'))
         return pools
 
     def _status_filter(self, pool):
