@@ -1,19 +1,78 @@
 {% load i18n %}
 <div class="contentBody detailInfoCon" resource_id="{{ resource_id }}" resource_type="{{ resource_type }}">
-	{%if data.name%}<div class="form-group header">{{ data.name }}</div>{%endif%}
-	<div class="form-group"><label class="control-label">{% trans "Name" %}</label><div class=" "><input class="form-control" id="id_name" name="name" type="text" data-ori="{{ data.name }}" value="{{ data.name }}"></div></div>
-	<div class="form-group"><label class="control-label">{% trans "Network Address"%}</label><div class=" "><input class="form-control" id="id_cidr" name="cidr" type="text" data-ori="{{ data.cidr }}" value="{{ data.cidr }}"></div></div>
-	<div class="form-group"><label class="control-label">{% trans "Gateway IP"%}</label><div class=" "><input class="form-control" id="id_gateway_ip" name="gateway_ip" type="text" data-ori="{{ data.gateway_ip }}" value="{{ data.gateway_ip }}"></div></div>
-    <div class="form-group "><div class=""><div class="checkbox"><label><input {% if data.no_gateway%}checked="checked"{%endif%} id="id_no_gateway" name="no_gateway" type="checkbox"><span>Disable Gateway</span></label></div></div></div>
-    <div class="form-group "><div class=""><div class="checkbox"><label><input {% if data.enable_dhcp%}checked="checked"{%endif%} id="id_enable_dhcp" name="enable_dhcp" type="checkbox"><span>Enable DHCP</span></label></div></div></div>
-	<div class="form-group"><label class="control-label">{% trans "Allocation Pools"%}</label><div class=" "><textarea class="form-control" id="id_allocation_pools" name="allocation_pools" cols="40" rows="4" data-ori="{{data.allocation_pools}}">{{data.allocation_pools}}</textarea></div></div>
-	<div class="form-group"><label class="control-label">{% trans "DNS Name Servers"%}</label><div class=" "><textarea class="form-control" id="id_dns_nameservers" name="dns_nameservers" value="" cols="40" rows="4" data-ori="{{ data.dns_nameservers }}">{{ data.dns_nameservers }}</textarea></div></div>
-	<div class="form-group"><label class="control-label">{% trans "Host Routes"%}</label><div class=" "><textarea class="form-control" id="id_host_routes" name="host_routes" value="" cols="40" rows="4" data-ori="{{ data.host_routes }}">{{ data.host_routes }}</textarea></div></div>
+  <div class="form-group">
+    <label class="control-label">{% trans "Name" %}</label>
+    <div class>
+      <input class="form-control" id="id_name" name="name" type="text" data-ori="{{ data.name }}" value="{{ data.name }}">
+    </div>
+  </div>
+	<div class="form-group">
+    <label class="control-label">{% trans "Network Address"%}</label>
+    <div class>
+      <input class="form-control" id="id_cidr" name="cidr" type="text" data-ori="{{ data.cidr }}" value="{{ data.cidr }}">
+    </div>
+  </div>
+	<div class="form-group">
+    <label class="control-label">{% trans "Gateway IP"%}</label>
+    <div class>
+      <input class="form-control" id="id_gateway_ip" name="gateway_ip" type="text" data-ori="{{ data.gateway_ip }}" value="{{ data.gateway_ip }}">
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="">
+      <div class="checkbox">
+        <label>
+          <input {% if data.no_gateway%}checked="checked"{%endif%} id="id_no_gateway" name="no_gateway" type="checkbox">
+          <span>{% trans "Disable Gateway" %}</span>
+        </label>
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class>
+      <div class="checkbox">
+        <label>
+          <input {% if data.enable_dhcp%}checked="checked"{%endif%} id="id_enable_dhcp" name="enable_dhcp" type="checkbox">
+          <span>{% trans "Enable DHCP" %}</span>
+        </label>
+      </div>
+    </div>
+  </div>
+	<div class="form-group">
+    <label class="control-label">{% trans "Allocation Pools"%}</label>
+    <span class="help-icon" data-toggle="tooltip" data-placement="top" title="" data-original-title="{% trans "Each entry is: start_ip_address,end_ip_address (e.g., 192.168.1.100,192.168.1.120) , and one entry per line." %}"><span class="fa fa-question-circle"></span></span>
+    <div class>
+      <textarea class="form-control" id="id_allocation_pools" name="allocation_pools" cols="40" rows="4" data-ori="{{data.allocation_pools}}">{{data.allocation_pools}}</textarea>
+    </div>
+  </div>
+	<div class="form-group">
+    <label class="control-label">{% trans "DNS Name Servers"%}</label>
+    <span class="help-icon" data-toggle="tooltip" data-placement="top" title="" data-original-title="{% trans "IP address list of DNS name servers for this subnet. One entry per line." %}"><span class="fa fa-question-circle"></span></span>
+    <div class>
+      <textarea class="form-control" id="id_dns_nameservers" name="dns_nameservers" value="" cols="40" rows="4" data-ori="{{ data.dns_nameservers }}">{{ data.dns_nameservers }}</textarea>
+    </div>
+  </div>
+	<div class="form-group">
+    <label class="control-label">{% trans "Host Routes"%}</label>
+    <span class="help-icon" data-toggle="tooltip" data-placement="top" title="" data-original-title="{% trans "Each entry is: destination_cidr,nexthop (e.g., 192.168.200.0/24,10.56.1.254) , and one entry per line." %}"><span class="fa fa-question-circle"></span></span>
+    <div class>
+      <textarea class="form-control" id="id_host_routes" name="host_routes" value="" cols="40" rows="4" data-ori="{{ data.host_routes }}">{{ data.host_routes }}</textarea>
+    </div>
+  </div>
 	{%if data.subnets%}
-	<div class="form-group "><div class=""><div class="checkbox"><label><input {% if data.from_other%}checked="checked"{%endif%} id="id_from_other" name="from_other" type="checkbox"><span>Select from Other Subnets</span></label></div></div></div>
+	<div class="form-group">
+    <div class>
+      <div class="checkbox">
+        <label>
+          <input {% if data.from_other%}checked="checked"{%endif%} id="id_from_other" name="from_other" type="checkbox">
+          <span>{% trans "Select from Other Subnets" %}</span>
+        </label>
+      </div>
+    </div>
+  </div>
 	<div class="form-group">
 	    <label class="control-label">{% trans "Subnets"%}</label>
-		<div class=" ">
+		<div class>
 		<select class="form-control" name="subnets" data-ori="{{ id }}">
 		{% for subnet in data.subnets %}
 			<option name="subenet" value="{{ subnet.id }}" {%ifequal id subnet.id %}selected="selected"{%endifequal%}>{{ subnet.name }} ({{ subnet.id }})</option>
@@ -22,11 +81,16 @@
 		</div>
 	</div>
 	{%endif%}
+<script>
+  $(function () {
+    "use strict";
+    var no_gateway = $('[name=no_gateway]');
+    var gateway_ip = $('[name=gateway_ip]');
+    if($(no_gateway).is(':checked')) {$(gateway_ip).parent().parent().hide();}
+    $(no_gateway).click(function () {
+      if($(no_gateway).is(':checked')) {$(gateway_ip).parent().parent().hide();}
+      else {$(gateway_ip).parent().parent().show()}
+    })
+  })
+</script>
 </div>
-<div class="footer">
-	<div class="cell delete">
-		<button class="cancel btn btn-danger btn-xs">{% trans "Cancel" %}</button>
-		<button class="save-info btn btn-danger btn-xs">{% trans "Save" %}</button>
-	</div>
-</div>
-
