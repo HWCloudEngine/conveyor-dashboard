@@ -498,7 +498,6 @@ class DestinationView(forms.ModalFormView):
                         self).get_context_data(**kwargs)
         context['plan_type'] = plan_type
         context.update(self._show_filter(self.get_object()))
-        LOG.info("context: %s", context)
         return context
 
     def get_initial(self):

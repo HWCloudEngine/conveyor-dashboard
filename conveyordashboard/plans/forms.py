@@ -59,14 +59,13 @@ class ImportPlan(forms.SelfHandlingForm):
 
 
 def preprocess_update_resources(update_resources):
-    for res in update_resources:
-        if res.get(constants.RES_ACTION_KEY, '') in (constants.ACTION_DELETE,
-                                                     constants.ACTION_ADD):
-            update_resources.remove(res)
-        else:
-            res[constants.RES_ACTION_KEY] = constants.ACTION_EDIT
+    def _filter(res):
+        return res.get(constants.RES_ACTION_KEY, '') \
+            not in (constants.ACTION_DELETE, constants.ACTION_ADD)
+    resources = filter(_filter, update_resources)
 
-    for res in update_resources:
+    for res in resources:
+        res[constants.RES_ACTION_KEY] = constants.ACTION_EDIT
         res_type = res[TAG_RES_TYPE]
         if res_type == constants.NOVA_SERVER:
             if res.get('user_data', None):
@@ -150,10 +149,11 @@ def preprocess_update_resources(update_resources):
                 for r in rules:
                     r.pop('id', None)
                 res['rules'] = rules
+    return resources
 
 
 def update_plan_resource(request, plan_id, resources):
-    preprocess_update_resources(resources)
+    resources = preprocess_update_resources(resources)
     if len(resources) > 0:
         LOG.info("Update plan %(plan)s with resources %(resources)s",
                  {'plan': plan_id, 'resources': resources})
@@ -205,13 +205,17 @@ class Destination(forms.SelfHandlingForm):
         if plan_type == constants.CLONE:
             try:
                 resources = json.loads(data['resources'])
-                preprocess_update_resources(resources)
+                resources = preprocess_update_resources(resources)
 
                 kwargs = {}
                 if 'sys_clone' in data:
                     kwargs['sys_clone'] = data['sys_clone']
                 if 'copy_data' in data:
                     kwargs['copy_data'] = data['copy_data']
+
+                LOG.info("Execute export plan %(plan)s template and clone "
+                         "with resource=%(res)s",
+                         {'plan': plan_id, 'res': resources})
 
                 api.export_template_and_clone(request, plan_id, zone_name,
                                               resources=resources,

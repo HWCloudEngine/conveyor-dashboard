@@ -119,11 +119,11 @@ var conveyorResources = {
           $("input.ip").each(function(){
             var ori_ip = $(this).attr("data-ori");
             var ip=$(this).val();
-            var alloc = $.parseJSON($(this).attr("data-alloc"));
-            if(! conveyorUtil.ipCheckInCidr(alloc, ip)) {
-              $(this).focus();
-              return false;
-            }
+            // var alloc = $.parseJSON($(this).attr("data-alloc"));
+            // if(! conveyorUtil.ipCheckInCidr(alloc, ip)) {
+            //   $(this).focus();
+            //   return false;
+            // }
             if(ori_ip != ip) {
               changed = true;
             }

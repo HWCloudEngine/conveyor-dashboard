@@ -18,14 +18,11 @@
 
 var conveyorService = {
   cancelPlan: function (plan_id) {
-    var result = true;
-    $.ajaxSetup({async: false});
     $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
-    $.post(WEBROOT + "/conveyor/plans/" + plan_id + "/cancel").error(function () {
-      horizon.alert('error', gettext("Cancel Plan " + plan_id + " failed"));
-      result = false;
-    });
-    return result;
+    $.post(WEBROOT + "/conveyor/plans/" + plan_id + "/cancel")
+      .error(function () {
+        horizon.alert('error', gettext("Cancel Plan " + plan_id + " failed"));
+      });
   },
 
   updatePlanResourceForFrontend: function (plan_id, data) {
