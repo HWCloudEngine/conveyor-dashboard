@@ -29,7 +29,7 @@ LOG = logging.getLogger(__name__)
 ALLOW_CLONE_STATUS = ('available', 'cloning', 'finished')
 ALLOW_MIGRATE_STATUS = ('available', 'migrating', 'finished')
 ALLOW_MODIFY_STATUS = ('initiating', 'available', 'finished')
-NOT_ALLOW_EXPORT_STATUS = ('expired', 'creating', 'error', 'initiating')
+NOT_ALLOW_EXPORT_STATUS = ('creating', 'error', 'initiating')
 
 
 class UpdateRow(tables.Row):
@@ -188,7 +188,6 @@ STATUS_DISPLAY_CHOICES = (
     ("finished", pgettext_lazy("Current status of plan", u"Finished")),
     ("deleting", pgettext_lazy("Current status of plan", u"Deleting")),
     ("deleted", pgettext_lazy("Current status of plan", u"Deleted")),
-    ("expired", pgettext_lazy("Current status of plan", u"Expired")),
     ("error", pgettext_lazy("Current status of plan", u"Error")),
     ("error_deleting",
      pgettext_lazy("Current status of plan", u"Error Deleting")),
@@ -207,8 +206,7 @@ class PlansTable(tables.DataTable):
     PLAN_STATUS_CHOICES = (
         ('available', True),
         ('error', False),
-        ('finished', True),
-        ('expired', True))
+        ('finished', True))
     TASK_STATUS_CHOICES = (
         (None, True),
         ('none', True),
@@ -228,8 +226,6 @@ class PlansTable(tables.DataTable):
                             filters=(filters.parse_isotime,
                                      filters.timesince_sortable),
                             attrs={'data-type': 'timesince'})
-    expire = tables.Column("expire_at",
-                           verbose_name=_("Expire Time"))
     plan_status = tables.Column("plan_status",
                                 filters=(title, filters.replace_underscores),
                                 verbose_name=_("Plan Status"),
