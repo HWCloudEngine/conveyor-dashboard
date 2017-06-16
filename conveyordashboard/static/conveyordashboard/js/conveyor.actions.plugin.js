@@ -104,14 +104,15 @@ $(function () {
           if(ul.length > 0) {
             $(ul).append("<li>" + $(action).prop("outerHTML") + "</li>");
           } else {
-            $(actions_column).children().addClass("btn-sm");
-            $(actions_column).width($(actions_column).width() + 30);
-            $(actions_column).append('<a class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" href="#"><span class="fa fa-caret-down"></span></a>');
-            $(actions_column).append("<ul class=\"dropdown-menu dropdown-menu-right row_actions\"><li>" + $(action).prop("outerHTML") + "</li></ul>");
+            var btn_group = $('<div class="btn-group"></div>');
+            $(actions_column).children().addClass("btn-sm").appendTo(btn_group);
+            $(btn_group).append('<a class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" href="#"><span class="fa fa-caret-down"></span></a>');
+            $(btn_group).append('<ul class="dropdown-menu dropdown-menu-right row_actions"><li>' + $(action).prop('outerHTML') + '</li></ul>');
+            $(actions_column).append(btn_group);
           }
         }
         else {
-          $(actions_column).append($(action))
+          $(actions_column).append(action)
         }
       }
     });
@@ -123,17 +124,16 @@ $(function () {
       var action_ids = ["a#type__action_create_plan_with_mul_res", "a#type__action_create_migrate_plan_with_mul_res"];
       for(var index in action_ids){
         var action_id = action_ids[index].replace(/type/g, table_type);
-
         if($(actions).find(action_id).length == 0) {continue;}
         var action = $(actions).find(action_id);
 
         var table_actions = $(table).find(table_actions_cls);
         if(table_actions) {
-          if($(table_actions).find(table_actions_menu_cls)) {
-            $(table_actions).children(table_actions_menu_cls).before($(action).prop("outerHTML"));
+          if($(table_actions).find(table_actions_menu_cls).length) {
+            $(table_actions).children(table_actions_menu_cls).before(action);
           }
           else{
-            $(table_actions).append($(action).prop("outerHTML"))
+            $(table_actions).append(action)
           }
         }
       }

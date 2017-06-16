@@ -93,9 +93,9 @@ class IndexView(common_tables.PagedTableMixin, tables.DataTableView):
 
 class DetailView(tabs.TabView):
     tab_group_class = plan_tabs.DetailTabs
-    template_name = 'plans/detail.html'
+    template_name = 'horizon/common/_detail.html'
     redirect_url = 'horizon:conveyor:plans:index'
-    page_title = _("Plan Details: {{ plan_id }}")
+    page_title = "{{ plan.plan_name|default:plan.plan_id }}"
 
     def get_context_data(self, **kwargs):
         context = super(DetailView, self).get_context_data(**kwargs)
@@ -103,6 +103,8 @@ class DetailView(tabs.TabView):
         context['plan_id'] = self.kwargs['plan_id']
         context['plan'] = plan
         context['url'] = reverse(self.redirect_url)
+        table = plan_tables.PlansTable(self.request)
+        context['actions'] = table.render_row_actions(plan)
         return context
 
     @memoized.memoized_method
