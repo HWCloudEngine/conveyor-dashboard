@@ -1,7 +1,22 @@
 {% extends 'base.html' %}
 {% load i18n %}
 {% load static %}
+{% load compress %}
 {% block title %}{% trans "Overview" %}{% endblock %}
+{% block css %}
+  {{ block.super }}
+  {% compress css %}
+    <style>
+      #plan_deps_table .table > thead > tr > th{padding:4px 8px!important;}
+      #plan_deps_table .table > tbody > tr > td{padding:0 8px!important;}
+      #plan_deps_table .table > tbody > tr > td span{margin-left: 0!important;}
+      .parent td{line-height: 30px!important;}
+      [id|=node--1] > td > span{margin-left: -10px!important;}
+    </style>
+    <link rel="stylesheet" href="{% static 'conveyordashboard/css/jquery.treeTable.css' %}"/>
+    <link rel="stylesheet" href="{% static 'conveyordashboard/css/conveyordashboard.css' %}"/>
+  {% endcompress %}
+{% endblock %}
 {% block main %}
   <idv class="conveyor-overview"></idv>
   <div id="resource_container" class="resource_container">
@@ -40,15 +55,6 @@
 {% endblock %}
 {% block js %}
   {% include "horizon/_scripts.html" %}
-  <style>
-      #plan_deps_table .table > thead > tr > th{padding:4px 8px!important;}
-      #plan_deps_table .table > tbody > tr > td{padding:0 8px!important;}
-      #plan_deps_table .table > tbody > tr > td span{margin-left: 0!important;}
-      .parent td{line-height: 30px!important;}
-      [id|=node--1] > td > span{margin-left: -10px!important;}
-  </style>
-  <link rel="stylesheet" href="{% static 'conveyordashboard/css/jquery.treeTable.css' %}"/>
-  <link rel="stylesheet" href="{% static 'conveyordashboard/css/conveyordashboard.css' %}"/>
   <script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.js' %}"></script>
   <script type="text/javascript">
     $(function() {

@@ -1,6 +1,9 @@
 {% load static %}
-<link rel="stylesheet" href="{% static 'conveyordashboard/css/jquery.treeTable.css' %}"/>
-<link rel="stylesheet" href="{% static 'conveyordashboard/css/deps_topo.css' %}"/>
+{% load compress %}
+{% compress css %}
+  <link rel="stylesheet" href="{% static 'conveyordashboard/css/jquery.treeTable.css' %}"/>
+  <link rel="stylesheet" href="{% static 'conveyordashboard/css/deps_topo.css' %}"/>
+{% endcompress %}
 <script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.js' %}"></script>
 <div id="resource_container" class="resource_container">
   <div id="info_box" class="info_box"></div>

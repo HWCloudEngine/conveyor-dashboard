@@ -1,15 +1,15 @@
+#plan_deps_table {
+    max-height: 200px;
+    overflow-x: hidden;
+    overflow-y: auto
+}
+
 #plan_deps_table .table > thead > tr > th {
     padding: 4px 8px !important;
 }
 
 #plan_deps_table .table > tbody > tr > td {
     padding: 0 8px !important;
-}
-
-#plan_deps_table {
-    height: 200px;
-    overflow-x: hidden;
-    overflow-y: auto
 }
 
 #plan_deps_table .table > tbody > tr > td span {

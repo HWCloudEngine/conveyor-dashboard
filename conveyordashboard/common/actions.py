@@ -33,7 +33,7 @@ class CreateClonePlan(tables.LinkAction):
     name = 'clone_plan'
     verbose_name = _("Create Clone Plan")
     url = 'horizon:conveyor:plans:clone'
-    classes = ("ajax-modal", "btn-default", "btn-clone")
+    classes = ("ajax-modal", "btn-clone")
     help_text = _("Execute clone plan")
 
     def get_link_url(self, datum):
@@ -54,7 +54,7 @@ class CreateMigratePlan(tables.LinkAction):
     name = 'migrate_plan'
     verbose_name = _("Create Migrate Plan")
     url = 'horizon:conveyor:plans:migrate'
-    classes = ("ajax-modal", "btn-default", "btn-migrate")
+    classes = ("ajax-modal", "btn-migrate")
     help_text = _("Execute migrate plan")
 
     def get_link_url(self, datum):
@@ -70,8 +70,7 @@ class CreateClonePlanWithMulRes(tables.LinkAction):
     name = 'create_plan_with_mul_res'
     verbose_name = _("Create Clone Plan")
     url = 'horizon:conveyor:plans:clone'
-    classes = ("ajax-modal", "btn-default",
-               "create-clone-plan-for-mul-sel", "disabled")
+    classes = ("ajax-modal", "create-clone-plan-for-mul-sel", "disabled")
     help_text = _("Create clone plan with selecting multi-resources")
     icon = 'plus'
 
@@ -80,7 +79,6 @@ class CreateMigratePlanWithMulRes(tables.LinkAction):
     name = 'create_migrate_plan_with_mul_res'
     verbose_name = _("Create Migrate Plan")
     url = 'horizon:conveyor:plans:migrate'
-    classes = ("ajax-modal", "btn-default",
-               "create-migrate-plan-for-mul-sel", "disabled")
+    classes = ("ajax-modal", "create-migrate-plan-for-mul-sel", "disabled")
     help_text = _("Create migrate plan with selecting multi-resources")
     icon = 'plus'
