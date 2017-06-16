@@ -149,6 +149,9 @@ def preprocess_update_resources(update_resources):
                 for r in rules:
                     r.pop('id', None)
                 res['rules'] = rules
+        elif res_type == constants.NEUTRON_FLOATINGIP:
+            # NOTE: In heat, there is not floating_network_id property.
+            res.pop('floating_network_id')
     return resources
 
 
