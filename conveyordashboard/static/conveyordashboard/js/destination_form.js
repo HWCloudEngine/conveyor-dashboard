@@ -29,7 +29,7 @@ $(function () {
 
     if (!$(destinationForm).find('.modal-body .col-sm-6').eq(0).find('.form-group').length) {
       $(destinationForm).find('.modal-body .col-sm-6').eq(1).remove();
-      $(destinationForm).find('.modal-body').append("<p>" + gettext("No need to provide 'az', 'sys_clone' or 'copy_data' option") + "</p>")
+      $(destinationForm).find('.modal-body').append("<p>" + gettext("No need to provide 'availability_zone', 'sys_clone' or 'copy_data' option") + "</p>")
     }
   }
 

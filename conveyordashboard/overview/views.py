@@ -62,7 +62,7 @@ class IndexView(views.HorizonTemplateView):
         except Exception as e:
             azs = []
             exceptions.handle(self.request,
-                              _("Unable to retrieve availability zone."))
+                              _("Unable to retrieve availability zones."))
 
         context['azs'] = azs
         context['availability_zone'] = availability_zone

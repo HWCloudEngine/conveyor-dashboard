@@ -115,7 +115,7 @@ class DetailView(tabs.TabView):
         except Exception:
             redirect = reverse(self.redirect_url)
             exceptions.handle(self.request,
-                              _("Unable to retrieve detail for "
+                              _("Unable to retrieve details for "
                                 "plan %s.") % plan_id,
                               redirect=redirect)
             raise exceptions.Http302(redirect)
@@ -189,8 +189,8 @@ class CloneView(forms.ModalFormView):
                                        constants.CLONE,
                                        resource), True
             except Exception as e:
-                LOG.error("Create plan failed. %s", e)
-                msg = _("Create plan failed.")
+                LOG.error("Unable to create plan. %s", e)
+                msg = _("Unable to create plan.")
                 exceptions.handle(self.request, msg)
                 return None, None
         elif 'plan_id' in self.request.GET:
@@ -204,9 +204,10 @@ class CloneView(forms.ModalFormView):
                 exceptions.handle(self.request, msg)
                 return None, None
 
-        msg = _("Query string does not contain either plan_id or "
-                "resource ids.")
-        exceptions.handle(self.request, msg)
+        LOG.error("Query string does not contain either plan_id or "
+                  "resource ids.")
+        exceptions.handle(self.request,
+                          _("Query string is not a correct format."))
 
     def get_initial(self):
         initial = super(CloneView, self).get_initial()
@@ -294,8 +295,10 @@ class MigrateView(forms.ModalFormView):
                 exceptions.handle(self.request, msg)
                 return None, None
 
-        msg = _("Query string does not contain either plan_id or res ids.")
-        exceptions.handle(self.request, msg)
+        LOG.error("Query string does not contain either plan_id or "
+                  "resource ids.")
+        exceptions.handle(self.request,
+                          _("Query string is not a correct format."))
 
     def get_initial(self):
         initial = super(MigrateView, self).get_initial()
@@ -491,8 +494,10 @@ class DestinationView(forms.ModalFormView):
         plan = self.get_object(**self.kwargs)
         plan_type = plan.plan_type
         self.submit_label = plan_type.title()
-        self.modal_header = _('%s Destination') % self.submit_label
-        self.page_title = _('%s Destination') % self.submit_label
+        if plan_type == constants.CLONE:
+            self.modal_header = self.page_title = _('Clone Destination')
+        else:
+            self.modal_header = self.page_title = _('Migrate Destination')
         submit_url = 'horizon:conveyor:plans:destination'
         self.submit_url = reverse(submit_url,
                                   kwargs={'plan_id': plan.plan_id})

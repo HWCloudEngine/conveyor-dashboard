@@ -220,6 +220,7 @@ class PlansTable(tables.DataTable):
                               link="horizon:conveyor:plans:detail",
                               verbose_name=_("Plan Name"))
     plan_type = tables.Column("plan_type",
+                              filters=(title,),
                               verbose_name=_("Plan Type"))
     created = tables.Column("created_at",
                             verbose_name=_("Time since created"),

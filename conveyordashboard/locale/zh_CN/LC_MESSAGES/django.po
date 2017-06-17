@@ -1,0 +1,899 @@
+# Shaolin Deng <drngsl@qq.com>, 2017. #zanata
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-06-16 16:31+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Consistency Groups"
+msgstr "一致性组"
+
+msgctxt "Current status of Consistency Group"
+msgid "Available"
+msgstr "可用"
+
+msgctxt "Current status of Consistency Group"
+msgid "In-use"
+msgstr "使用中"
+
+msgctxt "Current status of Consistency Group"
+msgid "Error"
+msgstr "错误"
+
+msgid "Name"
+msgstr "名称"
+
+msgid "Description"
+msgstr "描述"
+
+msgid "Status"
+msgstr "状态"
+
+msgid "Availability Zone"
+msgstr "可用域"
+
+msgid "Volume Type(s)"
+msgstr "卷类型"
+
+msgid "Volume Consistency Groups"
+msgstr "卷一致性组"
+
+msgid "Unable to retrieve volume consistency groups."
+msgstr "无法检索卷一致性组"
+
+msgid "Create Clone Plan"
+msgstr "创建克隆计划"
+
+msgid "Execute clone plan"
+msgstr "执行克隆计划"
+
+msgid "Create Migrate Plan"
+msgstr "创迁移计划"
+
+msgid "Execute migrate plan"
+msgstr "创建迁移计划"
+
+msgid "Create clone plan with selecting multi-resources"
+msgstr "通过选择多个资源创建克隆计划"
+
+msgid "Create migrate plan with selecting multi-resources"
+msgstr "通过选择多个资源创建迁移计划"
+
+msgid "Floating IPs"
+msgstr "浮动IP"
+
+msgid "IP Address"
+msgstr "IP 地址"
+
+msgid "Mapped Fixed IP Address"
+msgstr "已映射固定 IP 地址"
+
+msgid "Pool"
+msgstr "池"
+
+msgid "Unable to retrieve floating IP addresses."
+msgstr "无法检索浮动 IP 地址。"
+
+msgid "Instances"
+msgstr "实例"
+
+#, python-format
+msgid "%s GB"
+msgstr "%s GB"
+
+msgid "Not available"
+msgstr "不可用"
+
+#, python-format
+msgid "Unable to retrieve flavor information for instance \"%s\"."
+msgstr "无法检索实例 “%s” 的 flavor 信息。"
+
+#, python-format
+msgid "Unable to retrieve Network information for instance \"%s\"."
+msgstr "无法检索实例 “%s” 的网络信息。"
+
+msgid "Instance Name"
+msgstr "实例名称"
+
+msgid "Status ="
+msgstr "状态 ="
+
+msgid "Image ID ="
+msgstr "镜像ID ="
+
+msgid "Flavor ID ="
+msgstr "云主机类型ID ="
+
+msgid "Image Name"
+msgstr "镜像名称"
+
+msgid "Size"
+msgstr "大小"
+
+msgid "Task"
+msgstr "任务"
+
+msgid "Power State"
+msgstr "电源状态"
+
+msgid "Unable to retrieve instances."
+msgstr "无法检索实例。"
+
+msgid "Load Balancers"
+msgstr "负载均衡"
+
+msgid "Pools"
+msgstr "池"
+
+msgid "Unable to retrieve pools list."
+msgstr "无法检索池列表。"
+
+msgid "Networks"
+msgstr "网络"
+
+msgid "Unable to retrieve network list."
+msgstr "无法检索网络列表"
+
+msgid "Overview"
+msgstr "概况"
+
+msgid "Actions"
+msgstr "操作"
+
+msgid "Project ID"
+msgstr "项目 ="
+
+msgid "Resource Type"
+msgstr "资源类型"
+
+msgid "Resource"
+msgstr "资源"
+
+msgid "Unable to retrieve plan list."
+msgstr "无法检索计划列表。"
+
+msgid "Create plan fialed."
+msgstr "创建计划失败。"
+
+msgid "Unable to retrieve instances list."
+msgstr "无法检索实例列表。"
+
+msgid "Plan File"
+msgstr "计划文件"
+
+#, python-format
+msgid "Successfully imported plan: %s"
+msgstr "成功导入计划： %s"
+
+msgid "Unable to import plan."
+msgstr "无法导入计划。"
+
+msgid "Target Availability Zone"
+msgstr "目标可用域"
+
+msgid "Clone System Volume"
+msgstr "克隆系统卷"
+
+msgid "Copy Volume Data"
+msgstr "拷贝卷数据"
+
+msgid "Unable to retrieve availability zones."
+msgstr "无法检索可用域。"
+
+#, python-format
+msgid "Execute clone plan %s successfully."
+msgstr "执行克隆计划 %s 成功。"
+
+#, python-format
+msgid "Execute clone plan %s failed."
+msgstr "执行克隆计划 %s 失败。"
+
+#, python-format
+msgid "Execute migrate plan %s successfully."
+msgstr "执行迁移计划 %s 成功。"
+
+#, python-format
+msgid "Execute migrate plan %s failed."
+msgstr "执行迁移计划 %s 失败。"
+
+msgid "Unsupported plan type."
+msgstr "不支持的计划类型。"
+
+#, python-format
+msgid "Save plan %s failed."
+msgstr "保存计划 %s 失败。"
+
+#, python-format
+msgid "Update plan %s failed"
+msgstr "更新计划 %s 失败。"
+
+msgid "Plans"
+msgstr "计划"
+
+msgid "Delete plan is not recoverable."
+msgstr "删除计划是不可恢复的。"
+
+msgid "Delete Plan"
+msgid_plural "Delete Plans"
+msgstr[0] "删除计划"
+msgstr[1] "删除计划"
+
+msgid "Scheduled deletion of Plan"
+msgid_plural "Scheduled deletion of Plans"
+msgstr[0] "已安排删除计划"
+msgstr[1] "已安排删除计划"
+
+msgid "Modify"
+msgstr "修改"
+
+msgid "Clone"
+msgstr "克隆"
+
+msgid "clone"
+msgstr "克隆"
+
+msgid "Migrate"
+msgstr "迁移"
+
+msgid "migrate"
+msgstr "迁移"
+
+msgid "Import"
+msgstr "导入"
+
+msgid "Import plan from local"
+msgstr "从本地导入计划"
+
+msgid "Download"
+msgstr "下载"
+
+msgid "Generate Template"
+msgid_plural "Generate Templates"
+msgstr[0] "生成模板"
+msgstr[1] "生成模板"
+
+msgid "Generated Template"
+msgid_plural "Generated Templates"
+msgstr[0] "已生成模板"
+msgstr[1] "已生成模板"
+
+msgctxt "Current status of plan"
+msgid "Initiating"
+msgstr "初始化中"
+
+msgctxt "Current status of plan"
+msgid "Creating"
+msgstr "创建中"
+
+msgctxt "Current status of plan"
+msgid "Available"
+msgstr "可用"
+
+msgctxt "Current status of plan"
+msgid "Cloning"
+msgstr "克隆中"
+
+msgctxt "Current status of plan"
+msgid "Migrating"
+msgstr "迁移中"
+
+msgctxt "Current status of plan"
+msgid "Finished"
+msgstr "已完成"
+
+msgctxt "Current status of plan"
+msgid "Deleting"
+msgstr "删除中"
+
+msgctxt "Current status of plan"
+msgid "Deleted"
+msgstr "已删除"
+
+msgctxt "Current status of plan"
+msgid "Error"
+msgstr "错误"
+
+msgctxt "Current status of plan"
+msgid "Error Deleting"
+msgstr "错误删除"
+
+msgid "initiating"
+msgstr "初始化中"
+
+msgid "creating"
+msgstr "创建中"
+
+msgid "available"
+msgstr "可用"
+
+msgid "cloning"
+msgstr "克隆中"
+
+msgid "migrating"
+msgstr "迁移中"
+
+msgid "finished"
+msgstr "已完成"
+
+msgid "deleting"
+msgstr "删除中"
+
+msgid "deleted"
+msgstr "已删除"
+
+msgid "error"
+msgstr "错误"
+
+msgid "error_deleting"
+msgstr "错误删除"
+
+msgctxt "Task status of plan"
+msgid "None"
+msgstr "空"
+
+msgctxt "Task status of plan"
+msgid "Deploying"
+msgstr "部署中"
+
+msgctxt "Task status of plan"
+msgid "Finished"
+msgstr "已完成"
+
+msgctxt "Task status of plan"
+msgid "Failed"
+msgstr "失败"
+
+msgid "Plan Name"
+msgstr "计划名称"
+
+msgid "Plan Type"
+msgstr "计划类型"
+
+msgid "Time since created"
+msgstr "从创建以来"
+
+msgid "Plan Status"
+msgstr "计划状态"
+
+msgid "Task Status"
+msgstr "任务状态"
+
+msgid "Topology"
+msgstr "拓扑"
+
+#, python-format
+msgid "Unable to retrieve details for plan %s."
+msgstr "无法检索计划 %s 的详情。"
+
+#, python-format
+msgid "Clone Plan %s"
+msgstr "克隆计划 %s"
+
+msgid "Unable to create plan."
+msgstr "无法创建计划。"
+
+msgid "Unable to retrieve plan details."
+msgstr "无法检索计划详情。"
+
+msgid "Migrate Plan"
+msgstr "迁移计划。"
+
+#, python-format
+msgid "Migrate Plan %s"
+msgstr "迁移计划 %s"
+
+msgid "Query string is not a correct format."
+msgstr "查询字符串格式错误。"
+
+msgid "Save Plan"
+msgstr "保存计划"
+
+msgid "Save"
+msgstr "保存"
+
+msgid "Unable to retrieve plan information."
+msgstr "无法检索计划信息。"
+
+msgid "Modify Plan"
+msgstr "修改计划"
+
+msgid "Import Plan"
+msgstr "导入计划"
+
+msgid "Unable to export plan."
+msgstr "无法导出计划。"
+
+msgid "Clone Destination"
+msgstr "克隆目标"
+
+msgid "Migrate Destination"
+msgstr "迁移目标"
+
+msgid "Security Groups"
+msgstr "安全组"
+
+msgid "Unable to retrieve security groups."
+msgstr "无法检索安全组。"
+
+msgid "Stacks"
+msgstr "堆栈"
+
+msgid "Stack Name"
+msgstr "堆栈名称"
+
+msgid "Created"
+msgstr "已创建"
+
+msgid "Updated"
+msgstr "已更新"
+
+msgid "Unable to retrieve stacks."
+msgstr "无法检索堆栈。"
+
+msgid "Cancel"
+msgstr "取消"
+
+msgid "Description:"
+msgstr "描述："
+
+msgid ""
+"Clone action will clone all rsources of this plan to another specific "
+"availability zone."
+msgstr "克隆当前计划的所有资源到指定的可用区域。"
+
+msgid ""
+"Migrate action will migrate all rsources of this plan to another specific "
+"availability zone."
+msgstr "迁移当前计划的所有资源到指定的可用区域。"
+
+msgid ""
+"you are able to provide options like 'clone sys volume' or "
+"'copy volume data' for this plan."
+msgstr "您可以提供 ‘克隆系统卷’ 和 ‘拷贝卷数据’ 这样的可选参数给这个计划。"
+
+msgid "Plan Overview"
+msgstr "计划概况"
+
+msgid "Information"
+msgstr "信息"
+
+msgid "ID"
+msgstr "标识"
+
+msgid "Create Time"
+msgstr "创建时间"
+
+msgid "Original Resources"
+msgstr "原始资源"
+
+msgid "Updated Resources"
+msgstr "更新后资源"
+
+msgid "Import Plan from local plan template file."
+msgstr "从本地计划模板文件导入计划"
+
+msgid "Save action will save all resources that you edited."
+msgstr "保存操作将会保存您编辑的所有资源。"
+
+msgid ""
+"You could also provide 'sys_clone' and 'copy_data' option for this plan."
+msgstr "您也可以提供 ‘克隆系统卷’ 和 ‘拷贝卷数据’ 可选参数给这个计划。"
+
+msgid "Plan Topology"
+msgstr "计划拓扑"
+
+msgid "Destination"
+msgstr "描述"
+
+msgid "Plan Details"
+msgstr "计划详情"
+
+msgid "Import Clone Plan"
+msgstr "导入克隆计划"
+
+msgid "RAM"
+msgstr "内存"
+
+msgid "VCPUS"
+msgstr "VCPUS"
+
+msgid "Disk"
+msgstr "磁盘"
+
+msgid "Is Public"
+msgstr "是否公有"
+
+msgid "RXTX Factor"
+msgstr "RX/TX 因子"
+
+msgid "Type"
+msgstr "类型"
+
+msgid "None"
+msgstr "空"
+
+msgid "Admin State"
+msgstr "管理状态"
+
+msgid "Provider Network"
+msgstr "供应商网络"
+
+msgid "External Network:"
+msgstr "外部网络"
+
+msgid "Network Type:"
+msgstr "网络类型："
+
+msgid "Unknown"
+msgstr "未知的"
+
+msgid "Physical Network:"
+msgstr "物理网络："
+
+msgid "-"
+msgstr "-"
+
+msgid "Segmentation ID:"
+msgstr "分段标识"
+
+msgid "Fixed Ips"
+msgstr "固定IP"
+
+msgid "Specs"
+msgstr "规范"
+
+msgid "Rules"
+msgstr "规则"
+
+msgid "Direction"
+msgstr "方向"
+
+msgid "Ether Type"
+msgstr "以太网类型"
+
+msgid "IP Protocal"
+msgstr "IP 协议"
+
+msgid "Port Range"
+msgstr "端口范围"
+
+msgid "Remote IP Prefix"
+msgstr "远程 IP 前缀"
+
+msgid "Remote Security Group"
+msgstr "远端安全组"
+
+msgid "CIDR"
+msgstr "CIDR"
+
+msgid "Gateway"
+msgstr "网关"
+
+msgid "Allocation Pools"
+msgstr "分配池"
+
+msgid "Start:"
+msgstr "起始："
+
+msgid "End:"
+msgstr "终止："
+
+msgid "IP Version"
+msgstr "IP版本"
+
+msgid "DNS Nameservers"
+msgstr "DNS 名称服务器"
+
+msgid "Host Routes"
+msgstr "主机路由"
+
+msgid "Enable dhcp"
+msgstr "启用 DHCP"
+
+msgid "Volume Type"
+msgstr "卷类型"
+
+msgid "VCPUs"
+msgstr "VCPUs"
+
+msgid "Floating Ip"
+msgstr "浮动IP"
+
+msgid "Delay"
+msgstr "延迟"
+
+msgid "Max Retries"
+msgstr "最大尝试次数"
+
+msgid "Timeout"
+msgstr "超时"
+
+msgid "Key Pair"
+msgstr "密钥对"
+
+msgid "Protocol Port"
+msgstr "协议端口"
+
+msgid "Protocol"
+msgstr "协议"
+
+msgid "Router External"
+msgstr "外部路由"
+
+msgid "Physical Network"
+msgstr "物理网络"
+
+msgid "Shared"
+msgstr "共享"
+
+msgid "Select from Other Networks"
+msgstr "从其他网络选择"
+
+msgid "Load Balancing Method"
+msgstr "负载均衡方式"
+
+msgid "Address"
+msgstr "地址"
+
+msgid "Weight"
+msgstr "权重"
+
+msgid "Port"
+msgstr "端口"
+
+msgid "Select from Other Security Groups"
+msgstr "从其他安全组选择"
+
+msgid "Script Data"
+msgstr "脚本数据"
+
+msgid "Metadata"
+msgstr "元数据"
+
+msgid "Each entry is key=value , and one entry per line."
+msgstr "每条记录为 键=值 ，并且每行一条记录"
+
+msgid "Network Address"
+msgstr "网络地址"
+
+msgid "Gateway IP"
+msgstr "网关 IP"
+
+msgid "Disable Gateway"
+msgstr "禁用网关"
+
+msgid "Enable DHCP"
+msgstr "启用 DHCP"
+
+msgid ""
+"Each entry is: start_ip_address,end_ip_address (e.g., "
+"192.168.1.100,192.168.1.120) , and one entry per line."
+msgstr ""
+"每条记录为：起始 IP 地址,结束 IP地址（例如，192.168.1.100,192.168.1.120），"
+"每行一条记录。"
+
+msgid "DNS Name Servers"
+msgstr "DNS 名称服务器"
+
+msgid ""
+"IP address list of DNS name servers for this subnet. One entry per line."
+msgstr "此子网的 DNS 名称服务器的 IP 地址列表，每行一个。"
+
+msgid ""
+"Each entry is: destination_cidr,nexthop (e.g., "
+"192.168.200.0/24,10.56.1.254) , and one entry per line."
+msgstr ""
+
+msgid "Select from Other Subnets"
+msgstr "从其他子网选择"
+
+msgid "Subnets"
+msgstr "子网"
+
+msgid "Connection Limit"
+msgstr "连接限制"
+
+msgid "Select from Other Volumes"
+msgstr "从其他卷选择"
+
+msgid "Volumes"
+msgstr "卷"
+
+msgid "Select from Other VolumeTypes"
+msgstr "从其他卷类型选择"
+
+msgid "Volume Types"
+msgstr "卷类型"
+
+msgid ""
+"Rules define which traffic is allowed to instances assigned to the security "
+"group. A security group rule consists of three main parts:"
+msgstr ""
+"规则定义允许将哪些流量传送至分配给安全组的实例。安全组由以下三个主要部分组"
+"成："
+
+msgid "Rule:"
+msgstr "规则："
+
+msgid ""
+"You can specify the desired rule template or use custom rules, the options "
+"are Custom TCP Rule, Custom UDP Rule, or Custom ICMP Rule."
+msgstr ""
+"您可以指定期望的规则模板或者使用定制规则，选项包括：定制 TCP 规则、定制 UDP "
+"规则或定制 ICMP 规则。"
+
+msgid "Open Port/Port Range:"
+msgstr "打开端口/端口范围："
+
+msgid ""
+"For TCP and UDP rules you may choose to open either a single port or a range "
+"of ports. Selecting the \"Port Range\" option will provide you with space to "
+"provide both the starting and ending ports for the range. For ICMP rules you "
+"instead specify an ICMP type and code in the spaces provided."
+msgstr ""
+"对于 TCP 和 UDP 规则，可选择打开一个端口或一定范围的端口。选择“端口范围”选项"
+"将提供空间以便您指定端口范围的起始端口和结束端口。对于 ICMP 规则，您应改为在"
+"所提供空间中指定 ICMP 类型和代码。"
+
+msgid "Remote:"
+msgstr "远程："
+
+msgid ""
+"You must specify the source of the traffic to be allowed via this rule. You "
+"may do so either in the form of an IP address block (CIDR) or via a source "
+"group (Security Group). Selecting a security group as the source will allow "
+"any other instance in that security group access to any other instance via "
+"this rule."
+msgstr ""
+"您必须指定允许通过该规则传送的流量的源。可以通过以下两种方式实现：IP 地址块 "
+"(CIDR) 或者源组（安全组）。选择安全组作为源允许该安全组中的任何其他实例通过此"
+"规则访问任何其他实例。"
+
+msgid "Add Rule"
+msgstr "添加规则"
+
+msgid "Not a valid ICMP type"
+msgstr "不是一个合法的 ICMP 类型"
+
+msgid "Not a valid ICMP code"
+msgstr "不是一个合法的 ICMP 编码"
+
+msgid "Rule"
+msgstr "规则"
+
+msgid "IP Protocol"
+msgstr "IP 协议"
+
+msgid "Enter an integer value between 0 and 255."
+msgstr "输入大于 0 且小于 255 的整数值"
+
+msgid "Open Port"
+msgstr "打开端口"
+
+msgid "Enter an integer value between 1 and 65535."
+msgstr "输入大于 1 且小于 65535 的整数值"
+
+msgid "From Port"
+msgstr "起始端口号"
+
+msgid "To Port"
+msgstr "终止端口号"
+
+msgid "Enter a value for ICMP code in the range (-1: 255)"
+msgstr "请输入介于 -1 到 255 之间的 ICMP 代码值"
+
+msgid "Enter a value for ICMP type in the range (-1: 255)"
+msgstr "请输入介于 -1 到 255 之间的 ICMP 类型值"
+msgid "Code"
+msgstr "编码"
+
+msgid "Remote"
+msgstr "远程"
+
+msgid "Security Group"
+msgstr "安全组"
+
+msgid ""
+"To specify an allowed IP range, select &quot;CIDR&quot;. To allow access "
+"from all members of another security group select &quot;Security Group&quot;."
+msgstr ""
+"选择 &quot;CIDR&quot; 以指定允许来访的 IP 地址范围。要允许来自另一安全组所有"
+"成员的访问，请选择 &quot;安全组&quot;。"
+
+msgid "Classless Inter-Domain Routing (e.g. 192.168.0.0/24, or 2001:db8::/128)"
+msgstr "无类别域间路由标记（例如，192.168.0.0/24 或 2001:db8::/128）"
+
+msgid "IPv4"
+msgstr "IPv4"
+
+msgid "IPv6"
+msgstr "IPv6"
+
+msgid "No security groups available"
+msgstr "无可用安全组"
+
+msgid "Custom TCP Rule"
+msgstr "定制 TCP 规则"
+
+msgid "Custom UDP Rule"
+msgstr "定制 UDP 规则"
+
+msgid "Custom ICMP Rule"
+msgstr "定制 ICMP 规则"
+
+msgid "Other Protocol"
+msgstr "其他协议"
+
+msgid "Ingress"
+msgstr "入口"
+
+msgid "Egress"
+msgstr "出口"
+
+msgid "ICMP code is provided but ICMP type is missing."
+msgstr "已提供 ICMP 代码，但缺少 ICMP 类型。"
+
+msgid "The ICMP type not in range (-1, 255)"
+msgstr "ICMP 类型不在 (-1, 255) 范围内"
+
+msgid "The ICMP code not in range (-1, 255)"
+msgstr "ICMP 代码不在 (-1, 255) 范围内 "
+
+msgid "The specified port is invalid."
+msgstr "指定端口不可用。"
+
+msgid "The \"from\" port number is invalid."
+msgstr "起始端口号无效。"
+
+msgid "The \"to\" port number is invalid."
+msgstr "终止端口号不合法。"
+
+msgid ""
+"The \"to\" port number must be greater than or equal to the \"from\" port "
+"number."
+msgstr "结束端口号必须大于或者等于起始端口号。"
+
+msgid "CIDR must be specified."
+msgstr "必须指定 CIDR。"
+
+msgid "Add"
+msgstr "添加"
+
+msgid "Delete"
+msgstr "删除"
+
+msgid "Delete Rule"
+msgstr "删除规则"
+
+msgid "Any"
+msgstr "任何"
+
+msgid "Security Group Rules"
+msgstr "安全组规则"
+
+msgid "Local Topology"
+msgstr "局部拓扑"
+
+msgid "Global Topology"
+msgstr "全局拓扑"
+
+msgid "Resource ID"
+msgstr "资源 ID"
+
+msgid "Plan Deps"
+msgstr "计划依赖"
+
+#, python-format
+msgid "%s (current)"
+msgstr "%s（当前）"
+
+msgid "Unable to retrieve volumes list."
+msgstr "无法检索卷列表"

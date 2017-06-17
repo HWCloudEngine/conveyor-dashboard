@@ -1,0 +1,90 @@
+# Shaolin Deng <drngsl@qq.com>, 2017. #zanata
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-06-16 16:31+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Unable to cancel plan Cancel Plan."
+msgstr "无法取消计划。"
+
+msgid "Unable to update plan resource."
+msgstr "无法更新计划资源。"
+
+msgid "Unable to retrieve resource detail."
+msgstr "无法检索资源详情。"
+
+msgid "Unable to create security group rule."
+msgstr "无法创建安全组规则。"
+
+msgid ""
+"No need to provide 'availability_zone', 'sys_clone' or 'copy_data' option"
+msgstr "无需提供 ‘可用域’ 、 ‘克隆系统卷’ 或者 ‘拷贝卷数据’ 选项"
+
+msgid "No need to provide 'sys_clone' or 'copy_data' option"
+msgstr "无需提供 ‘克隆系统卷’ 或者 ‘拷贝卷数据’ 选项"
+
+msgid "Edit Plan Resource:"
+msgstr "编辑计划资源："
+
+msgid "Server"
+msgstr "服务器"
+
+msgid "Flavor"
+msgstr "云主机类型"
+
+msgid "KeyPair"
+msgstr "密钥对"
+
+msgid "VolumeType"
+msgstr "卷类型"
+
+msgid "Qos"
+msgstr "Qos"
+
+msgid "Net"
+msgstr "网络"
+
+msgid "Subnet"
+msgstr "子网"
+
+msgid "Port"
+msgstr "端口"
+
+msgid "SecurityGroup"
+msgstr "安全组"
+
+msgid "Router"
+msgstr "路由"
+
+msgid "RouterInterface"
+msgstr "路由接口"
+
+msgid "FloatingIP"
+msgstr "浮动IP"
+
+msgid "Pool"
+msgstr "池"
+
+msgid "Vip"
+msgstr "Vip"
+
+msgid "Listener"
+msgstr "监听器"
+
+msgid "PoolMember"
+msgstr "池成员"
+
+msgid "HealthMonitor"
+msgstr "运行状况监视器"
+
+msgid "Stack"
+msgstr "堆栈"

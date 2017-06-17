@@ -9,11 +9,11 @@
     <dt>{% trans "ID" %}</dt>
     <dd>{{ plan.plan_id }}</dd>
     <dt>{% trans "Plan Type" %}</dt>
-    <dd>{{ plan.plan_type }}</dd>
+    <dd>{% trans plan.plan_type|title %}</dd>
     <dt>{% trans "Create Time" %}</dt>
     <dd>{{ plan.created_at|parse_isotime }}</dd>
     <dt>{% trans "Plan Status" %}</dt>
-    <dd>{{ plan.plan_status }}
+    <dd>{% trans plan.plan_status|title %}</dd>
   </dl>
 </div>
 

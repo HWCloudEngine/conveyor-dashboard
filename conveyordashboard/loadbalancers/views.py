@@ -28,9 +28,6 @@ class IndexView(tables.DataTableView):
     template_name = '_res_table.html'
     page_title = _("Pools")
 
-    def has_more_data(self, table):
-        return self._more
-
     def get_data(self):
         pools = []
         try:

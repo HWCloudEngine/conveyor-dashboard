@@ -21,7 +21,7 @@ var conveyorService = {
     $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
     $.post(WEBROOT + "/conveyor/plans/" + plan_id + "/cancel")
       .error(function () {
-        horizon.alert('error', gettext("Cancel Plan " + plan_id + " failed"));
+        horizon.alert('error', gettext("Unable to cancel plan Cancel Plan."));
       });
   },
 
@@ -34,7 +34,7 @@ var conveyorService = {
         result = data;
       })
       .error(function () {
-        horizon.alert('error', gettext("Update plan resource failed"));
+        horizon.alert('error', gettext("Unable to update plan resource."));
         result = false;
       });
     return result;
@@ -49,7 +49,7 @@ var conveyorService = {
         result = data;
       })
       .error(function () {
-        horizon.alert('error', gettext('Get detail resource failed'));
+        horizon.alert('error', gettext('Unable to retrieve resource detail.'));
       });
     return result;
   },
@@ -73,7 +73,7 @@ var conveyorService = {
         result = data;
       })
       .error(function () {
-      horizon.alert('error', gettext('Create security group rule failed.'));
+      horizon.alert('error', gettext('Unable to create security group rule.'));
     });
     return result;
   }

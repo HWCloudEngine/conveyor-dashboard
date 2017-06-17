@@ -367,7 +367,7 @@ var conveyorEditPlanRes = {
   },
   popResEditModal: function (resType, resId, data) {
     conveyorResources.prefixCss = '.modal.edit-plan-res';
-    var modal = horizon.modals.create(gettext('Edit Plan Resource: ' + resType.split('::')[2]), '', gettext('Save'));
+    var modal = horizon.modals.create(gettext('Edit Plan Resource:') + gettext(resType.split('::')[2]), '', gettext('Save'));
     $(modal)
       .addClass('edit-plan-res')
       .find('.modal-body')
