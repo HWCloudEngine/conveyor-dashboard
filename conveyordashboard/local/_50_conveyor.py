@@ -1,5 +1,7 @@
 from django.conf import settings
 
+from conveyordashboard import exceptions
+
 # The name of the dashboard to be added to HORIZON['dashboards']. Required.
 DASHBOARD = 'conveyor'
 
@@ -9,6 +11,12 @@ DISABLED = False
 ADD_INSTALLED_APPS = [
     'conveyordashboard'
 ]
+
+ADD_EXCEPTIONS = {
+    'recoverable': exceptions.RECOVERABLE,
+    'not_found': exceptions.NOT_FOUND,
+    'unauthorized': exceptions.UNAUTHORIZED,
+}
 
 ADD_JS_FILES = [
     'conveyordashboard/js/lib/jquery.cookie.js',

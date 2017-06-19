@@ -14,6 +14,7 @@
 from django.core.urlresolvers import reverse
 from django.template.defaultfilters import title  # noqa
 from django.utils.http import urlencode
+from django.utils.translation import gettext_lazy
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ungettext_lazy
@@ -179,6 +180,11 @@ class PlanFilterAction(tables.FilterAction):
         return filter(comp, plans)
 
 
+PLAN_TYPE_CHOICES = (
+    ("clone", gettext_lazy(u"Clone")),
+    ("migrate", gettext_lazy(u"Migrate"))
+)
+
 STATUS_DISPLAY_CHOICES = (
     ("initiating", pgettext_lazy("Current status of plan", u"Initiating")),
     ("creating", pgettext_lazy("Current status of plan", u"Creating")),
@@ -221,7 +227,8 @@ class PlansTable(tables.DataTable):
                               verbose_name=_("Plan Name"))
     plan_type = tables.Column("plan_type",
                               filters=(title,),
-                              verbose_name=_("Plan Type"))
+                              verbose_name=_("Plan Type"),
+                              display_choices=PLAN_TYPE_CHOICES)
     created = tables.Column("created_at",
                             verbose_name=_("Time since created"),
                             filters=(filters.parse_isotime,
