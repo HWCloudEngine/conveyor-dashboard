@@ -25,17 +25,11 @@ function redraw(url){
           "param": param};
   $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
   $.post(loca, postdata,function(json){
-    update_topo(json);
+    conveyorPlanTopology.updateTopo(json);
     if($('.btn-clone').length){$('g.node').unbind('click').bind('click', function () {
       conveyorEditPlanRes.nodeClick(this);
     });}
   });
-}
-
-function showTopology(){
-	$("#resource_info_box").hide();
-	$("#conveyor_plan_topology").show();
-	$("#thumbnail").show();
 }
 
 var conveyorEditPlanRes = {
@@ -167,7 +161,7 @@ var conveyorEditPlanRes = {
     };
     var result = conveyorService.updatePlanResourceForFrontend(plan_id, postdata);
     if(result) {
-      update_topo($.parseJSON(result.d3_data));
+      conveyorPlanTopology.updateTopo($.parseJSON(result.d3_data));
       if($('.btn-clone').length){$('g.node').unbind('click').bind('click', function () {
         conveyorEditPlanRes.nodeClick(this);
       });}
@@ -225,7 +219,6 @@ var conveyorEditPlanRes = {
         if($(self.tag_table_info).length) {
           $(self.tag_table_info).hide();
         }
-        showTopology();
         try{
           redraw($(this).attr('href'));
           return false

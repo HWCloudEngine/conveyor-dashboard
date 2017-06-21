@@ -14,7 +14,6 @@
 
 import json
 
-from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.template import loader
 
 from conveyordashboard.api import api
@@ -45,14 +44,6 @@ def _unit_info(unit, unit_image):
     return loader.render_to_string('plans/_unit_info.html', context)
 
 
-def _plan_info(plan_id, status, **kwargs):
-    context = {'id': plan_id,
-               'status': status}
-    context.update(kwargs)
-    return loader.render_to_string('plans/_plan_info.html',
-                                   context)
-
-
 def _create_empty_node(image_size=50):
     if isinstance(image_size, int):
         image_size = 50
@@ -73,19 +64,8 @@ def _create_empty_node(image_size=50):
     return node
 
 
-def render_d3_data(request, plan_id, resource_dependencies, **kwargs):
-    d3_data = {'nodes': [], 'environment': {}}
-
-    in_progress, status_message = True, 'Initialize Plan'
-    plan_node = _create_empty_node()
-    plan_node.update({
-        'id': plan_id,
-        'status': status_message,
-        'image': static('conveyordashboard/img/plan.png'),
-        'in_progress': in_progress,
-        'info_box': _plan_info(plan_id, status_message, **kwargs)
-    })
-    d3_data['environment'] = plan_node
+def render_d3_data(request, resource_dependencies, **kwargs):
+    d3_data = {'nodes': []}
 
     node_refs = {}
 
@@ -119,12 +99,10 @@ def render_d3_data(request, plan_id, resource_dependencies, **kwargs):
 def load_plan_d3_data(request, plan, plan_type, is_original=True):
     if plan_type == 'migrate' or not hasattr(plan, 'updated_dependencies') \
             or not plan.updated_dependencies:
-        return render_d3_data(request, plan.plan_id,
-                              plan.original_dependencies)
+        return render_d3_data(request, plan.original_dependencies)
     else:
-        return render_d3_data(request, plan.plan_id,
-                              plan.updated_dependencies)
+        return render_d3_data(request, plan.updated_dependencies)
 
 
-def load_d3_data(request, plan_id, resource_dependencies, **kwargs):
-    return render_d3_data(request, plan_id, resource_dependencies, **kwargs)
+def load_d3_data(request, resource_dependencies, **kwargs):
+    return render_d3_data(request, resource_dependencies, **kwargs)

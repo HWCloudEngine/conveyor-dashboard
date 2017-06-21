@@ -142,7 +142,7 @@ class LocalTopologyView(View):
         plan_type = GET['plan_type']
         res_id = GET['res_id']
         local_deps = filter_deps(request, plan_id, plan_type, {}, res_id)
-        d3_data = topology.load_d3_data(request, plan_id, local_deps)
+        d3_data = topology.load_d3_data(request, local_deps)
         return http.HttpResponse(d3_data,
                                  content_type='application/json')
 
@@ -157,7 +157,7 @@ class LocalTopologyView(View):
         plan_type = params['plan_type']
         res_id = params['res_id']
         local_deps = filter_deps(request, plan_id, plan_type, deps, res_id)
-        d3_data = topology.load_d3_data(request, plan_id, local_deps)
+        d3_data = topology.load_d3_data(request, local_deps)
         return http.HttpResponse(d3_data,
                                  content_type='application/json')
 
@@ -186,6 +186,6 @@ class GlobalTopologyView(View):
         plan_id = params['plan_id']
         plan_type = params['plan_type']
         global_deps = filter_deps(request, plan_id, plan_type, deps)
-        d3_data = topology.load_d3_data(request, plan_id, global_deps)
+        d3_data = topology.load_d3_data(request, global_deps)
         return http.HttpResponse(d3_data,
                                  content_type='application/json')

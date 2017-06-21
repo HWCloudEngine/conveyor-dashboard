@@ -382,7 +382,7 @@ class ModifyView(forms.ModalFormView):
         )
         context['plan_deps_table'] = plan_deps_table.render()
 
-        d3_data = topology.load_d3_data(self.request, plan.plan_id,
+        d3_data = topology.load_d3_data(self.request,
                                         plan.updated_dependencies)
         context['d3_data'] = d3_data
         return context
@@ -609,7 +609,7 @@ class UpdatePlanResourceView(View):
             plan_id=plan.plan_id,
             plan_type=constants.CLONE).render()
 
-        d3_data = topology.load_d3_data(request, plan_id, deps)
+        d3_data = topology.load_d3_data(request, deps)
 
         resp_data = {'d3_data': d3_data,
                      'res_deps': res_deps,
