@@ -37,7 +37,7 @@ class UpdateRow(tables.Row):
     ajax = True
 
     def get_data(self, request, plan_id):
-        plan = api.plan_get(request, plan_id)
+        plan = api.plan_get_brief(request, plan_id)
         return plan
 
 

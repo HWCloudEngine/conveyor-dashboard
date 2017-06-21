@@ -85,6 +85,10 @@ def plan_get(request, plan_id):
     return api.conveyorclient(request).plans.get(plan_id)
 
 
+def plan_get_brief(request, plan_id):
+    return api.conveyorclient(request).plans.get_brief(plan_id)
+
+
 def update_plan_resource(request, plan, resources):
     return api.conveyorclient(request).plans.update_plan_resource(plan,
                                                                   resources)
