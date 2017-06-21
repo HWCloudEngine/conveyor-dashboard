@@ -37,7 +37,7 @@ class UpdateRow(tables.Row):
     ajax = True
 
     def get_data(self, request, plan_id):
-        plan = api.plan_get(request, plan_id)
+        plan = api.plan_get_brief(request, plan_id)
         return plan
 
 
@@ -161,7 +161,7 @@ class GenerateTemplate(tables.BatchAction):
         return plan.plan_status in ('initiating',)
 
     def action(self, request, obj_id):
-        plan = api.plan_get(request, obj_id)
+        plan = api.plan_get_brief(request, obj_id)
         if plan.plan_type == 'clone':
             api.export_clone_template(request, obj_id)
         elif plan.plan_type == 'migrate':
