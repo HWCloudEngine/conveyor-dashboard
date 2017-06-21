@@ -3,22 +3,8 @@
 {% load static %}
 {% load compress %}
 {% block title %}{% trans "Overview" %}{% endblock %}
-{% block css %}
-  {{ block.super }}
-  {% compress css %}
-    <style>
-      #plan_deps_table .table > thead > tr > th{padding:4px 8px!important;}
-      #plan_deps_table .table > tbody > tr > td{padding:0 8px!important;}
-      #plan_deps_table .table > tbody > tr > td span{margin-left: 0!important;}
-      .parent td{line-height: 30px!important;}
-      [id|=node--1] > td > span{margin-left: -10px!important;}
-    </style>
-    <link rel="stylesheet" href="{% static 'conveyordashboard/css/jquery.treeTable.css' %}"/>
-    <link rel="stylesheet" href="{% static 'conveyordashboard/css/conveyordashboard.css' %}"/>
-  {% endcompress %}
-{% endblock %}
 {% block main %}
-  <idv class="conveyor-overview"></idv>
+  <div class="conveyor-overview"></div>
   <div id="resource_container" class="resource_container">
     <input id="id_action_type" name="action_type" type="hidden" value="">
     <input id="id_plan_type" name="plan_type" type="hidden" value="{{plan.plan_type}}">
@@ -39,28 +25,14 @@
     <div class="right"><a class="btn btn-default btn-sm ajax-modal btn-clone" {% if plan %} href="{% url "horizon:conveyor:plans:destination" plan.plan_id %}" {% endif %}>{% trans "Clone" %}</a></div>
   </div>
   {% if plan %}
-    <div>
-      <div id="plan_deps_table" class="hide">{{plan_deps_table}}</div>
-      <div id="conveyor_plan_topology" style="position: relative">
-        <div id="info_box" class="info_box"></div>
-        <div id="stack_box" class="stack_box"></div>
-      </div>
-      <div id="resource_info_box"></div>
-      <div id="thumbnail">
-        <div class="thbDetail"></div>
-      </div>
-      <div id="d3_data" data-d3_data="{{ d3_data }}"></div>
-    </div>
+    {%  include "_deps_topo.html" %}
   {% endif %}
 {% endblock %}
 {% block js %}
   {% include "horizon/_scripts.html" %}
-  <script type="text/javascript" src="{% static 'conveyordashboard/js/conveyor.topology.js' %}"></script>
   <script type="text/javascript">
     $(function() {
       "use strict";
-
-      depsTreeTableAndCallTopo();
 
       $("g.node").click(function () {
         conveyorEditPlanRes.nodeClick(this);

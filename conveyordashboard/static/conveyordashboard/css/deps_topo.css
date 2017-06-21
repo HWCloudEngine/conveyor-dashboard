@@ -1,7 +1,8 @@
 #plan_deps_table {
-    max-height: 200px;
+    width: 100%;
     overflow-x: hidden;
-    overflow-y: auto
+    overflow-y: auto;
+    display: none;
 }
 
 #plan_deps_table .table > thead > tr > th {
@@ -20,26 +21,28 @@
     line-height: 30px !important;
 }
 
-#info_box {
-    top: 240px;
-    z-index: -1;
-}
-
-#stack_box {
-    top: 250px;
-    width: 400px;
-    z-index: -1;
-}
-
 #conveyor_plan_topology {
     position: relative;
     z-index: 99
 }
 
+.info_box {
+    position: absolute;
+    top: 0;
+    z-index: -1;
+}
+
+.stack_box {
+    position: absolute;
+    top: 10px;
+    width: 400px;
+    z-index: -1;
+}
+
 #thumbnail {
     width: 200px;
     position: absolute;
-    top: 520px
+    bottom: 0;
 }
 
 .thbDetail {

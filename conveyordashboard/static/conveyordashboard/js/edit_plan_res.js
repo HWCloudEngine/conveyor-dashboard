@@ -25,7 +25,8 @@ function redraw(url){
           "param": param};
   $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
   $.post(loca, postdata,function(json){
-    update_topo(json);
+    conveyorPlanTopology.updateTopo(json);
+    // update_topo(json);
     if($('.btn-clone').length){$('g.node').unbind('click').bind('click', function () {
       conveyorEditPlanRes.nodeClick(this);
     });}
@@ -167,7 +168,8 @@ var conveyorEditPlanRes = {
     };
     var result = conveyorService.updatePlanResourceForFrontend(plan_id, postdata);
     if(result) {
-      update_topo($.parseJSON(result.d3_data));
+      conveyorPlanTopology.updateTopo($.parseJSON(result.d3_data))
+      // update_topo($.parseJSON(result.d3_data));
       if($('.btn-clone').length){$('g.node').unbind('click').bind('click', function () {
         conveyorEditPlanRes.nodeClick(this);
       });}

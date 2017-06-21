@@ -21,203 +21,257 @@
  * under the License.
  */
 
-var conveyor_container = "#conveyor_plan_topology";
+conveyorPlanTopology = {
+  svg_container: '#conveyor_plan_topology',
+  thumbnail_container: '#thumbnail',
+  graph: null,
+  force: null,
+  node: [],
+  link: [],
+  nodes: [],
+  links: [],
+  loading: function () {
+    var self = this;
+    var width = angular.element(self.svg_container).width();
+    if(width == 0) {width = 700;}
+    var height = 500;
+    self.graph = $("#d3_data").data("d3_data");
 
-function update(){
-  node = node.data(nodes, function(d) { return d.id; });
-  link = link.data(links);
+    self.force = d3.layout.force()
+      .nodes(self.graph.nodes)
+      .links([])
+      .gravity(0.25)
+      .charge(-1200)
+      .linkDistance(90)
+      .size([width, height])
+      .on("tick", function () {
+        self.link.attr('d', self.drawLink).style('stroke-width', 3).attr('marker-end', "url(#end)");
+        self.node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+      });
+    self.svg = d3.select(self.svg_container).append("svg")
+      .attr("width", width)
+      .attr("height", height);
+    self.node = self.svg.selectAll(".node");
+    self.link = self.svg.selectAll(".link");
+    self.needs_update = false;
+    self.nodes = self.force.nodes();
+    self.links = self.force.links();
+    self.svg.append("svg:clipPath")
+             .attr("id","clipCircle")
+             .append("svg:circle")
+             .attr("cursor","pointer")
+              .attr("r", "38px");
 
-  var nodeEnter = node.enter().append("g")
-    .attr("class", "node")
-    .attr("node_name", function(d) { return d.name; })
-    .attr("node_id", function(d) { return d.id; })
-    .attr("node_type", function(d) { return d.type; })
-    .call(force.drag);
-
-
-
-  nodeEnter.append("image")
-    .attr("xlink:href", function(d) { return d.image; })
-    .attr("id", function(d){ return "image_"+ d.id; })
-    .attr("x", function(d) { return d.image_x; })
-    .attr("y", function(d) { return d.image_y; })
-    .attr("width", function(d) { return d.image_size; })
-    .attr("height", function(d) { return d.image_size; })
-    .attr("clip-path","url(#clipCircle)");
-  node.exit().remove();
-
-  link.enter().insert("path", "g.node")
-    .attr("class", function(d) { return "link " + d.link_type; });
-
-  link.exit().remove();
-  //Setup click action for all nodes
-  node.on("mouseover", function(d) {
-    $("#info_box").html(d.info_box);
-  });
-  node.on("mouseout", function(d) {
-    $("#info_box").html('');
-  });
-
-  force.start();
-}
-
-function tick() {
-  link.attr('d', drawLink).style('stroke-width', 3).attr('marker-end', "url(#end)");
-  node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
-}
-
-function drawLink(d) {
-  return "M" + d.source.x + "," + d.source.y + "L" + d.target.x + "," + d.target.y;
-}
-
-function findNode(id) {
-  for (var i = 0; i < nodes.length; i++) {
-    if (nodes[i].id === id){ return nodes[i]; }
-  }
-}
-
-function findNodeIndex(id) {
-  for (var i = 0; i < nodes.length; i++) {
-    if (nodes[i].id=== id){ return i; }
-  }
-}
-
-function addNode (node) {
-  nodes.push(node);
-  needs_update = true;
-  for(var idx=0;idx<nodes.length;idx++){
-  }
-}
-
-function remove_links(id) {
-  var i = 0;
-  var n = findNode(id);
-  while (i < links.length) {
-    if (links[i].source === n || links[i].target === n) {
-      links.splice(i, 1);
-    } else {
-      i++;
-    }
-  }
-  needs_update = true;
-}
-
-function removeNode (id) {
-  var i = 0;
-  var n = findNode(id);
-  while (i < links.length) {
-    if (links[i].source === n || links[i].target === n) {
-      links.splice(i, 1);
-    } else {
-      i++;
-    }
-  }
-  nodes.splice(findNodeIndex(id),1);
-  needs_update = true;
-}
-
-function remove_nodes(old_nodes, new_nodes){
-  var needed_remove_ids = [];
-  //Check for removed nodes
-  for (var i=0;i<old_nodes.length;i++) {
-    var remove_node = true;
-    for (var j=0;j<new_nodes.length;j++) {
-      if (old_nodes[i].id === new_nodes[j].id){
-        remove_node = false;
-        break;
-      }
-    }
-    if (remove_node === true){
-      needed_remove_ids.push(old_nodes[i].id);
-      //removeNode(old_nodes[i].id);
-    }
-  }
-  for(var index in needed_remove_ids){
-    removeNode(needed_remove_ids[index]);
-  }
-}
-
-function build_link(node) {
-    build_node_links(node);
-    build_reverse_links(node);
-}
+  self.svg.append("svg:defs").selectAll("marker")
+    .data(["end"])      // Different link/path types can be defined here
+  .enter().append("svg:marker")    // This section adds in the arrows
+    .attr("id", String)
+    .attr("viewBox", "0 -5 10 10")
+    .attr("refX", 25)
+    .attr("refY", 0)
+    .attr("fill", "#999")
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("orient", "auto")
+  .append("svg:path")
+    .attr("d", "M0,-3L10,0L0,3");
 
 
-function build_links(){
-  for (var i=0;i<nodes.length;i++){
-    build_node_links(nodes[i]);
-    build_reverse_links(nodes[i]);
-  }
-}
+    self.buildLinks();
+    self.update();
 
-//build_node_links
-function build_node_links(node){
-  for (var j=0;j<node.required_by.length;j++){
-    var push_link = true;
-    var target_idx = '';
-    var source_idx = findNodeIndex(node.id);
-    //make sure target node exists
-    try {
-      target_idx = findNodeIndex(node.required_by[j]);
-    } catch(err) {
-      console.log(err);
-      push_link =false;
-    }
-    //check for duplicates
-    for (var lidx=0;lidx<links.length;lidx++) {
-      if (links[lidx].source === source_idx && links[lidx].target === target_idx) {
-        push_link=false;
-        break;
-      }
-    }
-    if (push_link === true && (source_idx && target_idx)){
-      links.push({
-        'target':target_idx,
-        'source':source_idx,
-        'value':1,
-        'link_type': node.link_type
+    //Load initial Stack box
+    $("#stack_box").html(self.graph.environment.info_box);
+
+    self.loadingThumbnail();
+  },
+  loadingThumbnail: function () {
+    var self = this;
+    //thumbnail
+    var thumbnailNodes=[];
+    var thumbnailEdges=[];
+    for(var i = 0; i < self.nodes.length; i++){
+      thumbnailNodes.push({
+        'name': self.nodes[i].id
       });
     }
-  }
-}
+    for(var j =0; j < self.links.length; j++){
+      thumbnailEdges.push({
+        'source': self.findNodeIndex(self.links[j].source.id),
+        'target': self.findNodeIndex(self.links[j].target.id)
+      });
+    }
+    var width = 200;
+    var height = 200;
+    var svgThumbnail = d3.select(self.thumbnail_container)
+      .append("svg")
+      .attr("width",width)
+      .attr("height",height);
+    var forceThumbnail = d3.layout.force()
+      .nodes(thumbnailNodes)
+      .links(thumbnailEdges)
+      .size([width,height])
+      .linkDistance(12)
+      .charge(-180);
+    forceThumbnail.start();
 
-//build_reverse_links
-function build_reverse_links(node){
-  for (var i=0;i<nodes.length;i++){
-    if(nodes[i].required_by){
-      for (var j=0;j<nodes[i].required_by.length;j++){
-        var dependency = nodes[i].required_by[j];
-        //if new node is required by existing node, push new link
-        if(node.id === dependency){
-          links.push({
-            'target':findNodeIndex(node.id),
-            'source':findNodeIndex(nodes[i].id),
-            'value':1,
-            'link_type': nodes[i].link_type
-          });
+    //add link
+    var svg_edges_thumbnail = svgThumbnail.selectAll("line")
+      .data(thumbnailEdges)
+      .enter()
+      .append("line")
+      .style("stroke","#999")
+      .style("stroke-width",2);
+
+    //add node
+    var svg_nodes_thumbnail = svgThumbnail.selectAll("circle")
+      .data(thumbnailNodes)
+      .enter()
+      .append("circle")
+      .attr("r",4)
+      .style({"fill":"black","cursor":"pointer"})
+      .attr("id",function(d){
+        return d.name;
+      })
+      .call(forceThumbnail.drag);
+    forceThumbnail.on("tick", function(){
+      svg_edges_thumbnail.attr("x1",function(d){ return d.source.x; })
+          .attr("y1",function(d){ return d.source.y; })
+          .attr("x2",function(d){ return d.target.x; })
+          .attr("y2",function(d){ return d.target.y; });
+      svg_nodes_thumbnail.attr("cx",function(d){ return d.x; })
+          .attr("cy",function(d){ return d.y; });
+    });
+    $(self.thumbnail_container).find('circle').each(function(i, e){
+      $(this).hover(function(){
+        $(".thbDetail").html("name:" + $(this).attr("id"));
+      },function(){
+        $(".thbDetail").html("");
+      });
+    });
+  },
+  tick: function () {
+    var self = this;
+    self.svg.selectAll('.node').attr('d', self.drawLink).style('stroke-width', 3).attr('marker-end', "url(#end)");
+    self.svg.selectAll('.link').attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+  },
+  drawLink: function (d) {
+    return "M" + d.source.x + "," + d.source.y + "L" + d.target.x + "," + d.target.y;
+  },
+  buildLinks: function (){
+    var self = this;
+    var nodes = self.nodes;
+    for (var i = 0; i < nodes.length; i++){
+      self.buildNodeLinks(nodes[i]);
+      self.buildReverseLinks(nodes[i]);
+    }
+  },
+  buildNodeLinks: function (node){
+    var self = this;
+    for (var j = 0; j < node.required_by.length; j++){
+      var push_link = true;
+      var target_idx = '';
+      var source_idx = self.findNodeIndex(node.id);
+      //make sure target node exists
+      try {
+        target_idx = self.findNodeIndex(node.required_by[j]);
+      } catch(err) {
+        console.log(err);
+        push_link =false;
+      }
+      //check for duplicates
+      for (var lidx = 0; lidx < self.links.length; lidx++) {
+        if (self.links[lidx].source === source_idx && self.links[lidx].target === target_idx) {
+          push_link=false;
+          break;
+        }
+      }
+      if (push_link === true && (source_idx && target_idx)){
+        self.links.push({
+          'target':target_idx,
+          'source':source_idx,
+          'value':1,
+          'link_type': node.link_type
+        });
+      }
+    }
+  },
+  buildReverseLinks: function (node){
+    var self = this;
+    var nodes = self.nodes;
+    for (var i = 0; i < nodes.length; i++){
+      if(nodes[i].required_by){
+        for (var j = 0; j < nodes[i].required_by.length; j++){
+          var dependency = nodes[i].required_by[j];
+          //if new node is required by existing node, push new link
+          if(node.id === dependency){
+            self.links.push({
+              'target': self.findNodeIndex(node.id),
+              'source': self.findNodeIndex(nodes[i].id),
+              'value':1,
+              'link_type': nodes[i].link_type
+            });
+          }
         }
       }
     }
-  }
-}
+  },
+  findNodeIndex: function (id) {
+    var self = this;
+    for (var i = 0; i < self.nodes.length; i++) {
+      if (self.nodes[i].id=== id){ return i; }
+    }
+  },
+  update: function () {
+    var self = this;
+    self.node = self.node.data(self.nodes, function(d) { return d.id; });
+    self.link = self.link.data(self.links);
 
-function update_node_name(id, name) {
-  node = findNode(id);
-  node.name = name;
-}
+    var nodeEnter = self.node.enter().append("g")
+      .attr('class', 'node')
+      .attr('node_name', function(d) { return d.name; })
+      .attr('node_id', function(d) { return d.id; })
+      .attr('node_type', function(d) { return d.type; })
+      .call(self.force.drag);
 
-function update_topo(json){
+    nodeEnter.append('image')
+      .attr("xlink:href", function(d) { return d.image; })
+      .attr("id", function(d){ return "image_"+ d.id; })
+      .attr("x", function(d) { return d.image_x; })
+      .attr("y", function(d) { return d.image_y; })
+      .attr("width", function(d) { return d.image_size; })
+      .attr("height", function(d) { return d.image_size; })
+      .attr("clip-path","url(#clipCircle)");
+    self.node.exit().remove();
+
+    self.link.enter().insert("path", "g.node")
+      .attr("class", function(d) { return "link " + d.link_type; });
+
+    self.link.exit().remove();
+
+    //Setup click action for all nodes
+    self.node.on("mouseover", function(d) {
+      $("#info_box").html(d.info_box);
+    });
+    self.node.on("mouseout", function(d) {
+      $("#info_box").html('');
+    });
+
+    self.force.start();
+  },
+  updateTopo: function (json){
+    var self = this;
     set_in_progress(json.environment, json.nodes);
-    needs_update = false;
+    self.needs_update = false;
 
     //Check Remove nodes
     // remove_nodes(nodes, json.nodes);
-    remove_nodes(nodes, {});
+    self.removeNodes(self.nodes, {});
 
     //Check for updates and new nodes
 
     var nID=[];
-    $("#thumbnail circle").each(function(i,e){
+    $(self.thumbnail_container).find('circle').each(function(i,e){
       $(this).css("fill","black");
       var id=$(this).attr("id");
       nID.push(id);
@@ -225,14 +279,14 @@ function update_topo(json){
 
     json.nodes.forEach(function(d){
       if(nID.toString().indexOf(d.id)>-1){
-        $("#thumbnail circle").each(function(i,e){
+        $(self.thumbnail_container).find('circle').each(function(i,e){
           if($(this).attr("id")==d.id){
             $(this).css("fill","red");
           }
         });
       }
 
-      var current_node = findNode(d.id);
+      var current_node = self.findNode(d.id);
       //Check if node already exists
       if (current_node) {
         //Node already exists, just update it
@@ -267,124 +321,63 @@ function update_topo(json){
         current_node.info_box = d.info_box;
 
       } else {
-        addNode(d);
-        build_links();
+        self.addNode(d);
+        self.buildLinks();
       }
     });
     //if any updates needed, do update now
-    if (needs_update === true){
-      update();
+    if (self.needs_update === true){
+      self.update();
     }
-}
+  },
 
-if ($(conveyor_container).length){
-  var width = $(conveyor_container).width();
-  if (width === 0) { width = 700;}
-  var height = 500,
-    //ajax_url = 'clone/get_d3_data',
-    graph = $("#d3_data").data("d3_data"),
-    force = d3.layout.force()
-      .nodes(graph.nodes)
-      .links([])
-      .gravity(0.25)
-      .charge(-1200)
-      .linkDistance(90)
-      .size([width, height])
-      .on("tick", tick),
-    svg = d3.select(conveyor_container).append("svg")
-      .attr("width", width)
-      .attr("height", height),
-    node = svg.selectAll(".node"),
-    link = svg.selectAll(".link"),
-    needs_update = false,
-    nodes = force.nodes(),
-    links = force.links();
-    svg.append("svg:clipPath")
-             .attr("id","clipCircle")
-             .append("svg:circle")
-             .attr("cursor","pointer")
-              .attr("r", "38px");
-
-  svg.append("svg:defs").selectAll("marker")
-    .data(["end"])      // Different link/path types can be defined here
-  .enter().append("svg:marker")    // This section adds in the arrows
-    .attr("id", String)
-    .attr("viewBox", "0 -5 10 10")
-    .attr("refX", 25)
-    .attr("refY", 0)
-    .attr("fill", "#999")
-    .attr("markerWidth", 6)
-    .attr("markerHeight", 6)
-    .attr("orient", "auto")
-  .append("svg:path")
-    .attr("d", "M0,-3L10,0L0,3");
-
-  build_links();
-  update();
-
-  //Load initial Stack box
-  $("#stack_box").html(graph.environment.info_box);
-
-  //thumbnail
-  var thumbnailNodes=[];
-  var thumbnailEdges=[];
-  for(var i=0;i<nodes.length;i++){
-    thumbnailNodes.push({
-      'name': nodes[i].id
-    });
+  removeNodes: function (old_nodes, new_nodes){
+    var self = this;
+    var needed_remove_ids = [];
+    //Check for removed nodes
+    for (var i = 0; i < old_nodes.length; i++) {
+      var remove_node = true;
+      for (var j = 0; j < new_nodes.length; j++) {
+        if (old_nodes[i].id === new_nodes[j].id){
+          remove_node = false;
+          break;
+        }
+      }
+      if (remove_node === true){
+        needed_remove_ids.push(old_nodes[i].id);
+        //removeNode(old_nodes[i].id);
+      }
+    }
+    for(var index in needed_remove_ids){
+      self.removeNode(needed_remove_ids[index]);
+    }
+  },
+  removeNode: function (id) {
+    var self = this;
+    var i = 0;
+    var n = self.findNode(id);
+    while (i < self.links.length) {
+      if (self.links[i].source === n || self.links[i].target === n) {
+        self.links.splice(i, 1);
+      } else {
+        i++;
+      }
+    }
+    self.nodes.splice(self.findNodeIndex(id),1);
+    self.needs_update = true;
+  },
+  findNode: function (id) {
+    var self = this;
+    var nodes = self.nodes;
+    for (var i = 0; i < nodes.length; i++) {
+      if (nodes[i].id === id){ return nodes[i]; }
+    }
+  },
+  addNode: function (node) {
+    var self = this;
+    self.nodes.push(node);
+    self.needs_update = true;
+    for(var idx = 0; idx < self.nodes.length; idx++){
+    }
   }
-  for(var i=0;i<links.length;i++){
-    thumbnailEdges.push({
-      'source':findNodeIndex(links[i].source.id),
-      'target':findNodeIndex(links[i].target.id)
-    });
-  }
-  var width = 200;
-  var height = 200;
-  var svgThumbnail = d3.select("#thumbnail")
-      .append("svg")
-      .attr("width",width)
-      .attr("height",height);
-  var forceThumbnail = d3.layout.force()
-      .nodes(thumbnailNodes)
-      .links(thumbnailEdges)
-      .size([width,height])
-      .linkDistance(12)
-      .charge(-180);
-  forceThumbnail.start();
-
-  //add link
-  var svg_edges_thumbnail = svgThumbnail.selectAll("line")
-      .data(thumbnailEdges)
-      .enter()
-      .append("line")
-      .style("stroke","#999")
-      .style("stroke-width",2);
-  var color = d3.scale.category20();
-  //add node
-  var svg_nodes_thumbnail = svgThumbnail.selectAll("circle")
-      .data(thumbnailNodes)
-      .enter()
-      .append("circle")
-      .attr("r",4)
-      .style({"fill":"black","cursor":"pointer"})
-      .attr("id",function(d){
-        return d.name;
-      })
-  .call(forceThumbnail.drag);
-  forceThumbnail.on("tick", function(){
-    svg_edges_thumbnail.attr("x1",function(d){ return d.source.x; })
-        .attr("y1",function(d){ return d.source.y; })
-        .attr("x2",function(d){ return d.target.x; })
-        .attr("y2",function(d){ return d.target.y; });
-    svg_nodes_thumbnail.attr("cx",function(d){ return d.x; })
-        .attr("cy",function(d){ return d.y; });
-  });
-  $("#thumbnail circle").each(function(i,e){
-    $(this).hover(function(){
-      $(".thbDetail").html("name:"+$(this).attr("id"));
-    },function(){
-      $(".thbDetail").html("");
-    });
-  });
-}
+};
