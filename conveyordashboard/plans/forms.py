@@ -180,6 +180,11 @@ class Destination(forms.SelfHandlingForm):
             self.fields['resources'] = forms.CharField(
                 widget=forms.HiddenInput, initial='[]')
 
+        if not initial.get('show_sys_clone'):
+            del self.fields['sys_clone']
+        if not initial.get('show_copy_data'):
+            del self.fields['copy_data']
+
         src_azs = initial.get('src_azs')
         for src_az in src_azs:
             self.fields[src_az] = forms.CharField(
@@ -197,9 +202,11 @@ class Destination(forms.SelfHandlingForm):
             for src_az in src_azs:
                 destination[src_az] = data[src_az]
         except Exception as e:
-            LOG.error("Get destination map from data %s failed. %s", data, e)
+            LOG.error("Unable to retrieve availability zones for plan "
+                      "resource. data %s, error %s", data, e)
             exceptions.handle(request,
-                              _("Get destination map failed."),
+                              _("Unable to retrieve availability zones for "
+                                "plan resource."),
                               redirect=reverse('horizon:conveyor:plans:index'))
 
         if plan_type == constants.CLONE:

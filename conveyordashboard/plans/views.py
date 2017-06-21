@@ -497,7 +497,7 @@ class DestinationView(forms.ModalFormView):
                 self.request, plan)
             return plan_res_azs or []
         except Exception:
-            msg = _("Unable to retrieve availability_zone for plan resource.")
+            msg = _("Unable to retrieve availability zones for plan resource.")
             exceptions.handle(self.request, msg)
 
     def get_context_data(self, **kwargs):

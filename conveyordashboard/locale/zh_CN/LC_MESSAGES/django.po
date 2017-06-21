@@ -897,3 +897,12 @@ msgstr "%s（当前）"
 
 msgid "Unable to retrieve volumes list."
 msgstr "无法检索卷列表"
+
+msgid "Unable to retrieve availability zones for plan resource."
+msgstr "无法检索计划资源的可用域。"
+
+msgid "Source Availability Zone"
+msgstr "源可用域"
+
+msgid "Destination Availability Zone"
+msgstr "目标可用域"
