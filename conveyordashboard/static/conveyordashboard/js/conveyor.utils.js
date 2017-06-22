@@ -36,7 +36,7 @@ var conveyorUtil = {
     },
     compareIp: function(ipBegin, ipEnd) {
         var temp1 = ipBegin.split("."), temp2 = ipEnd.split(".");
-        for (i = 0; i < 4; i++){
+        for (var i = 0; i < 4; i++){
             var j = parseInt(temp1[i]), k = parseInt(temp2[i]);
             if (j > k){
                 return 1;
