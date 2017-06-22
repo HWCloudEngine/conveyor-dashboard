@@ -203,7 +203,6 @@ var conveyorResources = {
       protocol: {type: fieldTypes.slt}
     }
   },
-  prefixCss: 'div#resource_info_box',
   process: function (resType, resId) {
     var self = this;
     var data = {};
