@@ -20,7 +20,6 @@ var depsTreeTableAndCallTopo = function () {
     /* Redraw the global topology.*/
     $(plan_deps_table).find('#plan_deps__action_global_topology').click(function () {
       try {
-        showTopology();
         redraw($(this).attr('href'));
         return false
       } catch (e) {
@@ -32,11 +31,6 @@ var depsTreeTableAndCallTopo = function () {
     $(plan_deps_table).find('tbody tr').each(function () {
       /* Click one resource of plan, then redraw the local topology.*/
       $(this).find('td:last a').click(function () {
-        var table_info = $('div#resource_info_box');
-        if ($(table_info).length) {
-          $(table_info).hide();
-        }
-        showTopology();
         try {
           redraw($(this).attr('href'));
           return false

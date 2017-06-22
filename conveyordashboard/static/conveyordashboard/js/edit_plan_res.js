@@ -34,7 +34,6 @@ function redraw(url){
 
 var conveyorEditPlanRes = {
   /* Tag for HTML element */
-  tag_table_info: "div#resource_info_box",
   tag_detailinfo_div: "div.detailInfoCon",
   tag_update_resource: "input#id_update_resource",
   tag_updated_resources: "input#id_updated_resources",
@@ -122,8 +121,6 @@ var conveyorEditPlanRes = {
           self.saveChangedInfo(resource_type, resource_id, data);
         }
       }
-      $(self.tag_table_info).html("");
-      $(self.tag_table_info).css("display", "none");
       self.clearEditing();
       $("#conveyor_plan_topology").show();
       $("#thumbnail").show();
@@ -216,9 +213,6 @@ var conveyorEditPlanRes = {
     var plan_deps_table = $('#plan_deps_table');
     $(plan_deps_table).find('tbody tr').each(function () {
       $(this).find('td:last a').click(function () {
-        if($(self.tag_table_info).length) {
-          $(self.tag_table_info).hide();
-        }
         try{
           redraw($(this).attr('href'));
           return false
@@ -279,7 +273,7 @@ var conveyorEditPlanRes = {
       .html($(form).find('.modal-body').prop("innerHTML"));
     $(modal).find('.modal-footer .btn-primary').click(function () {
       submitCall();
-      $(modal).find('.modal-footer .cancel').click();
+      $(modal).modal('hide');
     });
     $(modal).modal();
     $("#id_rule_menu").trigger('change', $("#id_rule_menu").children().eq(1));
@@ -367,7 +361,7 @@ var conveyorEditPlanRes = {
       .html(data);
     $(modal).find('.modal-footer .btn-primary').click(function () {
       conveyorEditPlanRes.saveTableInfo();
-      $(modal).find('.modal-footer .cancel').click();
+      $(modal).modal('hide');
     });
     $(modal).modal();
   }

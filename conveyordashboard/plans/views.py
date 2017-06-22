@@ -349,6 +349,7 @@ class SaveView(forms.ModalFormView):
         plan = self.get_object(**self.kwargs)
         initial = {
             'plan_id': self.kwargs['plan_id'],
+            'plan_type': plan.plan_type,
             'sys_clone': getattr(plan, 'sys_clone', False),
             'copy_data': getattr(plan, 'copy_data', True)
         }

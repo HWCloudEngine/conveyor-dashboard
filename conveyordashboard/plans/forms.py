@@ -12,11 +12,9 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import base64
 import json
 import six
 
-from oslo_utils import encodeutils
 from oslo_utils import strutils
 
 from django.core.urlresolvers import reverse
@@ -69,20 +67,6 @@ def preprocess_update_resources(update_resources):
         res[constants.RES_ACTION_KEY] = constants.ACTION_EDIT
         res_type = res[TAG_RES_TYPE]
         if res_type == constants.NOVA_SERVER:
-            if res.get('user_data', None):
-                user_data = res['user_data']
-                if six.PY3:
-                    try:
-                        user_data = user_data.encode('utf-8')
-                    except AttributeError:
-                        pass
-                else:
-                    try:
-                        user_data = encodeutils.safe_encode(user_data)
-                    except UnicodeDecodeError:
-                        pass
-                user_data = base64.b64encode(user_data).decode('utf-8')
-                res['user_data'] = user_data
             if res.get('metadata', None):
                 meta = [dict(zip(['k', 'v'], item.strip().split('=')))
                         for item in res['metadata'].split('\n')
@@ -283,6 +267,7 @@ class MigratePlan(forms.SelfHandlingForm):
 
 class SavePlan(forms.SelfHandlingForm):
     plan_id = forms.CharField(widget=forms.HiddenInput)
+    plan_type = forms.CharField(widget=forms.HiddenInput)
     sys_clone = forms.BooleanField(label=_("Clone System Volume"),
                                    required=False)
     copy_data = forms.BooleanField(label=_("Copy Volume Data"),
@@ -303,15 +288,22 @@ class SavePlan(forms.SelfHandlingForm):
     def handle(self, request, data):
         LOG.info("Save plan with data: %s", data)
         plan_id = data['plan_id']
+        plan_type = data['plan_type']
         try:
-            resources = json.loads(data['resources'])
-            update_plan_resource(request, plan_id, resources)
             kwargs = {}
             if 'sys_clone' in data:
                 kwargs['sys_clone'] = data['sys_clone']
-            if'copy_data' in data:
+            if 'copy_data' in data:
                 kwargs['copy_data'] = data['copy_data']
-            api.export_clone_template(request, plan_id, **kwargs)
+
+            if plan_type == constants.CLONE:
+                resources = json.loads(data['resources'])
+                update_plan_resource(request, plan_id, resources)
+                api.export_clone_template(request, plan_id, **kwargs)
+            else:
+                # TODO(drngsl) conveyor server doesn't access the 'sys_clone'
+                # and 'copy_data' currently, so here not provide them.
+                api.export_migrate_template(request, plan_id)
             msg = ("Save plan %s successfully." % plan_id)
             messages.success(request, msg)
             return True
