@@ -28,7 +28,7 @@
 
 #info_box {
     position: absolute;
-    top: 0;
+    top: 10px;
     left: 10px;
     width: 300px;
     z-index: -1;

@@ -12,11 +12,9 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import base64
 import json
 import six
 
-from oslo_utils import encodeutils
 from oslo_utils import strutils
 
 from django.core.urlresolvers import reverse
@@ -69,20 +67,6 @@ def preprocess_update_resources(update_resources):
         res[constants.RES_ACTION_KEY] = constants.ACTION_EDIT
         res_type = res[TAG_RES_TYPE]
         if res_type == constants.NOVA_SERVER:
-            if res.get('user_data', None):
-                user_data = res['user_data']
-                if six.PY3:
-                    try:
-                        user_data = user_data.encode('utf-8')
-                    except AttributeError:
-                        pass
-                else:
-                    try:
-                        user_data = encodeutils.safe_encode(user_data)
-                    except UnicodeDecodeError:
-                        pass
-                user_data = base64.b64encode(user_data).decode('utf-8')
-                res['user_data'] = user_data
             if res.get('metadata', None):
                 meta = [dict(zip(['k', 'v'], item.strip().split('=')))
                         for item in res['metadata'].split('\n')

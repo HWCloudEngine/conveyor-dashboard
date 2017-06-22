@@ -150,11 +150,6 @@ conveyorPlanTopology = {
       });
     });
   },
-  tick: function () {
-    var self = this;
-    self.svg.selectAll('.node').attr('d', self.drawLink).style('stroke-width', 3).attr('marker-end', "url(#end)");
-    self.svg.selectAll('.link').attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
-  },
   drawLink: function (d) {
     return "M" + d.source.x + "," + d.source.y + "L" + d.target.x + "," + d.target.y;
   },
@@ -270,16 +265,16 @@ conveyorPlanTopology = {
     //Check for updates and new nodes
 
     var nID=[];
-    $(self.thumbnail_container).find('circle').each(function(i,e){
+    $(self.thumbnail_container).find('circle').each(function(i, e){
       $(this).css("fill","black");
-      var id=$(this).attr("id");
+      var id = $(this).attr("id");
       nID.push(id);
     });
 
     json.nodes.forEach(function(d){
-      if(nID.toString().indexOf(d.id)>-1){
-        $(self.thumbnail_container).find('circle').each(function(i,e){
-          if($(this).attr("id")==d.id){
+      if(nID.toString().indexOf(d.id) > -1){
+        $(self.thumbnail_container).find('circle').each(function(i, e){
+          if($(this).attr("id") == d.id){
             $(this).css("fill","red");
           }
         });
@@ -294,7 +289,7 @@ conveyorPlanTopology = {
         //Status has changed, image should be updated
         if (current_node.image !== d.image){
           current_node.image = d.image;
-          var this_image = d3.select("#image_"+current_node.id);
+          var this_image = d3.select("#image_" + current_node.id);
           this_image
             .transition()
             .attr("x", function(d) { return d.image_x + 5; })
