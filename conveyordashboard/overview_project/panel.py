@@ -11,16 +11,16 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-from django.conf.urls import patterns
-from django.conf.urls import url
 
-from conveyordashboard.overview import views
+from django.utils.translation import ugettext_lazy as _
+
+import horizon
+
+from conveyordashboard import dashboard
 
 
-urlpatterns = patterns(
-    'conveyordashboard.overview.views',
-    url(r'^$', views.IndexView.as_view(), name='index'),
-    url(r'^row_actions$', views.RowActionsView.as_view(), name='row_actions'),
-    url(r'^table_actions$',
-        views.TableActionsView.as_view(), name='table_actions'),
-)
+class ProjectLevelOverview(horizon.Panel):
+    name = _("Project Level")
+    slug = 'overview_project'
+
+dashboard.Conveyor.register(ProjectLevelOverview)

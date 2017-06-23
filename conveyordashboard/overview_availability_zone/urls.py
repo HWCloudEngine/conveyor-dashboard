@@ -11,17 +11,16 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+from django.conf.urls import patterns
+from django.conf.urls import url
 
-from django.utils.translation import ugettext_lazy as _
-
-import horizon
-
-from conveyordashboard import dashboard
+from conveyordashboard.overview_availability_zone import views
 
 
-class Overview(horizon.Panel):
-    name = _("Overview")
-    slug = 'overview'
-    permissions = ('openstack.roles.admin',)
-
-dashboard.Conveyor.register(Overview)
+urlpatterns = patterns(
+    '',
+    url(r'^$', views.IndexView.as_view(), name='index'),
+    url(r'^row_actions$', views.RowActionsView.as_view(), name='row_actions'),
+    url(r'^table_actions$',
+        views.TableActionsView.as_view(), name='table_actions'),
+)

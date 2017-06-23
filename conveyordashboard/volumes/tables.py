@@ -26,20 +26,12 @@ from conveyordashboard.common import resource_state
 
 class CloneVolume(common_actions.CreateClonePlan):
     def allowed(self, request, volume=None):
-        if not volume:
-            return False
-        if volume.status not in resource_state.VOLUME_CLONE_STATE:
-            return False
-        return True
+        return volume.status in resource_state.VOLUME_CLONE_STATE
 
 
 class MigrateVolume(common_actions.CreateMigratePlan):
     def allowed(self, request, volume=None):
-        if not volume:
-            return False
-        if volume.status not in resource_state.VOLUME_MIGRATE_STATE:
-            return False
-        return True
+        return volume.status in resource_state.VOLUME_MIGRATE_STATE
 
 
 class VolumeFilterAction(tables.FilterAction):

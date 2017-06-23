@@ -22,6 +22,5 @@ from conveyordashboard import dashboard
 class Stacks(horizon.Panel):
     name = _("Stacks")
     slug = 'stacks'
-    permissions = ('openstack.roles.admin',)
 
 dashboard.Conveyor.register(Stacks)

@@ -22,6 +22,5 @@ from conveyordashboard import dashboard
 class LoadBalancers(horizon.Panel):
     name = _("Load Balancers")
     slug = "loadbalancers"
-    permissions = ('openstack.services.network',)
 
 dashboard.Conveyor.register(LoadBalancers)
