@@ -22,6 +22,5 @@ from conveyordashboard import dashboard
 class Networks(horizon.Panel):
     name = _("Networks")
     slug = 'networks'
-    permissions = ('openstack.services.network',)
 
 dashboard.Conveyor.register(Networks)

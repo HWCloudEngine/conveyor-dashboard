@@ -16,8 +16,8 @@
 $(function () {
   "use strict";
   var rootPath = WEBROOT;
-  var conveyor_action_url = rootPath + "/conveyor/overview/row_actions";
-  var conveyor_table_action_url = rootPath + "/conveyor/overview/table_actions";
+  var conveyor_action_url = rootPath + "/conveyor/overview_availability_zone/row_actions";
+  var conveyor_table_action_url = rootPath + "/conveyor/overview_availability_zone/table_actions";
   var conveyor_clone_url = rootPath + "/conveyor/plans/clone";
   var conveyor_migrate_url = rootPath + "/conveyor/plans/migrate";
   var next_url = window.location.href;

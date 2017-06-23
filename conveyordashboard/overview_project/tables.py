@@ -11,33 +11,32 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+
 from django.utils.translation import ugettext_lazy as _
 
-from openstack_dashboard.dashboards.project.loadbalancers \
-    import tables as lb_tables
+from horizon import tables
 
 from conveyordashboard.common import actions as common_actions
-from conveyordashboard.common import constants as consts
-from conveyordashboard.common import resource_state
 
 
-class ClonePool(common_actions.CreateClonePlan):
-    def allowed(self, request, pool=None):
-        return pool.status in resource_state.POOL_CLONE_STATE
-
-
-class MigratePool(common_actions.CreateMigratePlan):
-    def allowed(self, request, pool=None):
-        return pool.status in resource_state.POOL_MIGRATE_STATE
-
-
-class PoolsTable(lb_tables.PoolsTable):
+class ResTable(tables.DataTable):
+    project_id = tables.Column('project_id',
+                               verbose_name=_("Project ID"),
+                               hidden=True)
+    name = tables.Column("name",
+                         verbose_name=_("Name"),
+                         sortable=False)
+    res_type = tables.Column("res_type",
+                             verbose_name=_("Resource Type"),
+                             sortable=False)
+    availability_zone = tables.Column("availability_zone",
+                                      verbose_name=_("Availability Zone"),
+                                      sortable=False)
 
     class Meta(object):
-        name = "poolstable"
-        verbose_name = _("Pools")
-        css_classes = ' '.join(['table-res', consts.NEUTRON_POOL])
+        name = 'resource'
+        verbose_name = _("Resource")
         table_actions = (common_actions.CreateClonePlanWithMulRes,
                          common_actions.CreateMigratePlanWithMulRes)
-        row_actions = (ClonePool,
-                       MigratePool,)
+        row_actions = (common_actions.CreateClonePlan,
+                       common_actions.CreateMigratePlan)

@@ -61,20 +61,12 @@ def get_size(instance):
 
 class CloneInstance(common_actions.CreateClonePlan):
     def allowed(self, request, instance=None):
-        """Allow terminate action if instance not currently being deleted."""
-        if not instance:
-            return True
-        return (instance.status in resource_state.INSTANCE_CLONE_STATE) \
-            and not project_tables.is_deleting(instance)
+        return instance.status in resource_state.INSTANCE_CLONE_STATE
 
 
 class MigrateInstance(common_actions.CreateMigratePlan):
     def allowed(self, request, instance=None):
-        """Allow terminate action if instance not currently being deleted."""
-        if not instance:
-            return True
-        return (instance.status in resource_state.INSTANCE_MIGRATE_STATE) \
-            and not project_tables.is_deleting(instance)
+        return instance.status in resource_state.INSTANCE_MIGRATE_STATE
 
 
 class UpdateRow(tables.Row):

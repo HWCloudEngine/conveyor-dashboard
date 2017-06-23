@@ -21,6 +21,10 @@
     line-height: 30px !important;
 }
 
+[id|=node--1] > td > span {
+  margin-left: -10px !important;
+}
+
 #conveyor_plan_topology {
     position: relative;
     z-index: 99

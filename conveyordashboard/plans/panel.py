@@ -22,6 +22,5 @@ from conveyordashboard import dashboard
 class Plans(horizon.Panel):
     name = _("Plans")
     slug = 'plans'
-    permissions = ('openstack.roles.admin',)
 
 dashboard.Conveyor.register(Plans)
