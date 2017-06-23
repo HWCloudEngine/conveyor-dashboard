@@ -19,9 +19,8 @@ import horizon
 from conveyordashboard import dashboard
 
 
-class Volumes(horizon.Panel):
-    name = _("Volumes")
-    slug = 'volumes'
+class AZLevelOverview(horizon.Panel):
+    name = _("Availability Zone Level")
+    slug = 'overview_availability_zone'
 
-
-dashboard.Conveyor.register(Volumes)
+dashboard.Conveyor.register(AZLevelOverview)
