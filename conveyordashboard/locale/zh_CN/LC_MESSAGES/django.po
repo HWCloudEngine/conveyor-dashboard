@@ -68,7 +68,7 @@ msgid "Create migrate plan with selecting multi-resources"
 msgstr "通过选择多个资源创建迁移计划"
 
 msgid "Floating IPs"
-msgstr "浮动IP"
+msgstr "浮动 IP"
 
 msgid "IP Address"
 msgstr "IP 地址"
@@ -216,6 +216,9 @@ msgid "Update plan %s failed"
 msgstr "更新计划 %s 失败。"
 
 msgid "Plans"
+msgstr "计划"
+
+msgid "Plan"
 msgstr "计划"
 
 msgid "Delete plan is not recoverable."
@@ -906,3 +909,12 @@ msgstr "源可用域"
 
 msgid "Destination Availability Zone"
 msgstr "目标可用域"
+
+msgid "Project Level"
+msgstr "项目级别"
+
+msgid "Availability Zone Level"
+msgstr "可用域级别"
+
+msgid "Single Resource"
+msgstr "单项资源"

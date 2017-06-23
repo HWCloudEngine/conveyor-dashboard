@@ -22,7 +22,6 @@ from oslo_log import log as logging
 from conveyordashboard.api import api
 from conveyordashboard.common import constants as consts
 from conveyordashboard.common import resource_state
-from conveyordashboard.overview import tables as overview_tables
 from conveyordashboard.topology import tables as topo_tables
 from conveyordashboard.topology import topology
 
@@ -36,20 +35,9 @@ from conveyordashboard.volumes.tables import VolumesTable
 LOG = logging.getLogger(__name__)
 
 
-class Res(object):
-    def __init__(self, project_id, res_id, res_type, name, obj, **kwargs):
-        self.project_id = project_id
-        self.id = res_id
-        self.res_type = res_type
-        self.name = name
-        self.obj = obj
-        self.kwargs = kwargs
-
-
 class IndexView(views.HorizonTemplateView):
-    table_class = overview_tables.ResTable
     page_title = _("Overview")
-    template_name = 'overview/index.html'
+    template_name = 'overview_availability_zone/index.html'
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
