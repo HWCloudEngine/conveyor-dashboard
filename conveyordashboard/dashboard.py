@@ -22,7 +22,8 @@ class Conveyor(horizon.Dashboard):
     name = _(getattr(settings, 'CONVEYOR_DASHBOARD_NAME', "Conveyor"))
     supports_tenants = True
     slug = "conveyor"
-    panels = ('overview',
+    panels = ('overview_project',
+              'overview',
               'instances',
               'volumes',
               'networks',

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+{% block title %}{% trans "Overview" %}{% endblock %}
+{% block main %}
+  <div id="hide_ori_data" style="display: none">{{ table }}</div>
+{% endblock %}
+{% block js %}
+  {% include "horizon/_scripts.html" %}
+  <link rel="stylesheet" href="{% static 'conveyordashboard/css/jquery.treeTable.css' %}"/>
+  <link rel="stylesheet" href="{% static 'conveyordashboard/css/deps_topo.css' %}"/>
+  <script type="text/javascript" src="{% static 'conveyordashboard/js/overview_project.js' %}"></script>
+  <script>
+    $(function () {
+      conveyorProjectOverview.init();
+    })
+  </script>
+{% endblock %}
