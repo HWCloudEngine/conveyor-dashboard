@@ -20,8 +20,7 @@ from conveyordashboard import dashboard
 
 
 class Overview(horizon.Panel):
-    name = _("Overview")
+    name = _("Availability Zone Level")
     slug = 'overview'
-    permissions = ('openstack.roles.admin',)
 
 dashboard.Conveyor.register(Overview)

@@ -19,8 +19,8 @@ import horizon
 from conveyordashboard import dashboard
 
 
-class Instances(horizon.Panel):
-    name = _("Instances")
-    slug = 'instances'
+class OverviewForProject(horizon.Panel):
+    name = _("Project Level")
+    slug = 'overview_project'
 
-dashboard.Conveyor.register(Instances)
+dashboard.Conveyor.register(OverviewForProject)

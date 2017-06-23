@@ -16,46 +16,56 @@
 
 "use strict";
 
-String.prototype.isCidrV4=function () {
-    var re=/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$/;
-    return re.test(this)
+String.prototype.isCidrV4 = function () {
+  var re = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$/;
+  return re.test(this)
 };
 
 var conveyorUtil = {
-    merge: function (dict1, dict2) {
-        $.each(dict2, function (k, v) {
-            dict1[k] = v
-        });
-    },
-    checkCidr: function (cidr, max_net_len) {
-        if(!cidr.isCidrV4()) {
-            return false;
-        }
-        var net_len=cidr.split('/')[1];
-        return net_len <= max_net_len;
-    },
-    compareIp: function(ipBegin, ipEnd) {
-        var temp1 = ipBegin.split("."), temp2 = ipEnd.split(".");
-        for (var i = 0; i < 4; i++){
-            var j = parseInt(temp1[i]), k = parseInt(temp2[i]);
-            if (j > k){
-                return 1;
-            } else if (j < k) {
-                return -1;
-            }
-        }
-        return 0;
-    },
-    ipCheckInCidr: function (pool, ip) {
-        try {
-            for(var index in pool) {
-                if(this.compareIp(pool[index].start, ip) <= 0 && this.compareIp(ip, pool[index].end) <= 0) {
-                    return true;
-                }
-            }
-            return false;
-        } catch (e) {
-            return false;
-        }
+  merge: function (dict1, dict2) {
+    $.each(dict2, function (k, v) {
+      dict1[k] = v
+    });
+  },
+  checkCidr: function (cidr, max_net_len) {
+    if (!cidr.isCidrV4()) {
+      return false;
     }
+    var net_len = cidr.split('/')[1];
+    return net_len <= max_net_len;
+  },
+  compareIp: function (ipBegin, ipEnd) {
+    var temp1 = ipBegin.split("."), temp2 = ipEnd.split(".");
+    for (var i = 0; i < 4; i++) {
+      var j = parseInt(temp1[i]), k = parseInt(temp2[i]);
+      if (j > k) {
+        return 1;
+      } else if (j < k) {
+        return -1;
+      }
+    }
+    return 0;
+  },
+  ipCheckInCidr: function (pool, ip) {
+    try {
+      for (var index in pool) {
+        if (this.compareIp(pool[index].start, ip) <= 0 && this.compareIp(ip, pool[index].end) <= 0) {
+          return true;
+        }
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  },
+  randomString: function (len) {
+    len = len || 32;
+    var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
+    var maxPos = $chars.length;
+    var pwd = '';
+    for (var i = 0; i < len; i++) {
+      pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
+    }
+    return pwd;
+  }
 };

@@ -12,6 +12,12 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from oslo_log import log as logging
+
+from conveyordashboard.common import resource_state
+
+LOG = logging.getLogger(__name__)
+
 
 class PagedTableMixin(object):
     def __init__(self, *args, **kwargs):
@@ -38,3 +44,31 @@ class PagedTableMixin(object):
             if marker:
                 return marker, "desc"
             return None, "desc"
+
+
+class FilterTableMixin(object):
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def _tenant_filter(self, obj):
+        tenant_id = obj.get('tenant_id')
+        if not tenant_id:
+            LOG.error("%s object has no attribute 'tenant_id' ", obj.__class__)
+        return tenant_id == self.request.user.tenant_id
+
+    def _instance_status_filter(self, instance):
+        return instance.status in resource_state.INSTANCE_CLONE_STATE \
+               or instance.status in resource_state.INSTANCE_MIGRATE_STATE
+
+    def _volume_status_filter(self, volume):
+        return volume.status in resource_state.VOLUME_CLONE_STATE \
+            or volume.status in resource_state.VOLUME_MIGRATE_STATE
+
+    def _network_status_filter(self, net):
+        status = net.status
+        return status in resource_state.NET_CLONE_STATE \
+            or status in resource_state.NET_MIGRATE_STATE
+
+    def _pool_status_filter(self, pool):
+        return pool.status in resource_state.POOL_CLONE_STATE \
+               or pool.status in resource_state.POOL_MIGRATE_STATE

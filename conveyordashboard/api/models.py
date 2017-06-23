@@ -19,6 +19,20 @@ class Resource(base.APIDictWrapper):
     """Resource wrap for dict resources."""
 
 
+class OverviewResource(base.APIDictWrapper):
+    _attrs = ['res_id', 'res_type', 'name', 'tenant_id']
+
+    @property
+    def id(self):
+        return self.res_id
+
+    def project_id(self):
+        try:
+            return self.tenant_id
+        except (KeyError, AttributeError):
+            return '-'
+
+
 class Server(base.APIDictWrapper):
     _attrs = ['addresses', 'attrs', 'id', 'image', 'links', 'metadata', 'name',
               'private_ip', 'public_ip', 'status', 'uuid', 'image_name',
