@@ -26,6 +26,7 @@ ADD_JS_FILES = [
     'conveyordashboard/js/conveyor.service.js',
     'conveyordashboard/js/edit_plan_res.js',
     'conveyordashboard/js/deps_table.js',
+    'conveyordashboard/js/overview_project.js',
     'conveyordashboard/js/conveyor.topology.js',
     'conveyordashboard/js/conveyor.selector.js',
     'conveyordashboard/js/conveyor.resource.js',
