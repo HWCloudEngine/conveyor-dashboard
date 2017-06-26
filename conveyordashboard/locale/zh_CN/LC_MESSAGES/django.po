@@ -56,10 +56,10 @@ msgid "Execute clone plan"
 msgstr "执行克隆计划"
 
 msgid "Create Migrate Plan"
-msgstr "创迁移计划"
+msgstr "创建迁移计划"
 
 msgid "Execute migrate plan"
-msgstr "创建迁移计划"
+msgstr "执行迁移计划"
 
 msgid "Create clone plan with selecting multi-resources"
 msgstr "通过选择多个资源创建克隆计划"
