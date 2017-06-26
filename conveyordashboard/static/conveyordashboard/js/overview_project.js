@@ -11,12 +11,12 @@
 */
 
 var conveyorProjectOverview = {
-  t_ids: {},
+  id_map: {},
   tag_clone_plan_action: 'a.create-clone-plan-for-mul-sel',
   tag_migrate_plan_action: 'a.create-migrate-plan-for-mul-sel',
   checkTopologyLink: function () {
     var self = this;
-    var t_ids = self.t_ids;
+    var t_ids = self.id_map;
     var len = 0;
     var index;
     $.each(t_ids, function (k, v) {
@@ -41,7 +41,7 @@ var conveyorProjectOverview = {
   },
   getQueryString: function () {
     var self = this;
-    var t_ids = self.t_ids;
+    var t_ids = self.id_map;
     var id_strs = [];
     $.each(t_ids, function (k, v) {
       if (v.length > 0) {
@@ -51,16 +51,32 @@ var conveyorProjectOverview = {
     var url = id_strs.join("**");
     return '?ids=' + url;
   },
-  checkAllOfOneType: function (obj) {
+  typeIndex: function () {
+    return $('#resource').find('thead th[data-selenium=res_type]').attr('data-column');
+  },
+  setParentTrChecked: function (childCls, parentCls) {
+    var children = $(childCls);
+    var checkParent = true;
+    $(children).each(function (index, item) {
+      if (!$(this).find('[type=checkbox]').is(':checked')) {
+        checkParent = false;
+      }
+    });
+    if (checkParent) {
+      $(parentCls).find('[type=checkbox]').attr('checked', 'checked');
+    }
+  },
+  checkAllOfOneType: function (tr) {
     var self = this;
     var table = $('#resource');
-    var this_id = obj.id;
+    var this_id = tr.id;
     var child_cls = '.child-of-' + this_id;
-    $(obj).find('td:eq(0) input').click(function () {
-      var type = $.trim($(obj).find('td:eq(1)').html());
-      if ($(this).attr('checked') == 'checked') {
-        if ($(obj).hasClass('collapsed')) {
-          $(obj).find('td:eq(0) span').click()
+    var typeIndex = self.typeIndex();
+    $(tr).find('td:eq(0) input').click(function () {
+      var type = $.trim($(this).next().find('span').text());
+      if ($(this).is(':checked')) {
+        if ($(tr).hasClass('collapsed')) {
+          $(tr).find('td:eq(0) span').click()
         }
         var children = table.find(child_cls);
         if ($(children).length) {
@@ -69,14 +85,20 @@ var conveyorProjectOverview = {
             $(this).find('td:eq(0) input').attr('checked', 'checked');
             tmp_ids.push($(this).attr('data-object-id'));
           });
-          self.t_ids[type] = tmp_ids;
+          self.id_map[type] = tmp_ids;
         }
+
+        // If all of child node are checked, then the parent checkbox should be checked.
+        self.setParentTrChecked('[id^="node--1-OS_"]', '#resource thead');
       }
       else {
         $(table.find(child_cls)).each(function () {
           $(this).find('td:eq(0) input').removeAttr('checked');
         });
-        self.t_ids[type] = [];
+        self.id_map[type] = [];
+
+        // Remove the checked property of parent checkbox
+        $('#resource thead th [type=checkbox]').removeAttr('checked');
       }
       self.checkTopologyLink();
     });
@@ -84,56 +106,63 @@ var conveyorProjectOverview = {
   },
   prepareAction: function () {
     var self = this;
-    var t_ids = self.t_ids;
     var table = $('#resource');
     var type = '';
+    var typeIndex = self.typeIndex();
+    table.find('thead th:eq(0) input[type=checkbox]').click(function () {
+      var checked = $(this).is(':checked');
+      if (checked) {
+        table.find('tbody tr.parent').each(function (index, item) {
+          var chk = $(this).find('td:eq(0) [type=checkbox]');
+          if (!$(chk).is(':checked')) {
+            $(chk).click();
+          }
+        });
+      }
+      else {
+        table.find('tbody tr').each(function (index, item) {
+          $(this).find('td:eq(0) [type=checkbox]').removeAttr('checked');
+        });
+        self.id_map = {};
+        self.checkTopologyLink();
+      }
+    });
     table.find('tbody tr').each(function () {
       var tr = this;
+      var t_ids = self.id_map;
       if ($(this).hasClass('parent')) {
-        var this_id = this.id;
-        var child_cls = '.child-of-' + this_id;
-        if (this_id.indexOf('node--1-') == 0) {
-          $(this).find('td:eq(0) input').click(function () {
-            if ($(this).attr('checked') == 'checked') {
-              table.find(child_cls).each(function () {
-                var chk = $(this).find('td:eq(0) input');
-                if ($(chk).attr('checked') != 'checked') {
-                  $(chk).click()
-                }
-
-              });
-            }
-            else {
-              table.find(child_cls).each(function () {
-                var chk = $(this).find('td:eq(0) input');
-                if ($(chk).attr('checked') == 'checked') {
-                  $(chk).click()
-                }
-              });
-            }
-          });
-        } else if (this_id.indexOf('node--2-') == 0) {
-          return self.checkAllOfOneType(this);
-        }
+        return self.checkAllOfOneType(this);
       } else {
         var res_id = $(this).attr('data-object-id');
         $(tr).find('td:eq(0) input').click(function () {
-          type = $.trim($(tr).find('td:eq(3)').html());
-          if ($(this).attr('checked') == 'checked') {
+          type = $.trim($(tr).find('td:eq(' + typeIndex + ')').html());
+          if ($(this).is(':checked')) {
             try {
               if ($.inArray(res_id, t_ids[type]) == -1) {
                 t_ids[type].push(res_id);
               }
             } catch (e) {
-              console.log(e);
               t_ids[type] = [res_id]
             }
+
+            // If all of child node are checked, then the parent checkbox should be checked.
+            var new_type = type.replace(/::/g, '__');
+            var childCls = '.child-of-node--1-' + new_type;
+            var parentCls = '#node--1-' + new_type;
+            self.setParentTrChecked(childCls, parentCls);
+            self.setParentTrChecked('[id^="node--1-OS_"]', '#resource thead');
           } else {
             var index = $.inArray(res_id, t_ids[type]);
             if (index != -1) {
               t_ids[type].splice(index, 1);
             }
+
+            // Remove the checked property of parent checkbox
+            $('#node--1-' + type.replace(/::/g, '__')).find('td:eq(0) [type=checkbox]').removeAttr('checked');
+            $('#resource thead th [type=checkbox]').removeAttr('checked');
           }
+
+          // Update creating plan searching string
           self.checkTopologyLink();
         });
       }
@@ -146,39 +175,37 @@ var conveyorProjectOverview = {
   init: function () {
     var self = this;
     var ori = $('#hide_ori_data');
+    var typeIndex = self.typeIndex();
     var table_wrapper = ori.find('.table_wrapper')[0];
     var table = $(table_wrapper).find('table');
-    table.find('thead tr.tablesorter-headerRow th:eq(0)').empty();
-    var t_type = {};
+    var thead = table.find('thead');
+    var columnLen = thead.find('th').length;
+    thead.find('tr.tablesorter-headerRow th:eq(0)').empty().append(self.checkBox('', ''));
+    var t_type = [];
     $(table).find('tbody tr').each(function () {
-      var tenant = $.trim($('.context-project').text());
-      var type = $(this).find('td:eq(3)').html();
-      try {
-        if (t_type[tenant].toString().indexOf(type) == -1) {
-          t_type[tenant].push(type);
-        }
-      } catch (e) {
-        t_type[tenant] = [type]
+      var type = $.trim($(this).find('td:eq(' + typeIndex + ')').html());
+      if ($.inArray(type, t_type) === -1) {
+        t_type.push(type);
       }
     });
-    $.each(t_type, function (tenant, types) {
-      $(table).find('tbody').prepend("<tr id='node--1-" + tenant + "' class='parent'><td colspan='2'>" + self.checkBox('', tenant) + "</td><td>OS::Keystone::Project</td><td></td><td></td></tr>");
-      for (var i = 0; i < types.length; i++) {
-        var type = types[i];
-        $(table).find('tbody tr#node--1-' + tenant).after("<tr id='node--2-" + (i + 1) + "' class='parent child-of-node--1-" + tenant + "'><td colspan='2'>" + self.checkBox('', type) + "</td><td>" + type + "</td><td></td><td></td></tr>");
-        $(table).find('tbody tr').each(function () {
-          if ($(this).find('td:eq(3)').html() == type) {
-            $(this).addClass("child-of-node--2-" + (i + 1));
-            $(table).find('tbody tr#node--2-' + (i + 1)).after($(this));
-          }
-        });
-      }
+    $.each(t_type, function (index, type) {
+      var new_type = type.replace(/::/g, '__');
+      $(table).find('tbody').prepend("<tr id='node--1-" + new_type + "' class='parent'><td colspan='" + columnLen + "'>" + self.checkBox('', type) + "</td></tr>");
+      $(table).find('tbody tr').each(function () {
+        if ($.trim($(this).find('td:eq(' + typeIndex + ')').html()) == type) {
+          $(this).addClass("child-of-node--1-" + (new_type));
+          $(table).find('tbody tr#node--1-' + (new_type)).after($(this));
+        }
+      });
     });
     $(table).treeTable();
+
+    // Display the resource table
     ori.before(table_wrapper);
+
     self.prepareAction();
+
     var actions = $(self.tag_clone_plan_action + ', ' + self.tag_migrate_plan_action);
-    var btnTrigger = $('.btn-create-plan');
     $(actions).click(function () {
       var href = $(this).attr('href').split('?')[0];
       href += self.getQueryString();
