@@ -16,7 +16,6 @@ from django.conf.urls import patterns
 from django.conf.urls import url
 
 from conveyordashboard.plans import views
-from conveyordashboard.topology import views as topology_views
 
 PLAN = r'^(?P<plan_id>[^/]+)/%s$'
 
@@ -29,26 +28,12 @@ urlpatterns = patterns(
     url(PLAN % '', views.DetailView.as_view(), name='detail'),
     url(PLAN % 'save', views.SaveView.as_view(), name='save'),
     url(PLAN % 'modify', views.ModifyView.as_view(), name='modify'),
-    url(PLAN % 'cancel', views.CancelView.as_view(), name='cancel'),
     url(PLAN % 'export', views.ExportView.as_view(), name='export'),
     url(PLAN % 'destination', views.DestinationView.as_view(),
         name='destination'),
-    url(PLAN % 'update_plan_resource', views.UpdatePlanResourceView.as_view(),
-        name='update_plan_resource'),
 
-    url(r'^get_resource_detail$', views.ResourceDetailJsonView.as_view(),
-        name='resource_detail'),
-    url(r'^get_secgroup_rules/(?P<secgroup_id>[^/]+)$',
-        topology_views.SecgroupRulesView.as_view(),
-        name='get_secgroup_rules'),
-    url(r'^secgroup/add_rule/$',
-        topology_views.AddRuleView.as_view(),
-        name='add_rule'),
-    url(r'^secgroup/create_rule/$',
-        topology_views.CreateRuleView.as_view(),
-        name='create_rule'),
     url(r'^get_local_topology$',
-        topology_views.LocalTopologyView.as_view(), name='local_topology'),
+        views.LocalTopologyView.as_view(), name='local_topology'),
     url(r'^get_global_topology$',
-        topology_views.GlobalTopologyView.as_view(), name='global_topology')
+        views.GlobalTopologyView.as_view(), name='global_topology')
 )

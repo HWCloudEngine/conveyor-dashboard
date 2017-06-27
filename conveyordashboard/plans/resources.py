@@ -26,7 +26,7 @@ from openstack_dashboard import api as os_api
 
 from conveyordashboard.api import api
 from conveyordashboard.common import constants as consts
-from conveyordashboard.topology import tables as topology_tables
+from conveyordashboard.security_groups import tables as secgroup_tables
 
 DEPENDENCY_UPDATE_MAPPING = consts.DEPENDENCY_UPDATE_MAPPING
 TAG_RES_TYPE = consts.TAG_RES_TYPE
@@ -362,7 +362,7 @@ class ResourceDetailFromPlan(object):
             tmp_rs = [os_api.neutron.SecurityGroupRule(rebuild_rules(r))
                       for r in rules]
             props['rules'] = json.dumps(rules)
-            rules_table = topology_tables.RulesTable(self.request, tmp_rs,
+            rules_table = secgroup_tables.RulesTable(self.request, tmp_rs,
                                                      secgroup_id=context['id'])
             context['rules_table'] = rules_table.render()
 

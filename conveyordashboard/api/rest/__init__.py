@@ -1,5 +1,3 @@
-# Copyright (c) 2017 Huawei, Inc.
-#
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
 #    a copy of the License at
@@ -12,15 +10,5 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from django.conf.urls import patterns
-from django.conf.urls import url
-
-
-from conveyordashboard.security_groups import views
-
-
-urlpatterns = patterns(
-    '',
-    url(r'^$', views.IndexView.as_view(), name='index'),
-    url(r'^add_rule/$', views.AddRuleView.as_view(), name='add_rule'),
-)
+from . import plans  # noqa
+from . import resources  # noqa

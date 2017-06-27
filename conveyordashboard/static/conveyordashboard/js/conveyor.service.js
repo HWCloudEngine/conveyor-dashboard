@@ -19,7 +19,7 @@
 var conveyorService = {
   cancelPlan: function (plan_id) {
     $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
-    $.post(WEBROOT + "/conveyor/plans/" + plan_id + "/cancel")
+    $.post(WEBROOT + "api/conveyor/plans/" + plan_id + "/delete/")
       .error(function () {
         horizon.alert('error', gettext("Unable to cancel plan Cancel Plan."));
       });
@@ -29,7 +29,7 @@ var conveyorService = {
     var result = null;
     $.ajaxSetup({async: false});
     $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
-    $.post(WEBROOT + '/conveyor/plans/' + plan_id + '/update_plan_resource', data)
+    $.post(WEBROOT + 'api/conveyor/plans/' + plan_id + '/update_plan_resource_frontend/', angular.toJson(data))
       .success(function (data) {
         result = data;
       })
@@ -44,7 +44,7 @@ var conveyorService = {
     var result = null;
     $.ajaxSetup({async: false});
     $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
-    $.post(WEBROOT + '/conveyor/plans/get_resource_detail', data)
+    $.post(WEBROOT + 'api/conveyor/plans/' + data.plan_id + '/detail_resource/' + data.resource_id + '/', angular.toJson(data))
       .success(function (data) {
         result = data;
       })
@@ -57,7 +57,7 @@ var conveyorService = {
   addRuleForFrontend: function (sg_id, data) {
     var result = null;
     $.ajaxSetup({async: false});
-    $.get(WEBROOT + '/conveyor/plans/secgroup/add_rule/?security_group_id=' + sg_id)
+    $.get(WEBROOT + '/conveyor/security_groups/add_rule/?security_group_id=' + sg_id)
       .success(function (data) {
         result = data;
       });
@@ -68,7 +68,7 @@ var conveyorService = {
     var result = null;
     $.ajaxSetup({async: false});
     $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
-    $.post(WEBROOT + '/conveyor/plans/secgroup/create_rule/', data)
+    $.post(WEBROOT + 'api/conveyor/resources/create_rule/', angular.toJson(data))
       .success(function (data) {
         result = data;
       })

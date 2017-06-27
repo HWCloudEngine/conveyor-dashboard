@@ -50,12 +50,12 @@ var conveyorEditPlanRes = {
     var plan_id = $(this.tag_plan_id).val();
     var is_original = $(this.tag_is_original).attr("data-is_original");
     var update_data = this.getUpdateResource(node_type, node_id);
-    var updated_res = $(this.tag_updated_resources).val();
+    var updated_res = $.parseJSON($(this.tag_updated_resources).val());
     var postdata = {
       "plan_id": plan_id,
       "resource_type": node_type,
       "resource_id": node_id,
-      "update_data": JSON.stringify(update_data),
+      "update_data": update_data,
       "updated_res": updated_res,
       "is_original": is_original
     };
@@ -143,18 +143,14 @@ var conveyorEditPlanRes = {
   resChanged: function (resType, resId, data) {
     var self = this;
     var plan_id = $(self.tag_plan_id).val();
-    var updated_resources = $(self.tag_updated_resources).val();
-    var dependencies = $(self.tag_dependencies).val();
-    var update_resource = $(self.tag_update_resource).val();
-    $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
     var postdata = {
       "plan_id": plan_id,
       "resource_type": resType,
       "resource_id": resId,
-      "updated_resources": updated_resources,
-      "dependencies": dependencies,
-      "update_res": update_resource,
-      "data": JSON.stringify(data)
+      "updated_resources": $.parseJSON($(self.tag_updated_resources).val()),
+      "dependencies": $.parseJSON($(self.tag_dependencies).val()),
+      "update_res": $.parseJSON($(self.tag_update_resource).val()),
+      "data": data
     };
     var result = conveyorService.updatePlanResourceForFrontend(plan_id, postdata);
     if(result) {
@@ -340,7 +336,7 @@ var conveyorEditPlanRes = {
       'ethertype': $("#id_ethertype").val()
     };
 
-    var result = conveyorService.createSGRule($("#secgroup_wrap").attr('od_id'), {'secgroup_rule': JSON.stringify(secgroup_rule)});
+    var result = conveyorService.createSGRule($("#secgroup_wrap").attr('od_id'), secgroup_rule);
     if(result) {
        var sgr = result.sgr;
         var sgrs_node = $("#id_sgrs");
