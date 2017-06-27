@@ -25,6 +25,7 @@ from horizon.utils import filters
 from oslo_log import log as logging
 
 from conveyordashboard.api import api
+from conveyordashboard.api import models
 from conveyordashboard.common import utils
 
 LOG = logging.getLogger(__name__)
@@ -279,3 +280,67 @@ class DestinationAZTable(tables.DataTable):
     class Meta(object):
         name = 'destination_az'
         verbose_name = _("Destination Availability Zone")
+
+
+class LocalTopology(tables.LinkAction):
+    name = 'local_topology'
+    verbose_name = _("Local Topology")
+    url = 'horizon:conveyor:plans:local_topology'
+    classes = ("ajax-modal",)
+
+    def get_link_url(self, datum):
+        base_url = reverse(self.url)
+        params = urlencode({'res_id': self.table.get_object_id(datum),
+                            'plan_id': self.table.kwargs['plan_id'],
+                            'plan_type': self.table.kwargs['plan_type']})
+        return '?'.join([base_url, params])
+
+    def allowed(self, request, instance=None):
+        """Allow terminate action if instance not currently being deleted."""
+        return True
+
+
+class GlobalTopology(tables.LinkAction):
+    name = 'global_topology'
+    verbose_name = _("Global Topology")
+    url = 'horizon:conveyor:plans:global_topology'
+    classes = ("ajax-modal",)
+
+    def get_link_url(self, datum=None):
+        base_url = reverse(self.url)
+        params = urlencode({'plan_type': self.table.kwargs['plan_type'],
+                            'plan_id': self.table.kwargs['plan_id']})
+        return '?'.join([base_url, params])
+
+
+def get_dep_name(dep):
+    name = dep.name
+    if not name:
+        return '-'
+    if len(name) > 36:
+        return name[:33] + '...'
+    return name
+
+
+def trans_plan_deps(plan_deps):
+    deps = []
+    for dep in plan_deps.values():
+        deps.append(models.Resource(dep))
+    return deps
+
+
+class PlanDepsTable(tables.DataTable):
+    name = tables.Column(get_dep_name, verbose_name=_("Name"), sortable=False)
+    res_id = tables.Column('name_in_template', verbose_name=_("Resource ID"),
+                           sortable=False)
+    res_type = tables.Column('type', verbose_name=_("Resource Type"),
+                             sortable=False)
+
+    def get_object_id(self, obj):
+        return obj.name_in_template
+
+    class Meta(object):
+        name = 'plan_deps'
+        verbose_name = _("Plan Deps")
+        row_actions = (LocalTopology,)
+        table_actions = (GlobalTopology,)

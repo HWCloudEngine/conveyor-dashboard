@@ -17,11 +17,13 @@ from django.utils.translation import ugettext_lazy as _
 
 import horizon
 
+import conveyordashboard.api.rest  # noqa
+
 
 class Conveyor(horizon.Dashboard):
     name = _(getattr(settings, 'CONVEYOR_DASHBOARD_NAME', "Conveyor"))
     supports_tenants = True
     slug = "conveyor"
-    default_panel = 'instances'
+    default_panel = 'plans'
 
 horizon.register(Conveyor)

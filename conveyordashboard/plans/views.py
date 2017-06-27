@@ -23,7 +23,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.generic import View
 
 from oslo_log import log as logging
-from oslo_utils import strutils
 
 from horizon import exceptions
 from horizon import forms
@@ -36,20 +35,11 @@ from conveyordashboard.api import models
 from conveyordashboard.common import constants
 from conveyordashboard.common import tables as common_tables
 from conveyordashboard.plans import forms as plan_forms
-from conveyordashboard.plans import resources
 from conveyordashboard.plans import tables as plan_tables
 from conveyordashboard.plans import tabs as plan_tabs
-from conveyordashboard.topology import tables as topology_tables
 from conveyordashboard.topology import topology
 
 LOG = logging.getLogger(__name__)
-
-
-def trans_plan_deps(plan_deps):
-    deps = []
-    for dep in plan_deps.values():
-        deps.append(models.Resource(dep))
-    return deps
 
 
 class IndexView(common_tables.PagedTableMixin, tables.DataTableView):
@@ -156,9 +146,9 @@ class CloneView(forms.ModalFormView):
         context['plan_id'] = plan.plan_id
         context['plan_type'] = constants.CLONE
 
-        plan_deps_table = topology_tables.PlanDepsTable(
+        plan_deps_table = plan_tables.PlanDepsTable(
             self.request,
-            trans_plan_deps(plan.original_dependencies),
+            plan_tables.trans_plan_deps(plan.original_dependencies),
             plan_id=plan.plan_id,
             plan_type=constants.CLONE)
         context['plan_deps_table'] = plan_deps_table.render()
@@ -250,9 +240,9 @@ class MigrateView(forms.ModalFormView):
         context = super(MigrateView, self).get_context_data(**kwargs)
         context['plan_id'] = plan.plan_id
 
-        plan_deps_table = topology_tables.PlanDepsTable(
+        plan_deps_table = plan_tables.PlanDepsTable(
             self.request,
-            trans_plan_deps(plan.original_dependencies),
+            plan_tables.trans_plan_deps(plan.original_dependencies),
             plan_id=plan.plan_id,
             plan_type=constants.MIGRATE)
         context['plan_deps_table'] = plan_deps_table.render()
@@ -375,9 +365,9 @@ class ModifyView(forms.ModalFormView):
         plan = self.get_object(**self.kwargs)
 
         context['type'] = 'clone'
-        plan_deps_table = topology_tables.PlanDepsTable(
+        plan_deps_table = plan_tables.PlanDepsTable(
             self.request,
-            trans_plan_deps(plan.updated_dependencies),
+            plan_tables.trans_plan_deps(plan.updated_dependencies),
             plan_id=plan.plan_id,
             plan_type=constants.CLONE
         )
@@ -545,97 +535,78 @@ class DestinationView(forms.ModalFormView):
         return initial
 
 
-class CancelView(View):
+def filter_deps(request, plan_id, plan_type, deps, res_id=None):
+    plan = api.plan_get(request, plan_id)
+    plan_deps = plan.updated_dependencies \
+        if plan_type == 'clone' else plan.original_dependencies
+    plan_deps.update(deps)
+    for k, v in plan_deps.items():
+        if v.get(constants.RES_ACTION_KEY, '') == constants.ACTION_DELETE:
+            plan_deps.pop(k)
+
+    if res_id is not None:
+        local_deps = dict()
+        local_deps[res_id] = plan_deps[res_id]
+        for key, value in plan_deps.items():
+            if key in plan_deps[res_id]['dependencies'] \
+                    or res_id in value['dependencies']:
+                local_deps[key] = value
+        return local_deps
+    return plan_deps
+
+
+class LocalTopologyView(View):
+    @staticmethod
+    def get(request, **kwargs):
+        GET = request.GET
+        plan_id = GET['plan_id']
+        plan_type = GET['plan_type']
+        res_id = GET['res_id']
+        local_deps = filter_deps(request, plan_id, plan_type, {}, res_id)
+        d3_data = topology.load_d3_data(request, local_deps)
+        return http.HttpResponse(d3_data,
+                                 content_type='application/json')
+
     @staticmethod
     def post(request, **kwargs):
-        api.plan_delete(request, kwargs['plan_id'])
-        return http.HttpResponse({},
+        POST = request.POST
+        param = POST['param']
+        deps = json.JSONDecoder().decode(POST['deps'])
+        params = dict([(p.split('=')[0], p.split('=')[1])
+                       for p in param.split('&')])
+        plan_id = params['plan_id']
+        plan_type = params['plan_type']
+        res_id = params['res_id']
+        local_deps = filter_deps(request, plan_id, plan_type, deps, res_id)
+        d3_data = topology.load_d3_data(request, local_deps)
+        return http.HttpResponse(d3_data,
                                  content_type='application/json')
 
 
-class UpdatePlanResourceView(View):
+class GlobalTopologyView(View):
     @staticmethod
-    def post(request, **kwargs):
-        plan_id = kwargs['plan_id']
-        POST = request.POST
+    def get(request, **kwargs):
+        GET = request.GET
+        plan_id = GET['plan_id']
+        plan_type = GET['plan_type']
         plan = api.plan_get(request, plan_id)
+        d3_data = topology.load_plan_d3_data(request,
+                                             plan,
+                                             plan_type)
 
-        # Updated_resources
-        i_updated_resources = json.JSONDecoder()\
-                                  .decode(POST['updated_resources'])
-        updated_resources = plan.updated_resources
-        updated_resources.update(i_updated_resources)
-
-        # Dependenies
-        i_dependencies = json.JSONDecoder().decode(POST['dependencies'])
-        dependencies = plan.updated_dependencies
-        dependencies.update(i_dependencies)
-
-        data = json.JSONDecoder().decode(POST['data'])
-
-        # Update res
-        update_res = json.JSONDecoder().decode(POST['update_res'])
-        update_resource = dict([(ur[constants.TAG_RES_ID], ur)
-                                for ur in update_res])
-
-        for k, v in update_resource.items():
-            if 'name' in v:
-                updated_resources[k]['properties']['name'] = v['name']
-
-        planupdate = resources.PlanUpdate(request,
-                                          plan_id,
-                                          updated_resources,
-                                          dependencies,
-                                          update_resource=update_resource)
-
-        # Execute update resource items of plan
-        planupdate.execute(data)
-
-        (ret_reses, ret_deps, ret_res) = planupdate.execute_return()
-
-        resources.update_return_resource(i_updated_resources,
-                                         ret_reses,
-                                         i_dependencies,
-                                         ret_deps)
-
-        for k, v in ret_deps.items():
-            v['name'] = ret_reses[k]['properties'].get('name', None)
-        deps = dict([(key, value) for key, value in dependencies.items()
-                     if value.get(constants.RES_ACTION_KEY,
-                                  '') != constants.ACTION_DELETE])
-
-        res_deps = topology_tables.PlanDepsTable(
-            request,
-            trans_plan_deps(deps),
-            plan_id=plan.plan_id,
-            plan_type=constants.CLONE).render()
-
-        d3_data = topology.load_d3_data(request, deps)
-
-        resp_data = {'d3_data': d3_data,
-                     'res_deps': res_deps,
-                     'update_resources': ret_res.values(),
-                     'updated_resources': i_updated_resources,
-                     'dependencies': i_dependencies}
-        return http.HttpResponse(json.dumps(resp_data),
+        return http.HttpResponse(d3_data,
                                  content_type='application/json')
 
-
-class ResourceDetailJsonView(View):
     @staticmethod
     def post(request, **kwargs):
         POST = request.POST
-        plan_id = POST['plan_id']
-        is_original = strutils.bool_from_string(POST.get('is_original', False))
-
-        resource_type = POST['resource_type']
-        resource_id = POST['resource_id']
-        update_data = json.JSONDecoder().decode(POST['update_data'])
-        updated_res = json.JSONDecoder().decode(POST['updated_res'])
-        data = resources.ResourceDetailFromPlan(
-            request, plan_id, resource_type, resource_id,
-            update_data, updated_res, is_original).render()
-        resp = {'data': data,
-                'image': api.get_resource_image(resource_type, 'red')}
-        return http.HttpResponse(json.dumps(resp),
+        param = POST['param']
+        deps = json.JSONDecoder().decode(POST['deps'])
+        params = dict([(p.split('=')[0], p.split('=')[1])
+                       for p in param.split('&')])
+        plan_id = params['plan_id']
+        plan_type = params['plan_type']
+        global_deps = filter_deps(request, plan_id, plan_type, deps)
+        d3_data = topology.load_d3_data(request, global_deps)
+        return http.HttpResponse(d3_data,
                                  content_type='application/json')

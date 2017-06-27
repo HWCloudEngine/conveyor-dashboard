@@ -15,11 +15,6 @@
 
 $(function () {
   "use strict";
-  var rootPath = WEBROOT;
-  var conveyor_action_url = rootPath + "/conveyor/overview_availability_zone/row_actions";
-  var conveyor_table_action_url = rootPath + "/conveyor/overview_availability_zone/table_actions";
-  var conveyor_clone_url = rootPath + "/conveyor/plans/clone";
-  var conveyor_migrate_url = rootPath + "/conveyor/plans/migrate";
   var next_url = window.location.href;
 
   var inst_table_id = "table#instances";
@@ -60,13 +55,13 @@ $(function () {
   }
 
   var $conveyor_create_plan_topology = function(){
-    var href = conveyor_clone_url + conveyor_get_query_string() + "&type=clone";
+    var href = $(this).attr('href').split('?')[0] + conveyor_get_query_string() + "&type=clone";
     $(this).attr("href", href);
     return true;
   };
 
   var $conveyor_create_migrate_plan_topology = function(){
-    var href = conveyor_migrate_url + conveyor_get_query_string() + "&type=migrate";
+    var href = $(this).attr('href').split('?')[0] + conveyor_get_query_string() + "&type=migrate";
     $(this).attr("href", href);
     return true;
   };
@@ -88,7 +83,8 @@ $(function () {
   }
 
   function get_row_action(data, table_type, tr, res_id){
-    $.get(conveyor_action_url, data, function(rsp){
+    var url = WEBROOT + 'api/conveyor/resources/' + data.res_type.replace(/::/g, '__') + '/' + data.id + '/row_actions/';
+    $.get(url, function(rsp){
       var actions = $.parseHTML(rsp);
       var action_ids = ["a#type__row_id__action_clone_plan", "a#type__row_id__action_migrate_plan"];
       for(var index in action_ids){
@@ -119,7 +115,8 @@ $(function () {
   }
 
   function get_table_action(data, table, table_type){
-    $.get(conveyor_table_action_url, data, function(rsp){
+    var url = WEBROOT + 'api/conveyor/resources/' + data.res_type.replace(/::/g, '__') + '/table_actions/';
+    $.get(url, function(rsp){
       var actions = $.parseHTML(rsp);
       var action_ids = ["a#type__action_create_plan_with_mul_res", "a#type__action_create_migrate_plan_with_mul_res"];
       for(var index in action_ids){
@@ -185,7 +182,7 @@ $(function () {
       if($(res_table).find("tbody tr.empty").length){return;}
 
 			//table_actions
-      if($(res_table).find("tbody tr").length){get_table_action({"res_type": res_type, "next_url": next_url}, res_table, table_type);}
+      if($(res_table).find("tbody tr").length){get_table_action({"res_type": res_type}, res_table, table_type);}
 
       //row_actions
       $(res_table).find("tbody tr").each(function(){

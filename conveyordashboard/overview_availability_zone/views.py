@@ -11,9 +11,8 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-from django import http
+
 from django.utils.translation import ugettext_lazy as _
-from django.views import generic
 
 from horizon import exceptions
 from horizon import views
@@ -22,15 +21,8 @@ from oslo_log import log as logging
 from conveyordashboard.api import api
 from conveyordashboard.common import constants as consts
 from conveyordashboard.common import resource_state
-from conveyordashboard.topology import tables as topo_tables
+from conveyordashboard.plans import tables as plan_tables
 from conveyordashboard.topology import topology
-
-from conveyordashboard.floating_ips.tables import FloatingIPsTable
-from conveyordashboard.instances.tables import InstancesTable
-from conveyordashboard.loadbalancers.tables import PoolsTable
-from conveyordashboard.networks.tables import NetworksTable
-from conveyordashboard.security_groups.tables import SecurityGroupsTable
-from conveyordashboard.volumes.tables import VolumesTable
 
 LOG = logging.getLogger(__name__)
 
@@ -103,9 +95,9 @@ class IndexView(views.HorizonTemplateView):
         if plan is not None:
             d3_data = topology.load_plan_d3_data(self.request, plan, plan_type)
 
-            plan_deps_table = topo_tables.PlanDepsTable(
+            plan_deps_table = plan_tables.PlanDepsTable(
                 self.request,
-                topo_tables.trans_plan_deps(plan.original_dependencies),
+                plan_tables.trans_plan_deps(plan.original_dependencies),
                 plan_id=plan.plan_id,
                 plan_type=plan_type)
             context['plan_deps_table'] = plan_deps_table.render()
@@ -133,36 +125,3 @@ class IndexView(views.HorizonTemplateView):
                                 None) == az_name:
                 res_ids.append({'type': consts.NOVA_SERVER, 'id': res.id})
         return res_ids
-
-
-TYPE_CLASS_MAPPING = {
-    consts.NOVA_SERVER: InstancesTable,
-    consts.CINDER_VOLUME: VolumesTable,
-    consts.NEUTRON_POOL: PoolsTable,
-    consts.NEUTRON_NET: NetworksTable,
-    consts.NEUTRON_FLOATINGIP: FloatingIPsTable,
-    consts.NEUTRON_SECGROUP: SecurityGroupsTable
-}
-
-
-class RowActionsView(generic.View):
-    @staticmethod
-    def get(request, **kwargs):
-        res_type = request.GET['res_type']
-        id = request.GET['id']
-        next_url = request.GET.get('next_url', None)
-        res = api.get_wrapped_detail_resource(request, res_type, id)
-        if res_type in TYPE_CLASS_MAPPING:
-            table = TYPE_CLASS_MAPPING[res_type](request, next_url=next_url)
-            actions = table.render_row_actions(res)
-            return http.HttpResponse(actions, content_type='text/html')
-
-
-class TableActionsView(generic.View):
-    @staticmethod
-    def get(request, **kwargs):
-        res_type = request.GET['res_type']
-        if res_type in TYPE_CLASS_MAPPING:
-            table = TYPE_CLASS_MAPPING[res_type](request)
-            table_actions = table.render_table_actions()
-            return http.HttpResponse(table_actions, content_type='text/html')

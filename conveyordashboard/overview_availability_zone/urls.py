@@ -20,7 +20,4 @@ from conveyordashboard.overview_availability_zone import views
 urlpatterns = patterns(
     '',
     url(r'^$', views.IndexView.as_view(), name='index'),
-    url(r'^row_actions$', views.RowActionsView.as_view(), name='row_actions'),
-    url(r'^table_actions$',
-        views.TableActionsView.as_view(), name='table_actions'),
 )
