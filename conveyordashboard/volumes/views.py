@@ -38,8 +38,7 @@ class IndexView(tables.DataTableView):
         return volumes
 
     def _status_filter(self, volume):
-        return volume.status in resource_state.VOLUME_CLONE_STATE \
-            or volume.status in resource_state.VOLUME_MIGRATE_STATE
+        return volume.status in resource_state.VOLUME_CLONE_STATE
 
     def get_filters(self, filters):
         filter_action = self.table._meta._filter_action

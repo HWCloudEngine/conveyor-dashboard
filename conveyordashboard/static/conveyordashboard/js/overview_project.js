@@ -12,8 +12,8 @@
 
 var conveyorProjectOverview = {
   id_map: {},
-  tag_clone_plan_action: 'a.create-clone-plan-for-mul-sel',
-  tag_migrate_plan_action: 'a.create-migrate-plan-for-mul-sel',
+  tag_create_plan: 'a.create-plan-with-multi-res',
+  tag_project_plan_action: 'a.create-project-plan',
   checkTopologyLink: function () {
     var self = this;
     var t_ids = self.id_map;
@@ -22,7 +22,7 @@ var conveyorProjectOverview = {
     $.each(t_ids, function (k, v) {
       len += v.length
     });
-    var actions = [self.tag_clone_plan_action, self.tag_migrate_plan_action];
+    var actions = [self.tag_create_plan];
     for (index = 0; index < actions.length; index++) {
       var action = actions[index];
       if ($(action).length == 0) {
@@ -38,10 +38,18 @@ var conveyorProjectOverview = {
         }
       }
     }
+
+    if ($('#resource thead input.table-row-multi-select').is(':checked')) {
+      $(self.tag_project_plan_action).removeClass('disabled');
+    } else {
+      if (!$(self.tag_project_plan_action).hasClass("disabled")) {
+          $(self.tag_project_plan_action).addClass("disabled");
+        }
+    }
   },
   getQueryString: function () {
-    var self = this;
-    var t_ids = self.id_map;
+    var project_id = $.trim($('#conveyor_project_id').text());
+    var t_ids = this.id_map;
     var id_strs = [];
     $.each(t_ids, function (k, v) {
       if (v.length > 0) {
@@ -49,7 +57,7 @@ var conveyorProjectOverview = {
       }
     });
     var url = id_strs.join("**");
-    return '?ids=' + url;
+    return '?plan_level=project:' + project_id + '&&ids=' + url;
   },
   typeIndex: function () {
     return $('#resource').find('thead th[data-selenium=res_type]').attr('data-column');
@@ -205,7 +213,7 @@ var conveyorProjectOverview = {
 
     self.prepareAction();
 
-    var actions = $(self.tag_clone_plan_action + ', ' + self.tag_migrate_plan_action);
+    var actions = $(self.tag_create_plan);
     $(actions).click(function () {
       var href = $(this).attr('href').split('?')[0];
       href += self.getQueryString();

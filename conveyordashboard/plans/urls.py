@@ -22,18 +22,12 @@ PLAN = r'^(?P<plan_id>[^/]+)/%s$'
 urlpatterns = patterns(
     'conveyordashboard.plans.views',
     url(r'^$', views.IndexView.as_view(), name='index'),
-    url(r'^clone$', views.CloneView.as_view(), name='clone'),
-    url(r'^migrate$', views.MigrateView.as_view(), name='migrate'),
+    url(r'^create$', views.CreateView.as_view(), name='create'),
+    url(PLAN % 'clone', views.CloneView.as_view(), name='clone'),
+    # url(r'^migrate$', views.MigrateView.as_view(), name='migrate'),
     url(r'^import$', views.ImportView.as_view(), name='import'),
     url(PLAN % '', views.DetailView.as_view(), name='detail'),
-    url(PLAN % 'save', views.SaveView.as_view(), name='save'),
-    url(PLAN % 'modify', views.ModifyView.as_view(), name='modify'),
     url(PLAN % 'export', views.ExportView.as_view(), name='export'),
     url(PLAN % 'destination', views.DestinationView.as_view(),
         name='destination'),
-
-    url(r'^get_local_topology$',
-        views.LocalTopologyView.as_view(), name='local_topology'),
-    url(r'^get_global_topology$',
-        views.GlobalTopologyView.as_view(), name='global_topology')
 )

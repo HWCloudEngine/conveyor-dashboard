@@ -64,17 +64,21 @@ def plan_list(request, search_opts=None):
             limit=page_size + 1,
             sort_key='created_at',
             sort_dir=sort_dir)
-
-        volumes, has_more_data, has_prev_data = \
-            update_pagination(plans, page_size, marker, sort_dir)
-        return plans, has_more_data, has_prev_data
     else:
-        return api.conveyorclient(request).plans.list(search_opts)
+        plans = api.conveyorclient(request).plans.list(search_opts)
+
+    plans = [models.Plan(p) for p in plans]
+
+    if paginate:
+        return update_pagination(plans, page_size, marker, sort_dir)
+    else:
+        return plans, None, None
 
 
-def plan_create(request, plan_type, resource, plan_name=None):
-    return api.conveyorclient(request).plans.create(plan_type, resource,
-                                                    plan_name=plan_name)
+def plan_create(request, plan_type, resources,
+                plan_name=None):
+    return models.Plan(api.conveyorclient(request).plans.create(
+        plan_type, resources, plan_name=plan_name))
 
 
 def plan_delete(request, plan_id):
@@ -82,16 +86,7 @@ def plan_delete(request, plan_id):
 
 
 def plan_get(request, plan_id):
-    return api.conveyorclient(request).plans.get(plan_id)
-
-
-def plan_get_brief(request, plan_id):
-    return api.conveyorclient(request).plans.get_brief(plan_id)
-
-
-def update_plan_resource(request, plan, resources):
-    return api.conveyorclient(request).plans.update_plan_resource(plan,
-                                                                  resources)
+    return models.Plan(api.conveyorclient(request).plans.get(plan_id))
 
 
 def download_template(request, plan_id):
@@ -102,14 +97,14 @@ def create_plan_by_template(request, template):
     return api.conveyorclient(request).plans.create_plan_by_template(template)
 
 
-def resource_detail_from_plan(request, id, plan_id, is_original=True):
-    return api.conveyorclient(request).plans\
-        .get_resource_detail_from_plan(id, plan_id, is_original)
+def list_clone_resources_attribute(request, plan_id, attribute_name):
+    return api.conveyorclient(request).resources\
+        .list_clone_resources_attribute(plan_id, attribute_name)
 
 
-def list_plan_resource_availability_zones(request, plan_id):
-    return api.conveyorclient(request).plans\
-        .list_plan_resource_availability_zones(plan_id)
+def build_resources_topo(request, plan_id, az_map, search_opt=None):
+    return api.conveyorclient(request)\
+        .resources.build_resources_topo(plan_id, az_map, search_opt=search_opt)
 
 
 def resource_list(request, resource_type, search_opts=None):
@@ -119,26 +114,25 @@ def resource_list(request, resource_type, search_opts=None):
     return api.conveyorclient(request).resources.list(search_opts)
 
 
-def resource_get(request, id, plan_id):
-    return api.conveyorclient(request).resources.get(id, plan_id)
-
-
-def resource_detail(request, res_type, res_id):
+def resource_get(request, res_type, res_id):
     return api.conveyorclient(request).resources.get_resource_detail(res_type,
                                                                      res_id)
 
 
-def export_clone_template(request, plan_id, sys_clone=False, copy_data=True):
-    return api.conveyorclient(request).clones.export_clone_template(
-        plan_id, sys_clone=sys_clone, copy_data=copy_data)
-
-
-def export_template_and_clone(request, plan, destination,
-                              resources=[],
-                              sys_clone=False,
-                              copy_data=True):
-    return api.conveyorclient(request).clones.export_template_and_clone(
-        plan, destination, resources, sys_clone, copy_data
+def clone(request, plan_id, destination, clone_resources,
+          update_resources=None, replace_resources=None, clone_links=None,
+          sys_clone=False, copy_data=True):
+    if update_resources is None:
+        update_resources = []
+    if replace_resources is None:
+        replace_resources = []
+    if clone_links is None:
+        clone_links = []
+    return api.conveyorclient(request).clones.clone(
+        plan_id, destination, clone_resources,
+        update_resources=update_resources, clone_links=clone_links,
+        replace_resources=replace_resources,
+        sys_clone=sys_clone, copy_data=copy_data
     )
 
 
@@ -180,10 +174,6 @@ def server_list(request, search_opts=None, all_tenants=False):
             has_more_data)
 
 
-def server_get(request, id):
-    return models.Server(resource_detail(request, consts.NOVA_SERVER, id))
-
-
 def availability_zone_list(request, detailed=False):
     azs = resource_list(request, consts.NOVA_AZ)
     if not detailed:
@@ -191,24 +181,10 @@ def availability_zone_list(request, detailed=False):
     return azs
 
 
-def flavor_get(request, id):
-    return models.Flavor(resource_detail(request, consts.NOVA_FLAVOR, id))
-
-
 def volume_list(request, search_opts=None):
     volumes = resource_list(request, consts.CINDER_VOLUME,
                             search_opts=search_opts)
-    return [os_api.cinder.Volume(v) for v in volumes]
-
-
-def volume_get(request, id):
-    volume = resource_detail(request, consts.CINDER_VOLUME, id)
-    return models.Volume(volume)
-
-
-def net_get(request, id):
-    network = resource_detail(request, consts.NEUTRON_NET, id)
-    return os_api.neutron.Network(network)
+    return [models.Volume(v) for v in volumes]
 
 
 def net_list(request, search_opts=None):
@@ -229,36 +205,24 @@ def net_list_for_tenant(request, tenant_id, search_opts=None):
             if n.shared or n.tenant_id == tenant_id]
 
 
-def subnet_list_for_tenant(request, tenant_id, search_opts=None):
+def subnet_list(request, search_opts=None):
+    if search_opts is None:
+        search_opts = {}
+
     subnets = resource_list(request, consts.NEUTRON_SUBNET,
                             search_opts=search_opts)
-    return [os_api.neutron.Subnet(sn.__dict__) for sn in subnets
-            if sn.tenant_id == tenant_id]
-
-
-def subnet_list_for_network(request, tenant_id=None, is_external=False):
-    nets = net_list(request) \
-        if not tenant_id else net_list_for_tenant(request, tenant_id)
-    nets = [n for n in nets if getattr(n, 'router:external') == is_external]
-
-    subnets = []
-    for n in nets:
-        for sn in getattr(n, 'subnets'):
-            if sn not in subnets:
-                subnets.append(sn)
-    return subnets
+    return [os_api.neutron.Subnet(sn.__dict__) for sn in subnets]
 
 
 def sg_list(request, tenant_id=None, search_opts=None):
+    if search_opts is None:
+        search_opts = {}
+    if tenant_id:
+        search_opts['tenant_id'] = tenant_id
     secgroups = resource_list(request, consts.NEUTRON_SECGROUP,
                               search_opts=search_opts)
-    sgs = [sg.__dict__ for sg in secgroups if sg.tenant_id == tenant_id]
+    sgs = [sg.__dict__ for sg in secgroups]
     return [os_api.neutron.SecurityGroup(sg) for sg in sgs]
-
-
-def sg_get(request, sg_id):
-    secgroup = resource_detail(request, consts.NEUTRON_SECGROUP, sg_id)
-    return os_api.neutron.SecurityGroup(secgroup)
 
 
 def pool_list(request, **kwargs):
@@ -269,19 +233,4 @@ def pool_list(request, **kwargs):
 
 def stack_list(request, **kwargs):
     stacks = resource_list(request, consts.HEAT_STACK)
-    return [models.StackRes(s) for s in stacks]
-
-
-def stack_get(request, stack_id):
-    return models.Stack(resource_detail(request, consts.HEAT_STACK, stack_id))
-
-
-def get_wrapped_detail_resource(request, res_type, res_id):
-    if res_type == consts.NOVA_SERVER:
-        return server_get(request, res_id)
-    elif res_type == consts.CINDER_VOLUME:
-        return volume_get(request, res_id)
-    elif res_type == consts.HEAT_STACK:
-        return stack_get(request, res_id)
-    else:
-        return models.Resource(resource_detail(request, res_type, res_id))
+    return [models.Stack(s) for s in stacks]

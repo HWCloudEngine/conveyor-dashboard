@@ -25,6 +25,11 @@
   margin-left: -10px !important;
 }
 
+#topology_container {
+    position: relative;
+    z-index: 99
+}
+
 #conveyor_plan_topology {
     position: relative;
     z-index: 99

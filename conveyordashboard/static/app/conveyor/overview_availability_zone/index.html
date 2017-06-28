@@ -1,0 +1,60 @@
+<div class="action_column"
+     ng-controller="horizon.app.conveyor.overview_az.OverviewAzController as ctrl">
+  <input id="id_plan_id" value="{$ ctrl.plan.plan_id $}" class="hidden">
+  <div class="form-group">
+    <div class="form-horizontal">
+      <div class="form-inline">
+        <select class="form-control" ng-model="ctrl.src_az">
+          <option ng-repeat="az in ctrl.availability_zones"
+                  value="{$ az.zoneName $}">{$ az.zoneName $}
+          </option>
+        </select>
+        <select class="form-control" ng-model="ctrl.dest_az">
+          <option ng-repeat="az in ctrl.availability_zones"
+                  value="{$ az.zoneName $}">{$ az.zoneName $}
+          </option>
+        </select>
+        <a class="btn btn-default" ng-click="ctrl.buildTopology()"
+           ng-disabled="! ctrl.enableBuildTopo">
+          <translate>Build Topology</translate>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="form-horizontal">
+    <div class="form-inline">
+      <div class="form-control-static checkbox">
+        <label>
+          <input type="checkbox" ng-checked="ctrl.incrementalClone">
+          <translate>Incremental Clone</translate>
+        </label>
+      </div>
+      <div class="form-control-static checkbox">
+        <label>
+          <input type="checkbox" ng-checked="ctrl.sysClone">
+          <translate>Clone System Volume</translate>
+        </label>
+      </div>
+      <div class="form-control-static checkbox">
+        <label>
+          <input type="checkbox" ng-checked="ctrl.copyData">
+          <translate>Copy Volume Data</translate>
+        </label>
+      </div>
+      <a class="btn btn-default" ng-disabled="! ctrl.enableClone"
+         ng-click="ctrl.clone()">
+        <translate>Clone</translate>
+      </a>
+    </div>
+  </div>
+
+  <div>
+    <div id="topology_container">
+      <div id="info_box" class="info_box"></div>
+      <div id="conveyor_plan_topology"></div>
+      <div id="thumbnail">
+        <div class="thbDetail"></div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -25,31 +25,6 @@
                 data-ori="{{ data.metadata }}">{{ data.metadata }}</textarea>
     </div>
   </div>
-  {% if data.volumes %}
-    <div class="form-group">
-      <div class>
-        <div class="themable-checkbox">
-          <input id="id_from_other" name="from_other" type="checkbox"
-                 {% if data.from_other %}checked="checked"{% endif %}>
-          <label for="id_from_other">
-            <span>{% trans "Select from Other Volumes" %}</span>
-          </label>
-        </div>
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="control-label">{% trans "Volumes" %}</label>
-      <div class>
-        <select class="form-control" name="volumes" data-ori="{{ id }}">
-          {% for v in data.volumes %}
-            <option name="volume" value="{{ v.id }}" {% ifequal id v.id %}selected="selected"{% endifequal %}>
-              {{ v.display_name }} {{ v.id }}
-            </option>
-          {% endfor %}
-        </select>
-      </div>
-    </div>
-  {% endif %}
   <div class="form-group">
     <div class>
       <div class="themable-checkbox">

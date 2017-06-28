@@ -12,25 +12,32 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 
 from horizon import tables
-from openstack_dashboard.dashboards.project.access_and_security.\
-    floating_ips import tables as fip_tables
 
 from conveyordashboard.common import actions as common_actions
 from conveyordashboard.common import constants as consts
 
 
-class CloneFloatingIP(common_actions.CreateClonePlan):
+class CreatePlan(common_actions.CreatePlan):
     """"""
 
 
-class MigrateFloatingIP(common_actions.CreateMigratePlan):
-    """"""
+STATUS_DISPLAY_CHOICES = (
+    ("active", pgettext_lazy("Current status of a Floating IP", u"Active")),
+    ("down", pgettext_lazy("Current status of a Floating IP", u"Down")),
+    ("error", pgettext_lazy("Current status of a Floating IP", u"Error")),
+)
 
 
-class FloatingIPsTable(fip_tables.FloatingIPsTable):
+class FloatingIPsTable(tables.DataTable):
+    STATUS_CHOICES = (
+        ("active", True),
+        ("down", True),
+        ("error", False)
+    )
     ip = tables.Column("floating_ip_address",
                        verbose_name=_("IP Address"),
                        attrs={'data-type': "ip"})
@@ -38,6 +45,11 @@ class FloatingIPsTable(fip_tables.FloatingIPsTable):
                              verbose_name=_("Mapped Fixed IP Address"))
     pool = tables.Column("floating_network_id",
                          verbose_name=_("Pool"))
+    status = tables.Column("status",
+                           verbose_name=_("Status"),
+                           status=True,
+                           status_choices=STATUS_CHOICES,
+                           display_choices=STATUS_DISPLAY_CHOICES)
 
     def get_object_display(self, datum):
         return datum.floating_ip_address
@@ -46,7 +58,5 @@ class FloatingIPsTable(fip_tables.FloatingIPsTable):
         name = 'floating_ips'
         verbose_name = _("Floating IPs")
         css_classes = "table-res %s" % consts.NEUTRON_FLOATINGIP
-        table_actions = (common_actions.CreateClonePlanWithMulRes,
-                         common_actions.CreateMigratePlanWithMulRes)
-        row_actions = (CloneFloatingIP,
-                       MigrateFloatingIP,)
+        table_actions = (common_actions.CreatePlanWithMultiRes,)
+        row_actions = (CreatePlan,)

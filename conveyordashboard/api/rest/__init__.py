@@ -10,5 +10,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from . import clones  # noqa
 from . import plans  # noqa
 from . import resources  # noqa

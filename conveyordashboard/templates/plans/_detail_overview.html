@@ -1,10 +1,5 @@
 {% load i18n %}
-{% load static %}
-<link rel="stylesheet" href="{% static 'conveyordashboard/css/conveyordashboard.css' %}"/>
-<h3>{% trans "Plan Overview" %}</h3>
 <div class="status detail">
-  <h4>{% trans "Information" %}</h4>
-  <hr class="header_rule">
   <dl class="dl-horizontal">
     <dt>{% trans "ID" %}</dt>
     <dd>{{ plan.plan_id }}</dd>
@@ -14,38 +9,9 @@
     <dd>{{ plan.created_at|parse_isotime }}</dd>
     <dt>{% trans "Plan Status" %}</dt>
     <dd>{% trans plan.plan_status|title %}</dd>
+    <dt>{% trans "Clone Objects" %}</dt>
+    {% for res in plan.clone_obj %}
+    <dd>{{ res.obj_type }}  {{ res.obj_id }}</dd>
+    {% endfor %}
   </dl>
 </div>
-
-<div class="status detail left">
-  <h4>
-    <span class="fa fa-chevron-down" item_id="original_resources_container"></span>{% trans "Original Resources" %}
-  </h4>
-  <hr class="header_rule">
-  <div id="original_resources_container" class="drc">
-    {% for key, value in plan.original_resources.items %}
-      {{ value }}
-    {% endfor %}
-  </div>
-</div>
-
-<div class="status detail right">
-  <h4>
-    <span class="fa fa-chevron-down" item_id="updated_resources_container"></span>{% trans "Updated Resources" %}
-  </h4>
-  <hr class="header_rule"/>
-  <div id="updated_resources_container" class="drc">
-    {% for key, value in plan.updated_resources.items %}
-      {{ value }}
-    {% endfor %}
-  </div>
-</div>
-<script>
-  $(function () {
-    "use strict";
-    $('span.fa').click(function () {
-      $(this).toggleClass('fa-chevron-down').toggleClass('fa-chevron-right');
-      $('#' + $(this).attr('item_id')).slideToggle();
-    });
-  })
-</script>

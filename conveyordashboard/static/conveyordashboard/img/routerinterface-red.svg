@@ -1,15 +1,14 @@
-<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
- <!-- Created with Method Draw - http://github.com/duopixel/Method-Draw/ -->
+<svg width="62" height="62" xmlns="http://www.w3.org/2000/svg">
  <g>
-  <title>background</title>
-  <rect fill="#ffffff" id="canvas_background" height="102" width="102" y="-1" x="-1"/>
-  <g display="none" overflow="visible" y="0" x="0" height="100%" width="100%" id="canvasGrid">
-   <rect fill="url(#gridpattern)" stroke-width="0" y="0" x="0" height="100%" width="100%"/>
-  </g>
- </g>
- <g>
-  <title>Layer 1</title>
-  <text xml:space="preserve" text-anchor="start" font-family="Helvetica, Arial, sans-serif" font-size="24" id="svg_6" y="44.5" x="18.5" stroke-opacity="null" stroke-width="0" stroke="#000" fill="#ff0000">router</text>
-  <text xml:space="preserve" text-anchor="start" font-family="Helvetica, Arial, sans-serif" font-size="24" id="svg_7" y="68.5" x="4" stroke-width="0" stroke="#ff0000" fill="#ff0000">interface</text>
+  <circle fill="#fff" stroke="#c82128" stroke-width="2" cx="31" cy="31" r="28"/>
+  <line stroke="#c82128" stroke-linecap="null" stroke-linejoin="null" y2="42" x2="39.75" y1="34" x1="39.75" fill-opacity="null" stroke-opacity="null" fill="none"/>
+  <ellipse stroke="#c82128" ry="4.749989" rx="19.025475" cy="30.255121" cx="31" stroke-width="1.5" fill="#fff"/>
+  <ellipse stroke="#c82128" ry="4.749989" rx="19.025475" cy="26.377571" cx="31" stroke-width="1.5" fill="#fff"/>
+  <ellipse stroke="#c82128" ry="4.749989" rx="19.025475" cy="22.500021" cx="31" stroke-width="1.5" fill="#fff"/>
+  <path stroke="#c82128" transform="rotate(90 39.853206634521484,42.21048736572266) " d="m40.151213,42.210497l-2.95107,-3.2653l5.30612,3.2653l-5.30612,3.26531l2.95107,-3.26531z" fill-opacity="null" stroke-opacity="null" fill="#fff"/>
+  <path stroke="#c82128" transform="rotate(90 22.548700332641598,42.21048736572266) " d="m22.846804,42.210497l-2.95108,-3.2653l5.30613,3.2653l-5.30613,3.26531l2.95108,-3.26531z" fill-opacity="null" stroke-opacity="null" fill="#fff"/>
+  <line stroke="#c82128" stroke-linecap="null" stroke-linejoin="null" y2="42" x2="22.551873" y1="33.795918" x1="22.429422" fill-opacity="null" stroke-opacity="null" fill="none"/>
+  <line stroke="#c82128" stroke-linecap="null" stroke-linejoin="null" y2="22.020411" x2="22.551873" y1="13.18368" x1="22.429422" fill-opacity="null" stroke-opacity="null" fill="none"/>
+  <line stroke="#c82128" stroke-linecap="null" stroke-linejoin="null" y2="22" x2="39.333333" y1="13.448985" x1="39.333333" fill-opacity="null" stroke-opacity="null" fill="none"/>
  </g>
 </svg>

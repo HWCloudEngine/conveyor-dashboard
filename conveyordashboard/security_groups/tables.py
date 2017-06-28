@@ -21,30 +21,24 @@ from django.utils.translation import ugettext_lazy as _
 from horizon import tables
 from horizon.utils import filters
 
-from openstack_dashboard.dashboards.project.access_and_security.\
-    security_groups import tables as secgroup_tables
-
 from conveyordashboard.common import actions as common_actions
 from conveyordashboard.common import constants as consts
 
 
-class CloneSecurityGroup(common_actions.CreateClonePlan):
+class CreatePlan(common_actions.CreatePlan):
     """"""
 
 
-class MigrateSecurityGroup(common_actions.CreateMigratePlan):
-    """"""
+class SecurityGroupsTable(tables.DataTable):
+    name = tables.Column("name", verbose_name=_("Name"))
+    description = tables.Column("description", verbose_name=_("Description"))
 
-
-class SecurityGroupsTable(secgroup_tables.SecurityGroupsTable):
     class Meta(object):
         name = 'security_groups'
         verbose_name = _("Security Groups")
         css_classes = "table-res %s" % consts.NEUTRON_SECGROUP
-        table_actions = (common_actions.CreateClonePlanWithMulRes,
-                         common_actions.CreateMigratePlanWithMulRes)
-        row_actions = (CloneSecurityGroup,
-                       MigrateSecurityGroup,)
+        table_actions = (common_actions.CreatePlanWithMultiRes,)
+        row_actions = (CreatePlan,)
 
 
 def filter_direction(direction):

@@ -20,7 +20,7 @@ var depsTreeTableAndCallTopo = function () {
     /* Redraw the global topology.*/
     $(plan_deps_table).find('#plan_deps__action_global_topology').click(function () {
       try {
-        redraw($(this).attr('href'));
+        loadGlobalTopo($(this).attr('plan_id'));
         return false
       } catch (e) {
         console.error("Redraw failed: " + e);
@@ -32,7 +32,7 @@ var depsTreeTableAndCallTopo = function () {
       /* Click one resource of plan, then redraw the local topology.*/
       $(this).find('td:last a').click(function () {
         try {
-          redraw($(this).attr('href'));
+          loadLocalTopo($(this).attr('plan_id'), $(this).attr('res_type'), $(this).attr('res_id'));
           return false
         } catch (e) {
           console.error("Redraw failed: " + e);
