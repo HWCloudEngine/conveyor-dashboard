@@ -12,61 +12,38 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from django import http
 from django.views import generic
 from openstack_dashboard import api as os_api
 from openstack_dashboard.api.rest import urls
 from openstack_dashboard.api.rest import utils as rest_utils
 
 from conveyordashboard.api import api
-from conveyordashboard.common import constants as consts
-from conveyordashboard.floating_ips.tables import FloatingIPsTable
-from conveyordashboard.instances.tables import InstancesTable
-from conveyordashboard.loadbalancers.tables import PoolsTable
-from conveyordashboard.networks.tables import NetworksTable
 from conveyordashboard.security_groups.tables import RulesTable
-from conveyordashboard.security_groups.tables import SecurityGroupsTable
 from conveyordashboard.security_groups import utils as secgroup_utils
-from conveyordashboard.volumes.tables import VolumesTable
 
-TYPE_CLASS_MAPPING = {
-    consts.NOVA_SERVER: InstancesTable,
-    consts.CINDER_VOLUME: VolumesTable,
-    consts.NEUTRON_POOL: PoolsTable,
-    consts.NEUTRON_NET: NetworksTable,
-    consts.NEUTRON_FLOATINGIP: FloatingIPsTable,
-    consts.NEUTRON_SECGROUP: SecurityGroupsTable
-}
+from oslo_log import log
+LOG = log.getLogger(__name__)
 
 
 @urls.register
-class RowActions(generic.View):
-    url_regex = r'conveyor/resources/(?P<resource_type>[^/]+)/' \
-                r'(?P<resource_id>[^/]+)/row_actions/$'
+class Resource(generic.View):
+    url_regex = r'conveyor/resources/(?P<res_type>[^/]+)/(?P<res_id>[^/]+)/$'
 
     @rest_utils.ajax()
-    def get(self, request, resource_type, resource_id):
-        resource_type = resource_type.replace('__', '::')
-        res = api.get_wrapped_detail_resource(request,
-                                              resource_type,
-                                              resource_id)
-        if resource_type in TYPE_CLASS_MAPPING:
-            table = TYPE_CLASS_MAPPING[resource_type](request)
-            actions = table.render_row_actions(res)
-            return http.HttpResponse(actions, content_type='text/html')
+    def get(self, request, res_type, res_id):
+        return api.resource_get(request, res_type, res_id)
 
 
 @urls.register
-class TableActions(generic.View):
-    url_regex = r'conveyor/resources/(?P<resource_type>[^/]+)/table_actions/$'
+class Resources(generic.View):
+    url_regex = r'conveyor/resources/(?P<resource_type>[^/]+)/$'
 
     @rest_utils.ajax()
     def get(self, request, resource_type):
-        resource_type = resource_type.replace('__', '::')
-        if resource_type in TYPE_CLASS_MAPPING:
-            table = TYPE_CLASS_MAPPING[resource_type](request)
-            table_actions = table.render_table_actions()
-            return http.HttpResponse(table_actions, content_type='text/html')
+        search_opts, kwargs = rest_utils.parse_filters_kwargs(request)
+        res = api.resource_list(request, resource_type,
+                                search_opts=search_opts)
+        return {'items': [r.__dict__.get('_info') for r in res]}
 
 
 @urls.register

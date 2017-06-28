@@ -1,0 +1,23 @@
+<noscript><h3>{{ step }}</h3></noscript>
+<div class="row">
+  {% include "horizon/common/_form_fields.html" %}
+  {% include "_workflow_step_deps_topo.html" %}
+  <script type="text/javascript">
+    $(function () {
+      "use strict";
+      $("g.node[cloned=false]").click(function () {
+        conveyorEditPlanRes.nodeClick(this);
+      });
+      $('#clone_plan__resourceinfoaction').parent().parent().next().find('[type=submit]').click(function () {
+        var planId = '{{ step.plan_id }}';
+        var cloneResourceInfo = conveyorPlan.extractCloneInfo(planId, $('input[name=incremental_clone]').is(':checked'));
+
+        $('#id_clone_resources').val(JSON.stringify(cloneResourceInfo.clone_resources));
+        $('#id_clone_links').val(JSON.stringify(cloneResourceInfo.clone_links));
+        $('#id_update_resources').val(JSON.stringify(cloneResourceInfo.update_resources));
+        $('#id_replace_resources').val(JSON.stringify(cloneResourceInfo.replace_resources));
+      });
+
+    });
+  </script>
+</div>

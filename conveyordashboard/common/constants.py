@@ -52,62 +52,126 @@ RES_ACTIONS = (ACTION_EDIT, ACTION_DELETE, ACTION_ADD) \
 PLAN_TYPE = (MIGRATE, CLONE) = ('migrate', 'clone')
 
 DEPENDENCY_UPDATE_MAPPING = {
-    NEUTRON_NET: [NEUTRON_PORT, NEUTRON_SUBNET],
-    NEUTRON_SUBNET: [NEUTRON_PORT, NEUTRON_NET],
+    NEUTRON_NET: [NEUTRON_SUBNET],
+    NEUTRON_SUBNET: [NEUTRON_PORT],
     CINDER_VOLUME: [CINDER_VOL_TYPE],
     CINDER_VOL_TYPE: [CINDER_QOS],
 }
 
 RESOURCE_TYPE_IMAGE_MAPPINGS = {
     # Nova
-    NOVA_SERVER:
-        {'green': 'server-green.svg', 'red': 'server-red.svg'},
-    NOVA_KEYPAIR:
-        {'green': 'keypair-green.svg', 'red': 'keypair-red.svg'},
-    NOVA_FLAVOR:
-        {'green': 'flavor-green.svg', 'red': 'flavor-red.svg'},
+    NOVA_SERVER: {
+        'green': 'server-green.svg',
+        'red': 'server-red.svg',
+        'gray': 'server-gray.svg'
+    },
+    NOVA_KEYPAIR: {
+        'green': 'keypair-green.svg',
+        'red': 'keypair-red.svg',
+        'gray': 'keypair-gray.svg'
+    },
+    NOVA_FLAVOR: {
+        'green': 'flavor-green.svg',
+        'red': 'flavor-red.svg',
+        'gray': 'flavor-gray.svg'
+    },
     # Cinder
-    CINDER_VOLUME:
-        {'green': 'volume-green.svg', 'red': 'volume-red.svg'},
-    CINDER_VOL_TYPE:
-        {'green': 'volumetype-green.svg', 'red': 'volumetype-red.svg'},
-    CINDER_QOS:
-        {'green': 'qos-green.svg', 'red': 'qos-red.svg'},
-    CINDER_CONSISGROUP:
-        {'green': 'consisgroup-green.svg', 'red': 'consisgroup-red.svg'},
+    CINDER_VOLUME: {
+        'green': 'volume-green.svg',
+        'red': 'volume-red.svg',
+        'gray': 'volume-gray.svg'
+    },
+    CINDER_VOL_TYPE: {
+        'green': 'volumetype-green.svg',
+        'red': 'volumetype-red.svg',
+        'gray': 'volumetype-gray.svg'
+    },
+    CINDER_QOS: {
+        'green': 'qos-green.svg',
+        'red': 'qos-red.svg',
+        'gray': 'qos-gray.svg'
+    },
+    CINDER_CONSISGROUP: {
+        'green': 'consisgroup-green.svg',
+        'red': 'consisgroup-red.svg',
+        'gray': 'consisgroup-gray.svg'
+    },
     # Neutron
-    NEUTRON_NET:
-        {'green': 'net-green.svg', 'red': 'net-red.svg'},
-    NEUTRON_SUBNET:
-        {'green': 'subnet-green.svg', 'red': 'subnet-red.svg'},
-    NEUTRON_ROUTER:
-        {'green': 'router-green.svg', 'red': 'router-red.svg'},
-    NEUTRON_SECGROUP:
-        {'green': 'securitygroup-green.svg', 'red': 'securitygroup-red.svg'},
-    NEUTRON_PORT:
-        {'green': 'port-green.svg', 'red': 'port-red.svg'},
-    NEUTRON_ROUTER_IF:
-        {'green': 'routerinterface-green.svg',
-         'red': 'routerinterface-red.svg'},
-    NEUTRON_FLOATINGIP:
-        {'green': 'floatingip-green.svg', 'red': 'floatingip-red.svg'},
-    NEUTRON_FIP_ASSO:
-        {'green': 'floatingipassociation-green.svg',
-         'red': 'floatingipassociation-red.svg'},
-    NEUTRON_VIP:
-        {'green': 'vip-green.svg', 'red': 'vip-red.svg'},
-    NEUTRON_LISTENER:
-        {'green': 'listener-green.svg', 'red': 'listener-red.svg'},
-    NEUTRON_POOL:
-        {'green': 'pool-green.svg', 'red': 'pool-red.svg'},
-    NEUTRON_POOLMEMBER:
-        {'green': 'poolmember-green.svg', 'red': 'poolmember-red.svg'},
-    NEUTRON_HEALTHMONITOR:
-        {'green': 'healthmonitor-green.svg', 'red': 'healthmonitor-red.svg'},
+    NEUTRON_NET: {
+        'green': 'net-green.svg',
+        'red': 'net-red.svg',
+        'gray': 'net-gray.svg'
+    },
+    NEUTRON_SUBNET: {
+        'green': 'subnet-green.svg',
+        'red': 'subnet-red.svg',
+        'gray': 'subnet-gray.svg'
+    },
+    NEUTRON_ROUTER: {
+        'green': 'router-green.svg',
+        'red': 'router-red.svg',
+        'gray': 'router-gray.svg'
+    },
+    NEUTRON_SECGROUP: {
+        'green': 'securitygroup-green.svg',
+        'red': 'securitygroup-red.svg',
+        'gray': 'securitygroup-gray.svg'
+    },
+    NEUTRON_PORT: {
+        'green': 'port-green.svg',
+        'red': 'port-red.svg',
+        'gray': 'port-gray.svg'
+    },
+    NEUTRON_ROUTER_IF: {
+        'green': 'routerinterface-green.svg',
+        'red': 'routerinterface-red.svg',
+        'gray': 'routerinterface-gray.svg'
+    },
+    NEUTRON_FLOATINGIP: {
+        'green': 'floatingip-green.svg',
+        'red': 'floatingip-red.svg',
+        'gray': 'floatingip-gray.svg'
+    },
+    NEUTRON_FIP_ASSO: {
+        'green': 'floatingipassociation-green.svg',
+        'red': 'floatingipassociation-red.svg',
+        'gray': 'floatingipassociation-gray.svg'
+    },
+    NEUTRON_VIP: {
+        'green': 'vip-green.svg',
+        'red': 'vip-red.svg',
+        'gray': 'vip-gray.svg'
+    },
+    NEUTRON_LISTENER: {
+        'green': 'listener-green.svg',
+        'red': 'listener-red.svg',
+        'gray': 'listener-gray.svg'
+    },
+    NEUTRON_POOL: {
+        'green': 'pool-green.svg',
+        'red': 'pool-red.svg',
+        'gray': 'pool-gray.svg'
+    },
+    NEUTRON_POOLMEMBER: {
+        'green': 'poolmember-green.svg',
+        'red': 'poolmember-red.svg',
+        'gray': 'poolmember-gray.svg'
+    },
+    NEUTRON_HEALTHMONITOR: {
+        'green': 'healthmonitor-green.svg',
+        'red': 'healthmonitor-red.svg',
+        'gray': 'healthmonitor-gray.svg'
+    },
     # Stack
-    HEAT_STACK:
-        {'green': 'stack-green.svg', 'red': 'stack-red.svg'},
+    HEAT_STACK: {
+        'green': 'stack-green.svg',
+        'red': 'stack-red.svg',
+        'gray': 'stack-gray.svg'
+    },
     # Unknown type
-    'UNKNOWN':
-        {'green': 'unknown.svg', 'red': 'unknown-red.svg'},
+    'UNKNOWN': {
+        'green': 'unknown.svg',
+        'red': 'unknown-red.svg',
+        'gray': 'unknown-gray.svg'
+    },
 }

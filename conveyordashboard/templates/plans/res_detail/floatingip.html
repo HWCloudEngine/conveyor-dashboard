@@ -6,16 +6,4 @@
       <div class=>{{ data.name }}</div>
     </div>
   {% endif %}
-  {% if data.fips %}
-    <div class="form-group">
-      <label class="control-label">{% trans "Floating Ip" %}</label>
-      <div class>
-        <select class="form-control" name="fips" data-ori="{{ id }}">
-          {% for fip in data.fips %}
-            <option name="fip" value="{{ fip.id }}" {% ifequal id fip.id %}selected="selected"{% endifequal %}>{{ fip.floating_ip_address }}</option>
-          {% endfor %}
-        </select>
-      </div>
-    </div>
-  {% endif %}
 </div>

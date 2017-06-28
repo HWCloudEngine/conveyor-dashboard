@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load compress %}
+{% block css %}
+  {{ block.super }}
+  {% compress css %}
+    <link rel="stylesheet" href="{% static 'conveyordashboard/css/jquery.treeTable.css' %}"/>
+    <link rel="stylesheet" href="{% static 'conveyordashboard/css/deps_topo.css' %}"/>
+  {% endcompress %}
+{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Overview" %}{% endblock %}
+
+{% block ng_route_base %}
+  <base href="{{ WEBROOT }}">
+{% endblock %}
+
+{% block page_header %}
+  {% include "horizon/common/_page_header.html" with title=_("Overview") %}
+{% endblock page_header %}
+
+{% block main %}
+  <ng-include src="'{{ STATIC_URL }}app/conveyor/overview_availability_zone/index.html'"></ng-include>
+{% endblock %}

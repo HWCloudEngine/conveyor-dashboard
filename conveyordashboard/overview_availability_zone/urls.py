@@ -11,13 +11,12 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-from django.conf.urls import patterns
+
 from django.conf.urls import url
 
 from conveyordashboard.overview_availability_zone import views
 
-
-urlpatterns = patterns(
-    '',
-    url(r'^$', views.IndexView.as_view(), name='index'),
-)
+urlpatterns = [
+    url(r'^$',
+        views.NgIndexView.as_view(), name='index')
+]

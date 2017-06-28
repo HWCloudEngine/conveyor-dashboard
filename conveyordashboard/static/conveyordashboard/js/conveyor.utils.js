@@ -22,11 +22,6 @@ String.prototype.isCidrV4 = function () {
 };
 
 var conveyorUtil = {
-  merge: function (dict1, dict2) {
-    $.each(dict2, function (k, v) {
-      dict1[k] = v
-    });
-  },
   checkCidr: function (cidr, max_net_len) {
     if (!cidr.isCidrV4()) {
       return false;

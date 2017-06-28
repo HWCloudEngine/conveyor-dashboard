@@ -21,15 +21,6 @@ $(function () {
 
   function conveyorPlanDestination(modal) {
     var destinationForm = $(modal).find('#destination_form');
-    var migratePlanForm = $('#migrate_plan_form');
-    var updateResourcesField = $('[name=update_resource]');
-    if (updateResourcesField.length && !migratePlanForm.length) {
-      $(destinationForm).find('[name=resources]').val($(updateResourcesField).val());
-    }
-
-    if (!$(destinationForm).find('.modal-body').find('.form-group').length) {
-      $(destinationForm).find('.modal-body').empty().append("<p>" + gettext("No need to provide 'availability_zone', 'sys_clone' or 'copy_data' option") + "</p>")
-    }
 
     $('table#destination_az tbody tr').each(function () {
       var srcAZ = $(this).attr('data-object-id');
@@ -39,6 +30,15 @@ $(function () {
       $(destinationAZ).change(function () {
         $(destinationForm).find('[md5=' + srcAZmd5 + ']').val($(this).val());
       });
+    });
+
+    $(destinationForm).find('.modal-footer a.ajax-modal').click(function () {
+      var az_map = [];
+      $(destinationForm).find('fieldset input[md5]').each(function () {
+        az_map.push(this.name + '=' + $(this).val());
+      });
+      var href = $(this).attr('href');
+      $(this).attr('href', href.split('?')[0] + '?' + az_map.join('&&'));
     });
   }
 

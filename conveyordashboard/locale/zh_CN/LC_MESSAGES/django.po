@@ -49,24 +49,6 @@ msgstr "卷一致性组"
 msgid "Unable to retrieve volume consistency groups."
 msgstr "无法检索卷一致性组"
 
-msgid "Create Clone Plan"
-msgstr "创建克隆计划"
-
-msgid "Execute clone plan"
-msgstr "执行克隆计划"
-
-msgid "Create Migrate Plan"
-msgstr "创建迁移计划"
-
-msgid "Execute migrate plan"
-msgstr "执行迁移计划"
-
-msgid "Create clone plan with selecting multi-resources"
-msgstr "通过选择多个资源创建克隆计划"
-
-msgid "Create migrate plan with selecting multi-resources"
-msgstr "通过选择多个资源创建迁移计划"
-
 msgid "Floating IPs"
 msgstr "浮动 IP"
 
@@ -91,14 +73,6 @@ msgstr "%s GB"
 
 msgid "Not available"
 msgstr "不可用"
-
-#, python-format
-msgid "Unable to retrieve flavor information for instance \"%s\"."
-msgstr "无法检索实例 “%s” 的 flavor 信息。"
-
-#, python-format
-msgid "Unable to retrieve Network information for instance \"%s\"."
-msgstr "无法检索实例 “%s” 的网络信息。"
 
 msgid "Instance Name"
 msgstr "实例名称"
@@ -188,33 +162,6 @@ msgstr "拷贝卷数据"
 msgid "Unable to retrieve availability zones."
 msgstr "无法检索可用域。"
 
-#, python-format
-msgid "Execute clone plan %s successfully."
-msgstr "执行克隆计划 %s 成功。"
-
-#, python-format
-msgid "Execute clone plan %s failed."
-msgstr "执行克隆计划 %s 失败。"
-
-#, python-format
-msgid "Execute migrate plan %s successfully."
-msgstr "执行迁移计划 %s 成功。"
-
-#, python-format
-msgid "Execute migrate plan %s failed."
-msgstr "执行迁移计划 %s 失败。"
-
-msgid "Unsupported plan type."
-msgstr "不支持的计划类型。"
-
-#, python-format
-msgid "Save plan %s failed."
-msgstr "保存计划 %s 失败。"
-
-#, python-format
-msgid "Update plan %s failed"
-msgstr "更新计划 %s 失败。"
-
 msgid "Plans"
 msgstr "计划"
 
@@ -233,9 +180,6 @@ msgid "Scheduled deletion of Plan"
 msgid_plural "Scheduled deletion of Plans"
 msgstr[0] "已安排删除计划"
 msgstr[1] "已安排删除计划"
-
-msgid "Modify"
-msgstr "修改"
 
 msgid "Clone"
 msgstr "克隆"
@@ -376,37 +320,17 @@ msgstr "拓扑"
 msgid "Unable to retrieve details for plan %s."
 msgstr "无法检索计划 %s 的详情。"
 
-#, python-format
-msgid "Clone Plan %s"
-msgstr "克隆计划 %s"
-
 msgid "Unable to create plan."
 msgstr "无法创建计划。"
 
 msgid "Unable to retrieve plan details."
 msgstr "无法检索计划详情。"
 
-msgid "Migrate Plan"
-msgstr "迁移计划。"
-
-#, python-format
-msgid "Migrate Plan %s"
-msgstr "迁移计划 %s"
-
-msgid "Query string is not a correct format."
-msgstr "查询字符串格式错误。"
-
-msgid "Save Plan"
-msgstr "保存计划"
-
 msgid "Save"
 msgstr "保存"
 
 msgid "Unable to retrieve plan information."
 msgstr "无法检索计划信息。"
-
-msgid "Modify Plan"
-msgstr "修改计划"
 
 msgid "Import Plan"
 msgstr "导入计划"
@@ -447,27 +371,6 @@ msgstr "取消"
 msgid "Description:"
 msgstr "描述："
 
-msgid ""
-"Clone action will clone all rsources of this plan to another specific "
-"availability zone."
-msgstr "克隆当前计划的所有资源到指定的可用区域。"
-
-msgid ""
-"Migrate action will migrate all rsources of this plan to another specific "
-"availability zone."
-msgstr "迁移当前计划的所有资源到指定的可用区域。"
-
-msgid ""
-"you are able to provide options like 'clone sys volume' or "
-"'copy volume data' for this plan."
-msgstr "您可以提供 ‘克隆系统卷’ 和 ‘拷贝卷数据’ 这样的可选参数给这个计划。"
-
-msgid "Plan Overview"
-msgstr "计划概况"
-
-msgid "Information"
-msgstr "信息"
-
 msgid "ID"
 msgstr "标识"
 
@@ -483,24 +386,11 @@ msgstr "更新后资源"
 msgid "Import Plan from local plan template file."
 msgstr "从本地计划模板文件导入计划"
 
-msgid "Save action will save all resources that you edited."
-msgstr "保存操作将会保存您编辑的所有资源。"
-
-msgid ""
-"You could also provide 'sys_clone' and 'copy_data' option for this plan."
-msgstr "您也可以提供 ‘克隆系统卷’ 和 ‘拷贝卷数据’ 可选参数给这个计划。"
-
-msgid "Plan Topology"
-msgstr "计划拓扑"
-
 msgid "Destination"
 msgstr "描述"
 
 msgid "Plan Details"
 msgstr "计划详情"
-
-msgid "Import Clone Plan"
-msgstr "导入克隆计划"
 
 msgid "RAM"
 msgstr "内存"
@@ -891,7 +781,7 @@ msgstr "全局拓扑"
 msgid "Resource ID"
 msgstr "资源 ID"
 
-msgid "Plan Deps"
+msgid "Plan Dependencies"
 msgstr "计划依赖"
 
 #, python-format

@@ -1,21 +1,25 @@
 {% extends "horizon/common/_modal_form.html" %}
 {% load i18n %}
+
 {% block modal-body %}
-  <h4>{% trans "Target Availability Zone" %}</h4>
-  {{ destination_az.render }}
+    {{ destination_az.render }}
+    <script>
+      $(function () {
+        "use strict";
+        var sltEle = $('<select class="form-control"></select>');
+        $.each({{ availability_zones|safe }}, function (index, az) {
+          $(sltEle).append('<option value=' + az + '>' + az + '</option>')
+        });
+        $.each($('table#destination_az tbody tr'), function () {
+          $(this).find('td').eq(2).empty().append($(sltEle).clone());
+        });
+      });
+    </script>
   <fieldset>
     {% include "horizon/common/_form_fields.html" %}
   </fieldset>
-  <script>
-    $(function () {
-      "use strict";
-      var sltEle = $('<select class="form-control"></select>');
-      $.each({{ availability_zones|safe }}, function (index, az) {
-        $(sltEle).append('<option value=' + az + '>' + az + '</option>')
-      });
-      $.each($('table#destination_az tbody tr'), function () {
-        $(this).find('td').eq(2).empty().append($(sltEle).clone());
-      });
-    });
-  </script>
+{% endblock %}
+{% block modal-footer %}
+  <a class="btn btn-default cancel">{% trans "Cancel" %}</a>
+  <a class="btn btn-default ajax-modal" href="{% url 'horizon:conveyor:plans:clone' plan_id %}">{% trans "Build Topology" %}</a>
 {% endblock %}
