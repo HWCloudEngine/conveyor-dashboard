@@ -45,9 +45,6 @@ class UpdateRow(tables.Row):
 
 
 class DeletePlan(tables.DeleteAction):
-    name = 'delete'
-    classes = ("btn-default", "btn-danger",)
-    icon = 'remove'
     help_text = _("Delete plan is not recoverable.")
 
     @staticmethod
@@ -98,8 +95,7 @@ class ClonePlan(tables.LinkAction):
     def get_link_url(self, datum):
         base_url = reverse(self.url)
         params = urlencode({'plan_id': self.table.get_object_id(datum),
-                            'type': 'clone',
-                            'next_url': self.table.get_full_url()})
+                            'type': 'clone'})
         return '?'.join([base_url, params])
 
 
@@ -113,8 +109,7 @@ class MigratePlan(tables.LinkAction):
     def get_link_url(self, datum):
         base_url = reverse(self.url)
         params = urlencode({'plan_id': self.table.get_object_id(datum),
-                            'type': 'migrate',
-                            'next_url': self.table.get_full_url()})
+                            'type': 'migrate'})
         return '?'.join([base_url, params])
 
     def allowed(self, request, plan):
@@ -173,14 +168,28 @@ class GenerateTemplate(tables.BatchAction):
             raise Exception("Unknown plan type %s" % plan.plan_type)
 
 
+class CreateIncrementalClone(tables.LinkAction):
+    name = 'create_incremental_clone'
+    verbose_name = _("Create Incremental Clone")
+    url = 'horizon:conveyor:plans:incremental_clone'
+    classes = ("ajax-modal", "btn-default")
+
+    def allowed(self, request, plan):
+        if plan.plan_status != 'finished':
+            return False
+        plan_level = getattr(plan, 'plan_level', '')
+        if plan_level:
+            if plan_level.split(':')[0] in ('project', 'availability_zone'):
+                return True
+        return False
+
+
 class PlanFilterAction(tables.FilterAction):
     def filter(self, table, plans, filter_string):
-        q = filter_string.lower()
-
-        def comp(plan):
-            return q in plan.name.lower()
-
-        return filter(comp, plans)
+        """Naive case-insensitive search."""
+        query = filter_string.lower()
+        return [plan for plan in plans
+                if query in getattr(plan, 'name', '').lower()]
 
 
 PLAN_TYPE_CHOICES = (
@@ -237,6 +246,8 @@ class PlansTable(tables.DataTable):
                             filters=(filters.parse_isotime,
                                      filters.timesince_sortable),
                             attrs={'data-type': 'timesince'})
+    plan_level = tables.Column("plan_level",
+                               verbose_name=_("Plan Level"))
     plan_status = tables.Column("plan_status",
                                 filters=(title, filters.replace_underscores),
                                 verbose_name=_("Plan Status"),
@@ -259,7 +270,8 @@ class PlansTable(tables.DataTable):
         table_actions = (ImportPlan, DeletePlan, PlanFilterAction)
         row_class = UpdateRow
         row_actions = (ClonePlan, MigratePlan, GenerateTemplate,
-                       ModifyPlan, ExportPlan, DeletePlan,)
+                       ModifyPlan, CreateIncrementalClone,
+                       ExportPlan, DeletePlan,)
 
 
 def get_src_az_md5(availability_zone):
