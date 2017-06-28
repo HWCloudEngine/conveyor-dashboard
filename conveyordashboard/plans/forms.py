@@ -58,6 +58,7 @@ class ImportPlan(forms.SelfHandlingForm):
 
 
 def preprocess_update_resources(update_resources):
+
     def _filter(res):
         return res.get(constants.RES_ACTION_KEY, '') \
             not in (constants.ACTION_DELETE, constants.ACTION_ADD)
@@ -67,13 +68,13 @@ def preprocess_update_resources(update_resources):
         res[constants.RES_ACTION_KEY] = constants.ACTION_EDIT
         res_type = res[TAG_RES_TYPE]
         if res_type == constants.NOVA_SERVER:
-            if res.get('metadata', None):
+            if isinstance(res.get('metadata'), six.string_types):
                 meta = [dict(zip(['k', 'v'], item.strip().split('=')))
                         for item in res['metadata'].split('\n')
                         if item.strip()]
                 res['metadata'] = dict((i['k'], i.get('v', '')) for i in meta)
         elif res_type == constants.CINDER_VOLUME:
-            if res.get('metadata', None):
+            if isinstance(res.get('metadata'), six.string_types):
                 meta = [dict(zip(['k', 'v'], item.strip().split('=')))
                         for item in res['metadata'].split('\n')
                         if item.strip()]
@@ -109,20 +110,18 @@ def preprocess_update_resources(update_resources):
         elif res_type == constants.NEUTRON_NET:
             if 'value_specs' in res:
                 val_specs = res['value_specs']
-                specs = {}
                 if 'router_external' in val_specs:
-                    specs['router:external'] = strutils.bool_from_string(
+                    val_specs['router:external'] = strutils.bool_from_string(
                         val_specs.pop('router_external'))
                 if 'segmentation_id' in val_specs:
-                    specs['provider:segmentation_id'] \
+                    val_specs['provider:segmentation_id'] \
                         = int(val_specs.pop('segmentation_id'))
                 if 'physical_network' in val_specs:
-                    specs['provider:physical_network'] \
+                    val_specs['provider:physical_network'] \
                         = val_specs.pop('physical_network')
                 if 'network_type' in val_specs:
-                    specs['provider:network_type'] \
+                    val_specs['provider:network_type'] \
                         = val_specs.pop('network_type')
-                res['value_specs'] = specs
             if 'admin_state_up' in res:
                 res['admin_state_up'] \
                     = strutils.bool_from_string(res['admin_state_up'])
@@ -286,7 +285,6 @@ class SavePlan(forms.SelfHandlingForm):
             del self.fields['copy_data']
 
     def handle(self, request, data):
-        LOG.info("Save plan with data: %s", data)
         plan_id = data['plan_id']
         plan_type = data['plan_type']
         try:

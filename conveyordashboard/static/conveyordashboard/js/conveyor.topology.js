@@ -227,11 +227,12 @@ conveyorPlanTopology = {
       .attr('node_name', function(d) { return d.name; })
       .attr('node_id', function(d) { return d.id; })
       .attr('node_type', function(d) { return d.type; })
+      .attr('cloned', function (d) { return d.cloned; })
       .call(self.force.drag);
 
     nodeEnter.append('image')
       .attr("xlink:href", function(d) { return d.image; })
-      .attr("id", function(d){ return "image_"+ d.id; })
+      .attr("id", function(d){ return "image_"+ d.id.replace(/\./g, '__'); })
       .attr("x", function(d) { return d.image_x; })
       .attr("y", function(d) { return d.image_y; })
       .attr("width", function(d) { return d.image_size; })

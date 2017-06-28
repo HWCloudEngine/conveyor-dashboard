@@ -101,7 +101,7 @@ class DetailView(tabs.TabView):
     def get_data(self):
         plan_id = self.kwargs['plan_id']
         try:
-            plan = api.plan_get(self.request, plan_id)
+            plan = api.plan_get_brief(self.request, plan_id)
         except Exception:
             redirect = reverse(self.redirect_url)
             exceptions.handle(self.request,
@@ -116,68 +116,67 @@ class DetailView(tabs.TabView):
         return self.tab_group_class(request, plan=plan, **kwargs)
 
 
+def create_plan(request, plan_type, ids, plan_level=None):
+    resource = []
+    id_list = {}
+    for item in ids.split('**'):
+        id_list[item.split('*')[0]] = item.split('*')[1].split(',')
+    for key, value in id_list.items():
+        for id in value:
+            resource.append({'type': key, 'id': id})
+
+    return api.plan_create(request, plan_type, resource, plan_level=plan_level)
+
+
 class CloneView(forms.ModalFormView):
     form_class = plan_forms.ClonePlan
     form_id = 'clone_plan_form'
     template_name = 'plans/clone.html'
-    context_object_name = 'plan'
     submit_url = reverse_lazy("horizon:conveyor:plans:clone")
     success_url = reverse_lazy("horizon:conveyor:plans:index")
 
-    def _init_data(self):
-        plan = getattr(self, 'plan', None)
-        if plan is None:
-            plan, is_original = self.get_object()
-            setattr(self, 'plan', plan)
-            setattr(self, 'is_original', is_original)
-
     def get_context_data(self, **kwargs):
-        self._init_data()
         plan = getattr(self, 'plan')
         is_original = getattr(self, 'is_original')
 
-        self.modal_header = _('Clone Plan %s') % plan.plan_id
-        base_url = reverse('horizon:conveyor:plans:clone')
-        params = urlencode({'plan_id': plan.plan_id})
-        self.submit_url = '?'.join([base_url, params])
+        if 'modal_header' in kwargs:
+            self.modal_header = kwargs['modal_header']
+        else:
+            self.modal_header = _('Clone Plan %s') % plan.plan_id
+
+        if 'submit_url' in kwargs:
+            self.submit_url = kwargs['submit_url']
+        else:
+            base_url = reverse('horizon:conveyor:plans:clone')
+            params = urlencode({'plan_id': plan.plan_id})
+            self.submit_url = '?'.join([base_url, params])
 
         context = super(CloneView, self).get_context_data(**kwargs)
-        context['plan'] = plan
         context['plan_id'] = plan.plan_id
-        context['plan_type'] = constants.CLONE
+        context['is_original'] = is_original
 
+        res_deps = api.update_dependencies(self.request, plan.plan_id)
         plan_deps_table = plan_tables.PlanDepsTable(
             self.request,
-            plan_tables.trans_plan_deps(plan.original_dependencies),
+            plan_tables.trans_plan_deps(res_deps),
             plan_id=plan.plan_id,
             plan_type=constants.CLONE)
         context['plan_deps_table'] = plan_deps_table.render()
 
-        d3_data = topology.load_plan_d3_data(self.request,
-                                             plan,
-                                             constants.CLONE,
-                                             is_original)
+        d3_data = topology.load_d3_data(self.request, res_deps)
         context['d3_data'] = d3_data
-        context['is_original'] = is_original
 
         return context
 
     @memoized.memoized_method
     def get_object(self, *args, **kwargs):
         if 'ids' in self.request.GET:
-            resource = []
-            id_list = {}
             try:
                 ids = self.request.GET['ids']
-                for item in ids.split('**'):
-                    id_list[item.split('*')[0]] = item.split('*')[1].split(',')
-                for key, value in id_list.items():
-                    for id in value:
-                        resource.append({'type': key, 'id': id})
+                plan_level = self.request.GET.get('plan_level', 'atomic')
 
-                return api.plan_create(self.request,
-                                       constants.CLONE,
-                                       resource), True
+                return create_plan(self.request, constants.CLONE, ids,
+                                   plan_level=plan_level), True
             except Exception as e:
                 LOG.error("Unable to create plan. %s", e)
                 msg = _("Unable to create plan.")
@@ -185,9 +184,9 @@ class CloneView(forms.ModalFormView):
                 return None, None
         elif 'plan_id' in self.request.GET:
             try:
-                return (api.plan_get(self.request,
-                                     self.request.GET['plan_id']),
-                        False)
+                plan_id = self.request.GET['plan_id']
+                plan = api.plan_get_brief(self.request, plan_id)
+                return plan, False
             except Exception as e:
                 LOG.error("Unable to retrieve plan details. %s", e)
                 msg = _("Unable to retrieve plan details.")
@@ -200,16 +199,14 @@ class CloneView(forms.ModalFormView):
                           _("Query string is not a correct format."))
 
     def get_initial(self):
-        initial = super(CloneView, self).get_initial()
-        self._init_data()
-        plan = getattr(self, 'plan')
-        is_original = getattr(self, 'is_original')
-        initial.update({
-            'plan_id': plan.plan_id,
-            'is_original': is_original,
+        plan, is_original = self.get_object()
+        setattr(self, 'plan', plan)
+        setattr(self, 'is_original', is_original)
 
-        })
-        return initial
+        return {
+            'plan_id': plan.plan_id,
+            'is_original': is_original
+        }
 
 
 class MigrateView(forms.ModalFormView):
@@ -217,69 +214,55 @@ class MigrateView(forms.ModalFormView):
     form_id = 'migrate_plan_form'
     modal_header = _("Migrate Plan")
     template_name = 'plans/migrate.html'
-    context_object_name = 'plan'
     success_url = reverse_lazy("horizon:conveyor:plans:index")
 
-    def _init_data(self):
-        plan = getattr(self, 'plan', None)
-        if plan is None:
-            plan, is_original = self.get_object()
-            setattr(self, 'plan', plan)
-            setattr(self, 'is_original', is_original)
-
     def get_context_data(self, **kwargs):
-        self._init_data()
         plan = getattr(self, 'plan')
-        is_original = getattr(self, 'is_original')
 
-        self.modal_header = _('Migrate Plan %s') % plan.plan_id
-        base_url = reverse('horizon:conveyor:plans:migrate')
-        params = urlencode({'plan_id': plan.plan_id})
-        self.submit_url = '?'.join([base_url, params])
+        if 'modal_header' in kwargs:
+            self.modal_header = kwargs['modal_header']
+        else:
+            self.modal_header = _('Migrate Plan %s') % plan.plan_id
+
+        if 'submit_url' in kwargs:
+            self.submit_url = kwargs['submit_url']
+        else:
+            base_url = reverse('horizon:conveyor:plans:migrate')
+            params = urlencode({'plan_id': plan.plan_id})
+            self.submit_url = '?'.join([base_url, params])
 
         context = super(MigrateView, self).get_context_data(**kwargs)
         context['plan_id'] = plan.plan_id
 
+        res_deps = api.original_dependencies(self.request, plan.plan_id)
         plan_deps_table = plan_tables.PlanDepsTable(
             self.request,
-            plan_tables.trans_plan_deps(plan.original_dependencies),
+            plan_tables.trans_plan_deps(res_deps),
             plan_id=plan.plan_id,
             plan_type=constants.MIGRATE)
         context['plan_deps_table'] = plan_deps_table.render()
 
-        d3_data = topology.load_plan_d3_data(self.request,
-                                             plan,
-                                             constants.MIGRATE,
-                                             is_original)
+        d3_data = topology.load_d3_data(self.request, res_deps)
         context['d3_data'] = d3_data
         return context
 
     @memoized.memoized_method
     def get_object(self, *args, **kwargs):
         if 'ids' in self.request.GET:
-            resource = []
-            id_list = {}
             try:
                 ids = self.request.GET['ids']
-                for item in ids.split('**'):
-                    id_list[item.split('*')[0]] = item.split('*')[1].split(',')
-                for key, value in id_list.items():
-                    for id in value:
-                        resource.append({'type': key, 'id': id})
+                plan_level = self.request.GET.get('plan_level', 'atomic')
 
-                return (api.plan_create(self.request,
-                                        constants.MIGRATE,
-                                        resource),
-                        True)
+                return create_plan(self.request, constants.MIGRATE, ids,
+                                   plan_level=plan_level), True
             except Exception:
                 msg = _("Query string is not a correct format.")
                 exceptions.handle(self.request, msg)
                 return None, None
         elif 'plan_id' in self.request.GET:
             try:
-                return (api.plan_get(self.request,
-                                     self.request.GET['plan_id']),
-                        False)
+                plan_id = self.request.GET['plan_id']
+                return api.plan_get_brief(self.request, plan_id), False
             except Exception:
                 msg = _("Unable to retrieve plan details.")
                 exceptions.handle(self.request, msg)
@@ -291,16 +274,13 @@ class MigrateView(forms.ModalFormView):
                           _("Query string is not a correct format."))
 
     def get_initial(self):
-        initial = super(MigrateView, self).get_initial()
-        self._init_data()
-        plan = getattr(self, 'plan')
-        is_original = getattr(self, 'is_original')
-        initial.update({
-            'plan_id': plan.plan_id,
-            'is_original': is_original,
+        plan, is_original = self.get_object()
+        setattr(self, 'plan', plan)
 
-        })
-        return initial
+        return {
+            'plan_id': plan.plan_id,
+            'is_original': is_original
+        }
 
 
 class SaveView(forms.ModalFormView):
@@ -319,31 +299,42 @@ class SaveView(forms.ModalFormView):
         self.submit_url = reverse(submit_url,
                                   kwargs={'plan_id': self.kwargs['plan_id']})
         context = super(SaveView, self).get_context_data(**kwargs)
-        context.update(self._show_filter(self.get_object()))
+
+        context.update(display_filter(self.get_res_deps(self.get_object())))
         return context
 
     @memoized.memoized_method
     def get_object(self, *args, **kwargs):
         try:
-            return api.plan_get(self.request, self.kwargs['plan_id'])
+            return api.plan_get_brief(self.request, self.kwargs['plan_id'])
         except Exception as e:
             LOG.error("Unable to retrieve plan information. %s", e)
             msg = _("Unable to retrieve plan information.")
             exceptions.handle(self.request, msg)
 
     @memoized.memoized_method
-    def _show_filter(self, plan):
-        return show_filter(plan)
+    def get_res_deps(self, plan):
+        try:
+            if plan.plan_type == constants.CLONE:
+                deps = api.update_dependencies(self.request, plan.plan_id)
+            else:
+                deps = api.original_dependencies(self.request, plan.plan_id)
+            return deps
+        except Exception as e:
+            LOG.error("Unable to retrieve plan resource dependencies. %s", e)
+            msg = _("Unable to retrieve plan resource dependencies.")
+            exceptions.handle(self.request, msg)
 
     def get_initial(self):
         plan = self.get_object(**self.kwargs)
+        res_deps = self.get_res_deps(plan)
         initial = {
             'plan_id': self.kwargs['plan_id'],
             'plan_type': plan.plan_type,
             'sys_clone': getattr(plan, 'sys_clone', False),
             'copy_data': getattr(plan, 'copy_data', True)
         }
-        initial.update(show_filter(plan))
+        initial.update(display_filter(res_deps))
         return initial
 
 
@@ -363,29 +354,28 @@ class ModifyView(forms.ModalFormView):
         context['plan_id'] = self.kwargs['plan_id']
 
         plan = self.get_object(**self.kwargs)
+        rs_deps = api.update_dependencies(self.request, plan.plan_id)
 
         context['type'] = 'clone'
         plan_deps_table = plan_tables.PlanDepsTable(
             self.request,
-            plan_tables.trans_plan_deps(plan.updated_dependencies),
+            plan_tables.trans_plan_deps(rs_deps),
             plan_id=plan.plan_id,
             plan_type=constants.CLONE
         )
         context['plan_deps_table'] = plan_deps_table.render()
 
-        d3_data = topology.load_d3_data(self.request,
-                                        plan.updated_dependencies)
+        d3_data = topology.load_d3_data(self.request, rs_deps)
         context['d3_data'] = d3_data
         return context
 
     @memoized.memoized_method
     def get_object(self, *args, **kwargs):
         try:
-            return api.plan_get(self.request, kwargs['plan_id'])
+            return api.plan_get_brief(self.request, kwargs['plan_id'])
         except Exception:
-            redirect = ModifyView.success_url
             msg = _("Unable to retrieve plan details.")
-            exceptions.handle(self.request, msg, redirect=redirect)
+            exceptions.handle(self.request, msg)
 
     def get_initial(self):
         initial = super(ModifyView, self).get_initial()
@@ -427,7 +417,7 @@ class ExportView(View):
             return
 
         response = http.HttpResponse(content_type='application/binary')
-        response['Content-Disposition'] = ('attachment; filename=%s.plan'
+        response['Content-Disposition'] = ('attachment; filename=plan-%s'
                                            % plan_id)
         template = yaml.dump(yaml.load(json.dumps(plan[1]['template'])))
         response.write(template)
@@ -435,13 +425,7 @@ class ExportView(View):
         return response
 
 
-def show_filter(plan):
-    plan_type = plan.plan_type
-    if plan_type == constants.CLONE:
-        deps = plan.updated_dependencies
-    else:
-        deps = plan.original_dependencies
-
+def display_filter(deps):
     show_az = False
     show_sys_clone = False
     show_copy_data = False
@@ -472,14 +456,23 @@ class DestinationView(forms.ModalFormView):
     @memoized.memoized_method
     def get_object(self, *args, **kwargs):
         try:
-            return api.plan_get(self.request, self.kwargs['plan_id'])
+            return api.plan_get_brief(self.request, self.kwargs['plan_id'])
         except Exception:
             msg = _("Unable to retrieve plan information.")
             exceptions.handle(self.request, msg)
 
     @memoized.memoized_method
-    def _show_filter(self, plan):
-        return show_filter(plan)
+    def get_res_deps(self, plan):
+        try:
+            if plan.plan_type == constants.CLONE:
+                deps = api.update_dependencies(self.request, plan.plan_id)
+            else:
+                deps = api.original_dependencies(self.request, plan.plan_id)
+            return deps
+        except Exception as e:
+            LOG.error("Unable to retrieve plan resource dependencies. %s", e)
+            msg = _("Unable to retrieve plan resource dependencies.")
+            exceptions.handle(self.request, msg)
 
     @memoized.memoized_method
     def get_plan_res_azs(self, plan):
@@ -505,7 +498,8 @@ class DestinationView(forms.ModalFormView):
         context = super(DestinationView,
                         self).get_context_data(**kwargs)
         context['plan_type'] = plan_type
-        context.update(self._show_filter(plan))
+        res_deps = self.get_res_deps(plan)
+        context.update(display_filter(res_deps))
 
         res_azs = self.get_plan_res_azs(plan.plan_id)
         context['destination_az'] = plan_tables.DestinationAZTable(
@@ -523,6 +517,7 @@ class DestinationView(forms.ModalFormView):
 
     def get_initial(self):
         plan = self.get_object(**self.kwargs)
+        res_deps = self.get_res_deps(plan)
         res_azs = self.get_plan_res_azs(plan.plan_id)
         initial = {
             'plan_id': self.kwargs['plan_id'],
@@ -531,14 +526,84 @@ class DestinationView(forms.ModalFormView):
             'copy_data': getattr(plan, 'copy_data', True),
             'src_azs': res_azs
         }
-        initial.update(show_filter(plan))
+        initial.update(display_filter(res_deps))
         return initial
 
 
+class IncrementalCloneView(CloneView):
+
+    def get_context_data(self, **kwargs):
+        plan = getattr(self, 'plan')
+        kwargs['modal_header'] = _("Increment Plan %s") % plan.plan_id
+        kwargs['submit_url'] = reverse(
+            'horizon:conveyor:plans:incremental_clone',
+            kwargs={'plan_id': plan.plan_id})
+
+        return super(IncrementalCloneView, self)\
+            .get_context_data(**kwargs)
+
+    def create_incremental_plan(self, plan_id):
+        try:
+            plan = api.plan_get_brief(self.request, plan_id)
+            plan_name = 'increment-of-%s' % plan_id
+            return api.create_increment_plan(self.request, plan_id,
+                                             plan.plan_type,
+                                             plan_name=plan_name)
+        except Exception as e:
+            LOG.error('Unable to create incremental plan %s. %s', plan_id, e)
+            exceptions.handle(self.request,
+                              _('Unable to create incremental plan.'))
+
+    def get_initial(self):
+        increment_plan = self.create_incremental_plan(self.kwargs['plan_id'])
+        setattr(self, 'plan', increment_plan)
+        setattr(self, 'is_original', True)
+
+        return {
+            'plan_id': increment_plan.plan_id,
+            'is_original': True,
+        }
+
+
+class IncrementalMigrateView(MigrateView):
+
+    def get_context_data(self, **kwargs):
+        plan = getattr(self, 'plan')
+        kwargs['modal_header'] = _("Increment Plan %s") % plan.plan_id
+        kwargs['submit_url'] = reverse(
+            'horizon:conveyor:plans:incremental_migrate',
+            kwargs={'plan_id': plan.plan_id})
+
+        return super(IncrementalMigrateView, self)\
+            .get_context_data(**kwargs)
+
+    def create_incremental_plan(self, plan_id):
+        try:
+            plan = api.plan_get_brief(self.request, plan_id)
+            plan_name = 'increment-of-%s' % plan_id
+            return api.create_increment_plan(self.request, plan_id,
+                                             plan.plan_type,
+                                             plan_name=plan_name)
+        except Exception as e:
+            LOG.error('Unable to create incremental plan %s. %s', plan_id, e)
+            exceptions.handle(self.request,
+                              _('Unable to create incremental plan.'))
+
+    def get_initial(self):
+        increment_plan = self.create_incremental_plan(self.kwargs['plan_id'])
+        setattr(self, 'plan', increment_plan)
+
+        return {
+            'plan_id': increment_plan.plan_id,
+            'is_original': True,
+        }
+
+
 def filter_deps(request, plan_id, plan_type, deps, res_id=None):
-    plan = api.plan_get(request, plan_id)
-    plan_deps = plan.updated_dependencies \
-        if plan_type == 'clone' else plan.original_dependencies
+    if plan_type == constants.CLONE:
+        plan_deps = api.update_dependencies(request, plan_id)
+    else:
+        plan_deps = api.original_dependencies(request, plan_id)
     plan_deps.update(deps)
     for k, v in plan_deps.items():
         if v.get(constants.RES_ACTION_KEY, '') == constants.ACTION_DELETE:
@@ -556,16 +621,6 @@ def filter_deps(request, plan_id, plan_type, deps, res_id=None):
 
 
 class LocalTopologyView(View):
-    @staticmethod
-    def get(request, **kwargs):
-        GET = request.GET
-        plan_id = GET['plan_id']
-        plan_type = GET['plan_type']
-        res_id = GET['res_id']
-        local_deps = filter_deps(request, plan_id, plan_type, {}, res_id)
-        d3_data = topology.load_d3_data(request, local_deps)
-        return http.HttpResponse(d3_data,
-                                 content_type='application/json')
 
     @staticmethod
     def post(request, **kwargs):
@@ -584,18 +639,6 @@ class LocalTopologyView(View):
 
 
 class GlobalTopologyView(View):
-    @staticmethod
-    def get(request, **kwargs):
-        GET = request.GET
-        plan_id = GET['plan_id']
-        plan_type = GET['plan_type']
-        plan = api.plan_get(request, plan_id)
-        d3_data = topology.load_plan_d3_data(request,
-                                             plan,
-                                             plan_type)
-
-        return http.HttpResponse(d3_data,
-                                 content_type='application/json')
 
     @staticmethod
     def post(request, **kwargs):

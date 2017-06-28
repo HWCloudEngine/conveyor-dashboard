@@ -66,16 +66,17 @@ class UpdatePlanResourceFrontend(generic.View):
 
     @rest_utils.ajax()
     def post(self, request, plan_id):
-        plan = api.plan_get(request, plan_id)
-
         # Updated_resources
         i_updated_resources = request.DATA['updated_resources']
-        updated_resources = plan.updated_resources
+        # updated_resources = plan.updated_resources
+        updated_resources = api.update_resources(request, plan_id,
+                                                 with_deps=False)
         updated_resources.update(i_updated_resources)
 
         # Dependenies
         i_dependencies = request.DATA['dependencies']
-        dependencies = plan.updated_dependencies
+        dependencies = api.update_dependencies(request, plan_id,
+                                               with_deps=False)
         dependencies.update(i_dependencies)
 
         data = request.DATA['data']
@@ -114,7 +115,7 @@ class UpdatePlanResourceFrontend(generic.View):
         res_deps = plan_tables.PlanDepsTable(
             request,
             plan_tables.trans_plan_deps(deps),
-            plan_id=plan.plan_id,
+            plan_id=plan_id,
             plan_type=constants.CLONE).render()
 
         d3_data = topology.load_d3_data(request, deps)

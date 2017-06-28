@@ -1,8 +1,8 @@
 <svg width="62" height="62" xmlns="http://www.w3.org/2000/svg">
  <g>
-  <circle fill="#fff" stroke="#1a6e39" stroke-width="2" cx="31" cy="31" r="28"/>
+  <circle fill="#fff" stroke="#696a6a" stroke-width="2" cx="31" cy="31" r="28"/>
   <polyline xmlns="http://www.w3.org/2000/svg"
             points="8.24245,31 19.00002,31 22.20078,44.32568 27.70078,14.50766 34.88257,50.36352 41.67799,31 53.00002,31"
-            style="fill:white;stroke:#1a6e39;stroke-width:1.5"/>
- </g>
+            style="fill:white;stroke:#696a6a;stroke-width:1.5"/>
+  </g>
 </svg>

@@ -70,26 +70,29 @@ def render_d3_data(request, resource_dependencies, **kwargs):
     node_refs = {}
 
     # Resource_dependencies = plan.resource_dependencies.
-    for service in resource_dependencies.values():
+    for dep in resource_dependencies.values():
         in_progress, status_message = True, 'Node Topology'
 
         service_node = _create_empty_node()
-        service_image = api.get_resource_image(service['type'])
-        node_id = service['name_in_template']
+        service_image = api.get_resource_image(
+            dep['type'],
+            'green' if not dep.get('is_cloned') else 'gray')
+        node_id = dep['name_in_template']
         node_refs[node_id] = service_node
 
         service_node.update({
-            'name': service['name'],
+            'name': dep['name'],
             'status': status_message,
             'image': service_image,
             'id': node_id,
-            'type': service['type'],
+            'type': dep['type'],
+            'cloned': dep.get('is_cloned', False),
             'link_type': 'relation',
             'in_progress': in_progress,
-            'info_box': _unit_info(service, service_image)
+            'info_box': _unit_info(dep, service_image)
         })
-        if service['dependencies']:
-            for dependency in service['dependencies']:
+        if dep['dependencies']:
+            for dependency in dep['dependencies']:
                 service_node['required_by'].append(dependency)
         d3_data['nodes'].append(service_node)
 

@@ -52,11 +52,17 @@ msgstr "无法检索卷一致性组"
 msgid "Create Clone Plan"
 msgstr "创建克隆计划"
 
+msgid "Create Incremental Clone"
+msgstr "创建增量克隆"
+
 msgid "Execute clone plan"
 msgstr "执行克隆计划"
 
 msgid "Create Migrate Plan"
 msgstr "创建迁移计划"
+
+msgid "Create Incremental Migrate"
+msgstr "创建增量迁移"
 
 msgid "Execute migrate plan"
 msgstr "执行迁移计划"
@@ -354,6 +360,21 @@ msgctxt "Task status of plan"
 msgid "Failed"
 msgstr "失败"
 
+msgctxt "Level of plan"
+msgid "Atomic"
+msgstr "原子"
+
+msgctxt "Level of plan"
+msgid "Project"
+msgstr "项目"
+
+msgctxt "Level of plan"
+msgid "Availability Zone"
+msgstr "可用域"
+
+msgid "Atomic"
+msgstr "原子"
+
 msgid "Plan Name"
 msgstr "计划名称"
 
@@ -365,6 +386,9 @@ msgstr "从创建以来"
 
 msgid "Plan Status"
 msgstr "计划状态"
+
+msgid "Plan Level"
+msgstr "计划级别"
 
 msgid "Task Status"
 msgstr "任务状态"
@@ -392,6 +416,14 @@ msgstr "迁移计划。"
 #, python-format
 msgid "Migrate Plan %s"
 msgstr "迁移计划 %s"
+
+#, python-format
+msgid "Increment Plan %s"
+msgstr "增量计划 %s"
+
+#, python-format
+msgid "Unable to create incremental plan."
+msgstr "无法创建增量计划。"
 
 msgid "Query string is not a correct format."
 msgstr "查询字符串格式错误。"
@@ -461,12 +493,6 @@ msgid ""
 "you are able to provide options like 'clone sys volume' or "
 "'copy volume data' for this plan."
 msgstr "您可以提供 ‘克隆系统卷’ 和 ‘拷贝卷数据’ 这样的可选参数给这个计划。"
-
-msgid "Plan Overview"
-msgstr "计划概况"
-
-msgid "Information"
-msgstr "信息"
 
 msgid "ID"
 msgstr "标识"

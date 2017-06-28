@@ -72,21 +72,44 @@ def plan_list(request, search_opts=None):
         return api.conveyorclient(request).plans.list(search_opts)
 
 
-def plan_create(request, plan_type, resource, plan_name=None):
+def plan_create(request, plan_type, resource,
+                plan_name=None, plan_level='atomic'):
     return api.conveyorclient(request).plans.create(plan_type, resource,
-                                                    plan_name=plan_name)
+                                                    plan_name=plan_name,
+                                                    plan_level=plan_level)
+
+
+def create_increment_plan(request, plan_id, plan_type, plan_name=None):
+    return api.conveyorclient(request).plans.create_increment_plan(
+        plan_id, plan_type, plan_name=plan_name)
 
 
 def plan_delete(request, plan_id):
     return api.conveyorclient(request).plans.delete(plan_id)
 
 
-def plan_get(request, plan_id):
-    return api.conveyorclient(request).plans.get(plan_id)
-
-
 def plan_get_brief(request, plan_id):
     return api.conveyorclient(request).plans.get_brief(plan_id)
+
+
+def original_resources(request, plan_id, with_deps=True):
+    return api.conveyorclient(request).plans.get_plan_original_resources(
+        plan_id, with_deps=with_deps)
+
+
+def update_resources(request, plan_id, with_deps=True):
+    return api.conveyorclient(request).plans.get_plan_update_resources(
+        plan_id, with_deps=with_deps)
+
+
+def original_dependencies(request, plan_id, with_deps=True):
+    return api.conveyorclient(request).plans.get_plan_original_dependencies(
+        plan_id, with_deps=with_deps)
+
+
+def update_dependencies(request, plan_id, with_deps=True):
+    return api.conveyorclient(request).plans.get_plan_update_dependencies(
+        plan_id, with_deps=with_deps)
 
 
 def update_plan_resource(request, plan, resources):
@@ -229,11 +252,12 @@ def net_list_for_tenant(request, tenant_id, search_opts=None):
             if n.shared or n.tenant_id == tenant_id]
 
 
-def subnet_list_for_tenant(request, tenant_id, search_opts=None):
+def subnet_list_for_tenant(request, tenant_id, search_opts={}):
+    search_opts['tenant_id'] = tenant_id
+
     subnets = resource_list(request, consts.NEUTRON_SUBNET,
                             search_opts=search_opts)
-    return [os_api.neutron.Subnet(sn.__dict__) for sn in subnets
-            if sn.tenant_id == tenant_id]
+    return [os_api.neutron.Subnet(sn.__dict__) for sn in subnets]
 
 
 def subnet_list_for_network(request, tenant_id=None, is_external=False):
@@ -249,10 +273,12 @@ def subnet_list_for_network(request, tenant_id=None, is_external=False):
     return subnets
 
 
-def sg_list(request, tenant_id=None, search_opts=None):
+def sg_list(request, tenant_id=None, search_opts={}):
+    if tenant_id:
+        search_opts['tenant_id'] = tenant_id
     secgroups = resource_list(request, consts.NEUTRON_SECGROUP,
                               search_opts=search_opts)
-    sgs = [sg.__dict__ for sg in secgroups if sg.tenant_id == tenant_id]
+    sgs = [sg.__dict__ for sg in secgroups]
     return [os_api.neutron.SecurityGroup(sg) for sg in sgs]
 
 

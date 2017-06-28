@@ -66,7 +66,7 @@ var conveyorEditPlanRes = {
     $("image#" + node_id).attr("href", data.image);
     var click_img = data.image;
     if(click_img != "") {
-      var img_node = $("image[id=image_" + node_id + "]");
+      var img_node = $("image[id=image_" + node_id.replace(/\./g, '__') + "]");
       img_node.attr("ori-href", img_node.attr("href"));
       img_node.attr({"href": click_img, "editing": true});
     }

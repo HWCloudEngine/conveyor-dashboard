@@ -30,7 +30,7 @@ OVERVIEW_ITEMTEMPL_PATH = 'plans/overview_items/itemtmpl.html'
 LOG = logging.getLogger(__name__)
 
 
-def render_overview_html(request, res_dict):
+def render_overview_html(request, res_dict, dep_dict):
     try:
         res_dict = sorted(res_dict.iteritems(), key=lambda i: i[1]['type'])
     except Exception:
@@ -55,7 +55,8 @@ def render_overview_html(request, res_dict):
                 = fip['floating_ip_address']
 
         type = data['type']
-        image = api.get_resource_image(type)
+        cloned = dep_dict.get(template_name, {}).get('is_cloned', False)
+        image = api.get_resource_image(type, 'gray' if cloned else 'green')
         template_html = ''.join([OVERVIEW_ITEMS_DIR,
                                  type.split('::')[-1].lower(),
                                  '.html'])
@@ -81,14 +82,25 @@ class OverviewTab(tabs.Tab):
 
     def get_context_data(self, request):
         plan = self.tab_group.kwargs['plan']
-        original_resources_html = self.get_render_html(plan.original_resources)
-        plan.original_resources = original_resources_html
-        updated_resources_html = self.get_render_html(plan.updated_resources)
-        plan.updated_resources = updated_resources_html
-        return {"plan": plan}
+        plan_id = plan.plan_id
+        ori_res = api.original_resources(request, plan_id)
+        ori_deps = api.original_dependencies(request, plan_id)
+        original_resources_html = self.get_render_html(
+            ori_res, ori_deps)
 
-    def get_render_html(self, res_dict):
-        return render_overview_html(self.request, res_dict)
+        update_res = api.update_resources(request, plan_id)
+        update_deps = api.update_dependencies(request, plan_id)
+        updated_resources_html = self.get_render_html(
+            update_res, update_deps)
+        plan.plan_level = plan.plan_level.split(':')[0]
+        return {
+            'plan': plan,
+            'original_resources': original_resources_html,
+            'updated_resources': updated_resources_html
+        }
+
+    def get_render_html(self, res_dict, dep_dict):
+        return render_overview_html(self.request, res_dict, dep_dict)
 
 
 class TopologyTab(tabs.Tab):
@@ -99,12 +111,13 @@ class TopologyTab(tabs.Tab):
 
     def get_context_data(self, request):
         context = {}
-        plan_id = self.tab_group.kwargs['plan_id']
-        context['plan_id'] = plan_id
         plan = self.tab_group.kwargs['plan']
-        context['d3_data'] = topology.load_plan_d3_data(self.request,
-                                                        plan,
-                                                        plan.plan_type)
+        context['plan_id'] = plan.plan_id
+        if plan.plan_type == constants.CLONE:
+            res_deps = api.update_dependencies(request, plan.plan_id)
+        else:
+            res_deps = api.original_dependencies(request, plan.plan_id)
+        context['d3_data'] = topology.load_d3_data(request, res_deps)
         return context
 
 

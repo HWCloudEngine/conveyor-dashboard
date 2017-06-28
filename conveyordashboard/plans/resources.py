@@ -149,15 +149,16 @@ class ResourceDetailFromPlan(object):
             props['copy_data'] = self.res.get('extra_properties',
                                               {}).get('copy_data', True)
 
-        plan = api.plan_get(self.request, self.plan_id)
-        dependencies = plan.updated_dependencies
-        updated_res = dict(plan.updated_resources, **self.updated_res)
+        dependencies = api.update_dependencies(self.request, self.plan_id)
         rebuild_dependencies(dependencies)
         dep_servers = search_dependent_items(dependencies,
                                              [self.res_id],
                                              'server')
 
         if len(dep_servers):
+            updated_resources = api.update_resources(self.request,
+                                                     self.plan_id)
+            updated_res = dict(updated_resources, **self.updated_res)
             dep_volumes = search_dependent_items(copy.deepcopy(dependencies),
                                                  dep_servers,
                                                  'volume',
@@ -216,14 +217,15 @@ class ResourceDetailFromPlan(object):
                         and len(network.subnets) > 0)]
 
         # Remove conflict network
-        plan = api.plan_get(self.request, self.plan_id)
-        dependencies = plan.updated_dependencies
-        updated_res = dict(plan.updated_resources, **self.updated_res)
+        dependencies = api.update_dependencies(self.request, self.plan_id)
         rebuild_dependencies(dependencies)
         dep_servers = search_dependent_items(copy.deepcopy(dependencies),
                                              [self.res_id],
                                              'server')
         if len(dep_servers):
+            updated_resources = api.update_resources(self.request,
+                                                     self.plan_id)
+            updated_res = dict(updated_resources, **self.updated_res)
             dep_networks = search_dependent_items(copy.deepcopy(dependencies),
                                                   dep_servers,
                                                   'network',
@@ -259,19 +261,21 @@ class ResourceDetailFromPlan(object):
                       for r in properties['host_routes']]
             properties['host_routes'] = '\n'.join(routes)
 
-        tenant_id = self.request.user.tenant_id
-        subnets = api.subnet_list_for_tenant(self.request, tenant_id)
+        dependencies = api.update_dependencies(self.request, self.plan_id)
+        updated_resources = api.update_resources(self.request, self.plan_id)
+        updated_res = dict(updated_resources, **self.updated_res)
 
-        properties = context['data']
+        search_opts = {}
         if 'from_network_id' in properties:
-            subnets = [subnet for subnet in subnets
-                       if subnet.network_id ==
-                       properties.get('from_network_id')]
+            search_opts['network_id'] = properties['from_network_id']
+        else:
+            net_name = properties.get('network_id')['get_resource']
+            search_opts['network_id'] = updated_res.get(net_name, {}).get('id')
+        subnets = api.subnet_list_for_tenant(self.request,
+                                             self.request.user.tenant_id,
+                                             search_opts=search_opts)
 
         # Remove conflict subnet.
-        plan = api.plan_get(self.request, self.plan_id)
-        dependencies = plan.updated_dependencies
-        updated_res = dict(plan.updated_resources, **self.updated_res)
         rebuild_dependencies(dependencies)
         dep_servers = search_dependent_items(copy.deepcopy(dependencies),
                                              [self.res_id],
@@ -293,7 +297,8 @@ class ResourceDetailFromPlan(object):
         return loader.render_to_string(self.container, context)
 
     def _render_port(self, context):
-        plan = api.plan_get(self.request, self.plan_id)
+        updated_dependencies = api.update_dependencies(self.request,
+                                                       self.plan_id)
         fixed_ips = context['data']['fixed_ips']
 
         # Get detail subnet information for each fixed ip in fixed_ips.
@@ -306,7 +311,7 @@ class ResourceDetailFromPlan(object):
                     if res['id'] == subnet_id:
                         fixed_ip['subnet_id'] = {'get_resource': key}
                 if not isinstance(fixed_ip['subnet_id'], dict):
-                    for key, res in plan.updated_dependencies.items():
+                    for key, res in updated_dependencies.items():
                         if res['id'] == subnet_id:
                             fixed_ip['subnet_id'] = {'get_resource': key}
             elif isinstance(fip_subnet_id, dict):
@@ -321,7 +326,7 @@ class ResourceDetailFromPlan(object):
                         if res['id'] == subnet_id:
                             fixed_ip['subnet_id'] = {'get_resource': key}
                     if 'get_resource' not in fixed_ip['subnet_id']:
-                        for key, res in plan.updated_dependencies.items():
+                        for key, res in updated_dependencies.items():
                             if res['id'] == subnet_id:
                                 fixed_ip['subnet_id'] = {'get_resource': key}
                 else:
@@ -330,7 +335,7 @@ class ResourceDetailFromPlan(object):
                 if res_id_subnet in self.updated_res:
                     subnet_id = self.updated_res[res_id_subnet]['id']
                 else:
-                    subnet_id = plan.updated_dependencies[res_id_subnet]['id']
+                    subnet_id = updated_dependencies[res_id_subnet]['id']
             else:
                 raise Exception
             subnet = api.resource_detail(self.request,
@@ -366,8 +371,8 @@ class ResourceDetailFromPlan(object):
                                                      secgroup_id=context['id'])
             context['rules_table'] = rules_table.render()
 
-        plan = api.plan_get(self.request, self.plan_id)
-        dependencies = plan.updated_dependencies
+        dependencies = api.update_dependencies(self.request, self.plan_id,
+                                               with_deps=False)
         rebuild_dependencies(dependencies)
         dep_servers = search_dependent_items(dependencies,
                                              [self.res_id],
@@ -391,8 +396,7 @@ class ResourceDetailFromPlan(object):
         return loader.render_to_string(self.container, context)
 
     def _render_floatingip(self, context):
-        plan = api.plan_get(self.request, self.plan_id)
-        dependencies = plan.updated_dependencies
+        dependencies = api.update_dependencies(self.request, self.plan_id)
         rebuild_dependencies(dependencies)
         dep_servers = search_dependent_items(dependencies,
                                              [self.res_id],
@@ -400,7 +404,7 @@ class ResourceDetailFromPlan(object):
         # If current topology doesn't contain Server, then deny user to
         # select floating ip from existed items.
         if len(dep_servers):
-            fip_id = plan.original_resources[self.res_id]['id']
+            fip_id = context.get('id')
             fips = api.resource_list(self.request, self.res_type)
             fips = [fip for fip in fips
                     if fip.status == 'DOWN' or fip.id == fip_id]

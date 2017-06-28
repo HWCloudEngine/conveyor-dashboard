@@ -52,6 +52,7 @@ class IndexView(views.HorizonTemplateView):
         plan_name = '%s#%s' % (self.request.user.tenant_id, availability_zone)
 
         plan = None
+        res_deps = {}
 
         try:
             for p in api.plan_list(self.request,
@@ -59,7 +60,8 @@ class IndexView(views.HorizonTemplateView):
                 if plan_name == p.plan_name \
                         and p.plan_status in ('initiating', 'creating',
                                               'available', 'finished'):
-                    plan = api.plan_get(self.request, p.plan_id)
+                    plan = p
+                    res_deps = api.update_dependencies(self.request, p.plan_id)
                     break
         except Exception as e:
             LOG.error("search plan failed. %s", e)
@@ -82,9 +84,11 @@ class IndexView(views.HorizonTemplateView):
             try:
                 # TODO(drngsl) First, check plan with plan_name is existing,
                 # if not, create a new plan.
-                plan = api.plan_create(self.request, plan_type,
-                                       servers_id_dict,
-                                       plan_name=plan_name)
+                plan = api.plan_create(
+                    self.request, plan_type, servers_id_dict,
+                    plan_name=plan_name,
+                    plan_level='availability_zone:%s' % availability_zone)
+                res_deps = plan.original_dependencies
             except Exception as e:
                 LOG.error("Create plan failed. %s", e)
                 exceptions.handle(self.request,
@@ -93,11 +97,11 @@ class IndexView(views.HorizonTemplateView):
         context['plan'] = plan
 
         if plan is not None:
-            d3_data = topology.load_plan_d3_data(self.request, plan, plan_type)
+            d3_data = topology.load_d3_data(self.request, res_deps)
 
             plan_deps_table = plan_tables.PlanDepsTable(
                 self.request,
-                plan_tables.trans_plan_deps(plan.original_dependencies),
+                plan_tables.trans_plan_deps(res_deps),
                 plan_id=plan.plan_id,
                 plan_type=plan_type)
             context['plan_deps_table'] = plan_deps_table.render()
