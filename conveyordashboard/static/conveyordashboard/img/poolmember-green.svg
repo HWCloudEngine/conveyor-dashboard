@@ -2,14 +2,11 @@
  <!-- Created with Method Draw - http://github.com/duopixel/Method-Draw/ -->
  <g>
   <title>background</title>
-  <rect fill="#ffffff" id="canvas_background" height="102" width="102" y="-1" x="-1"/>
-  <g display="none" overflow="visible" y="0" x="0" height="100%" width="100%" id="canvasGrid">
-   <rect fill="url(#gridpattern)" stroke-width="0" y="0" x="0" height="100%" width="100%"/>
-  </g>
+  <rect fill="#fff" id="canvas_background" height="102" width="102" y="-1" x="-1"/>
  </g>
  <g>
   <title>Layer 1</title>
-  <text stroke="#000" transform="matrix(1.6420771370874832,0,0,1.2263333094095188,-85.50341338923928,-63.440703694252925) " xml:space="preserve" text-anchor="start" font-family="Helvetica, Arial, sans-serif" font-size="24" id="svg_2" y="89.281249" x="58.276336" stroke-width="0" fill="#0000ff">Pool</text>
-  <text stroke="#000" transform="matrix(1.0537633895874023,0,0,1.4074074029922485,-5.295693874359131,-22.611110866069794) " xml:space="preserve" text-anchor="start" font-family="Helvetica, Arial, sans-serif" font-size="24" id="svg_3" y="73.657895" x="8.5" stroke-opacity="null" stroke-width="0" fill="#0000ff">Member</text>
+  <text xml:space="preserve" text-anchor="start" font-family="Helvetica, Arial, sans-serif" font-size="24" id="svg_4" y="70.5" x="4.492188" stroke-opacity="null" stroke-width="0" stroke="#808080" fill="#0000ff">Member</text>
+  <text stroke="#808080" xml:space="preserve" text-anchor="start" font-family="Helvetica, Arial, sans-serif" font-size="24" id="svg_5" y="45.5" x="25.984375" stroke-opacity="null" stroke-width="0" fill="#0000ff">Pool</text>
  </g>
 </svg>
