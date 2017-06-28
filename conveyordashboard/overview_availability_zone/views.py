@@ -82,9 +82,10 @@ class IndexView(views.HorizonTemplateView):
             try:
                 # TODO(drngsl) First, check plan with plan_name is existing,
                 # if not, create a new plan.
-                plan = api.plan_create(self.request, plan_type,
-                                       servers_id_dict,
-                                       plan_name=plan_name)
+                plan = api.plan_create(
+                    self.request, plan_type, servers_id_dict,
+                    plan_name=plan_name,
+                    plan_level='availability_zone:%s' % availability_zone)
             except Exception as e:
                 LOG.error("Create plan failed. %s", e)
                 exceptions.handle(self.request,

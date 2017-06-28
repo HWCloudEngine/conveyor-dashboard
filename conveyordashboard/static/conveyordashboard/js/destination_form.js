@@ -28,7 +28,9 @@ $(function () {
     }
 
     if (!$(destinationForm).find('.modal-body').find('.form-group').length) {
-      $(destinationForm).find('.modal-body').empty().append("<p>" + gettext("No need to provide 'availability_zone', 'sys_clone' or 'copy_data' option") + "</p>")
+      var modalBody = $(destinationForm).find('.modal-body');
+      modalBody.find('#az_wrap').remove();
+      modalBody.append("<p>" + gettext("No need to provide 'availability_zone', 'sys_clone' or 'copy_data' option") + "</p>")
     }
 
     $('table#destination_az tbody tr').each(function () {

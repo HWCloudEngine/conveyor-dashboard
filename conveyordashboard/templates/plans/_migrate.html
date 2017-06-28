@@ -9,7 +9,7 @@
   {% include "_deps_topo.html" %}
 {% endblock %}
 {% block modal-footer %}
-  <a class="btn btn-default cancel cancel_migrate" href="{% url 'horizon:conveyor:plans:index' %}">{% trans "Cancel" %}</a>
+  <a class="btn btn-default btn-sm cancel cancel_migrate">{% trans "Cancel" %}</a>
   <a class="btn btn-default btn-sm ajax-modal" href="{% url 'horizon:conveyor:plans:save' plan_id %}">{% trans "Save" %}</a>
   <a class="btn btn-default btn-sm ajax-modal" href="{% url 'horizon:conveyor:plans:destination' plan_id %}">{% trans "Migrate" %}</a>
 {% endblock %}

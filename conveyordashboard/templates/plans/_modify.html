@@ -11,7 +11,7 @@
   <script>
     $(function () {
       "use strict";
-      $("g.node").click(function () {
+      $("g.node[cloned=false]").click(function () {
         conveyorEditPlanRes.nodeClick(this);
       });
       $('[type=submit]').click(function () {

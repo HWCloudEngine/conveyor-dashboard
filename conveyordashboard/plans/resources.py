@@ -259,19 +259,21 @@ class ResourceDetailFromPlan(object):
                       for r in properties['host_routes']]
             properties['host_routes'] = '\n'.join(routes)
 
-        tenant_id = self.request.user.tenant_id
-        subnets = api.subnet_list_for_tenant(self.request, tenant_id)
-
-        properties = context['data']
-        if 'from_network_id' in properties:
-            subnets = [subnet for subnet in subnets
-                       if subnet.network_id ==
-                       properties.get('from_network_id')]
-
-        # Remove conflict subnet.
         plan = api.plan_get(self.request, self.plan_id)
         dependencies = plan.updated_dependencies
         updated_res = dict(plan.updated_resources, **self.updated_res)
+
+        search_opts = {}
+        if 'from_network_id' in properties:
+            search_opts['network_id'] = properties['from_network_id']
+        else:
+            net_name = properties.get('network_id')['get_resource']
+            search_opts['network_id'] = updated_res.get(net_name, {}).get('id')
+        subnets = api.subnet_list_for_tenant(self.request,
+                                             self.request.user.tenant_id,
+                                             search_opts=search_opts)
+
+        # Remove conflict subnet.
         rebuild_dependencies(dependencies)
         dep_servers = search_dependent_items(copy.deepcopy(dependencies),
                                              [self.res_id],
