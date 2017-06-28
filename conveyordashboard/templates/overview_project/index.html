@@ -12,6 +12,7 @@
 {% block title %}{% trans "Overview" %}{% endblock %}
 {% block main %}
   <div id="hide_ori_data" style="display: none">{{ table.render }}</div>
+  <div id="conveyor_project_id" class="hide">{{ project_id }}</div>
 {% endblock %}
 {% block js %}
   {{ block.super }}

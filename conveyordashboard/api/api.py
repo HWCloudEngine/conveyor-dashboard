@@ -72,9 +72,16 @@ def plan_list(request, search_opts=None):
         return api.conveyorclient(request).plans.list(search_opts)
 
 
-def plan_create(request, plan_type, resource, plan_name=None):
+def plan_create(request, plan_type, resource,
+                plan_name=None, plan_level='atomic'):
     return api.conveyorclient(request).plans.create(plan_type, resource,
-                                                    plan_name=plan_name)
+                                                    plan_name=plan_name,
+                                                    plan_level=plan_level)
+
+
+def create_increment_plan(request, plan_id, plan_type, plan_name=None):
+    return api.conveyorclient(request).plans.create_increment_plan(
+        plan_id, plan_type, plan_name=plan_name)
 
 
 def plan_delete(request, plan_id):

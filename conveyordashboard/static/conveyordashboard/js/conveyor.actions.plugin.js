@@ -15,7 +15,6 @@
 
 $(function () {
   "use strict";
-  var next_url = window.location.href;
 
   var inst_table_id = "table#instances";
   var vol_table_id = "table#volumes";
@@ -43,7 +42,7 @@ $(function () {
   var conveyor_ids = {};
 
   function conveyor_get_query_string(){
-    var url = "?next_url=" + next_url + "&ids=";
+    var url = "?ids=";
     var id_strs = [];
     for(var key in conveyor_ids){
       if (conveyor_ids[key].length > 0) {
@@ -188,7 +187,7 @@ $(function () {
       $(res_table).find("tbody tr").each(function(){
         var tr = this;
         var id = $(this).find("td.multi_select_column input.table-row-multi-select").val();
-        var data = {"id": id, "res_type": res_type, "next_url": next_url};
+        var data = {"id": id, "res_type": res_type};
         get_row_action(data, table_type, tr, id);
       });
     }
