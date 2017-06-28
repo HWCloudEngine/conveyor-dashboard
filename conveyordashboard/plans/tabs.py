@@ -30,7 +30,7 @@ OVERVIEW_ITEMTEMPL_PATH = 'plans/overview_items/itemtmpl.html'
 LOG = logging.getLogger(__name__)
 
 
-def render_overview_html(request, res_dict):
+def render_overview_html(request, res_dict, dep_dict):
     try:
         res_dict = sorted(res_dict.iteritems(), key=lambda i: i[1]['type'])
     except Exception:
@@ -55,7 +55,8 @@ def render_overview_html(request, res_dict):
                 = fip['floating_ip_address']
 
         type = data['type']
-        image = api.get_resource_image(type)
+        cloned = dep_dict.get(template_name, {}).get('is_cloned', False)
+        image = api.get_resource_image(type, 'gray' if cloned else 'green')
         template_html = ''.join([OVERVIEW_ITEMS_DIR,
                                  type.split('::')[-1].lower(),
                                  '.html'])
@@ -81,14 +82,16 @@ class OverviewTab(tabs.Tab):
 
     def get_context_data(self, request):
         plan = self.tab_group.kwargs['plan']
-        original_resources_html = self.get_render_html(plan.original_resources)
+        original_resources_html = self.get_render_html(
+            plan.original_resources, plan.original_dependencies)
         plan.original_resources = original_resources_html
-        updated_resources_html = self.get_render_html(plan.updated_resources)
+        updated_resources_html = self.get_render_html(
+            plan.updated_resources, plan.update_dependencies)
         plan.updated_resources = updated_resources_html
         return {"plan": plan}
 
-    def get_render_html(self, res_dict):
-        return render_overview_html(self.request, res_dict)
+    def get_render_html(self, res_dict, dep_dict):
+        return render_overview_html(self.request, res_dict, dep_dict)
 
 
 class TopologyTab(tabs.Tab):
