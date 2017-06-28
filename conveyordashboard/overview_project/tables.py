@@ -12,11 +12,39 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from django.core.urlresolvers import reverse
+from django.utils.http import urlencode
 from django.utils.translation import ugettext_lazy as _
 
 from horizon import tables
 
 from conveyordashboard.common import actions as common_actions
+
+
+class CloneRes(common_actions.CreateClonePlan):
+    def get_link_url(self, datum):
+        base_url = reverse(self.url)
+
+        params = urlencode({
+            'ids': ''.join([common_actions.get_res_type(datum, self.table),
+                            '*',
+                            self.table.get_object_id(datum)]),
+            'plan_level': 'project:' + self.table.request.user.tenant_id
+        })
+        return '?'.join([base_url, params])
+
+
+class MigrateRes(common_actions.CreateMigratePlan):
+    def get_link_url(self, datum):
+        base_url = reverse(self.url)
+
+        params = urlencode({
+            'ids': ''.join([common_actions.get_res_type(datum, self.table),
+                            '*',
+                            self.table.get_object_id(datum)]),
+            'plan_level': 'project:' + self.table.request.user.tenant_id
+        })
+        return '?'.join([base_url, params])
 
 
 class ResTable(tables.DataTable):
@@ -38,5 +66,4 @@ class ResTable(tables.DataTable):
         verbose_name = _("Resource")
         table_actions = (common_actions.CreateClonePlanWithMulRes,
                          common_actions.CreateMigratePlanWithMulRes)
-        row_actions = (common_actions.CreateClonePlan,
-                       common_actions.CreateMigratePlan)
+        row_actions = (CloneRes, MigrateRes)

@@ -109,20 +109,18 @@ def preprocess_update_resources(update_resources):
         elif res_type == constants.NEUTRON_NET:
             if 'value_specs' in res:
                 val_specs = res['value_specs']
-                specs = {}
                 if 'router_external' in val_specs:
-                    specs['router:external'] = strutils.bool_from_string(
+                    val_specs['router:external'] = strutils.bool_from_string(
                         val_specs.pop('router_external'))
                 if 'segmentation_id' in val_specs:
-                    specs['provider:segmentation_id'] \
+                    val_specs['provider:segmentation_id'] \
                         = int(val_specs.pop('segmentation_id'))
                 if 'physical_network' in val_specs:
-                    specs['provider:physical_network'] \
+                    val_specs['provider:physical_network'] \
                         = val_specs.pop('physical_network')
                 if 'network_type' in val_specs:
-                    specs['provider:network_type'] \
+                    val_specs['provider:network_type'] \
                         = val_specs.pop('network_type')
-                res['value_specs'] = specs
             if 'admin_state_up' in res:
                 res['admin_state_up'] \
                     = strutils.bool_from_string(res['admin_state_up'])
@@ -286,7 +284,6 @@ class SavePlan(forms.SelfHandlingForm):
             del self.fields['copy_data']
 
     def handle(self, request, data):
-        LOG.info("Save plan with data: %s", data)
         plan_id = data['plan_id']
         plan_type = data['plan_type']
         try:

@@ -116,35 +116,44 @@ class DetailView(tabs.TabView):
         return self.tab_group_class(request, plan=plan, **kwargs)
 
 
+def create_plan(request, plan_type, ids, plan_level=None):
+    resource = []
+    id_list = {}
+    for item in ids.split('**'):
+        id_list[item.split('*')[0]] = item.split('*')[1].split(',')
+    for key, value in id_list.items():
+        for id in value:
+            resource.append({'type': key, 'id': id})
+
+    return api.plan_create(request, plan_type, resource, plan_level=plan_level)
+
+
 class CloneView(forms.ModalFormView):
     form_class = plan_forms.ClonePlan
     form_id = 'clone_plan_form'
     template_name = 'plans/clone.html'
-    context_object_name = 'plan'
     submit_url = reverse_lazy("horizon:conveyor:plans:clone")
     success_url = reverse_lazy("horizon:conveyor:plans:index")
 
-    def _init_data(self):
-        plan = getattr(self, 'plan', None)
-        if plan is None:
-            plan, is_original = self.get_object()
-            setattr(self, 'plan', plan)
-            setattr(self, 'is_original', is_original)
-
     def get_context_data(self, **kwargs):
-        self._init_data()
         plan = getattr(self, 'plan')
         is_original = getattr(self, 'is_original')
 
-        self.modal_header = _('Clone Plan %s') % plan.plan_id
-        base_url = reverse('horizon:conveyor:plans:clone')
-        params = urlencode({'plan_id': plan.plan_id})
-        self.submit_url = '?'.join([base_url, params])
+        if 'modal_header' in kwargs:
+            self.modal_header = kwargs['modal_header']
+        else:
+            self.modal_header = _('Clone Plan %s') % plan.plan_id
+
+        if 'submit_url' in kwargs:
+            self.submit_url = kwargs['submit_url']
+        else:
+            base_url = reverse('horizon:conveyor:plans:clone')
+            params = urlencode({'plan_id': plan.plan_id})
+            self.submit_url = '?'.join([base_url, params])
 
         context = super(CloneView, self).get_context_data(**kwargs)
-        context['plan'] = plan
         context['plan_id'] = plan.plan_id
-        context['plan_type'] = constants.CLONE
+        context['is_original'] = is_original
 
         plan_deps_table = plan_tables.PlanDepsTable(
             self.request,
@@ -158,26 +167,18 @@ class CloneView(forms.ModalFormView):
                                              constants.CLONE,
                                              is_original)
         context['d3_data'] = d3_data
-        context['is_original'] = is_original
 
         return context
 
     @memoized.memoized_method
     def get_object(self, *args, **kwargs):
         if 'ids' in self.request.GET:
-            resource = []
-            id_list = {}
             try:
                 ids = self.request.GET['ids']
-                for item in ids.split('**'):
-                    id_list[item.split('*')[0]] = item.split('*')[1].split(',')
-                for key, value in id_list.items():
-                    for id in value:
-                        resource.append({'type': key, 'id': id})
+                plan_level = self.request.GET.get('plan_level', 'atomic')
 
-                return api.plan_create(self.request,
-                                       constants.CLONE,
-                                       resource), True
+                return create_plan(self.request, constants.CLONE, ids,
+                                   plan_level=plan_level), True
             except Exception as e:
                 LOG.error("Unable to create plan. %s", e)
                 msg = _("Unable to create plan.")
@@ -200,16 +201,14 @@ class CloneView(forms.ModalFormView):
                           _("Query string is not a correct format."))
 
     def get_initial(self):
-        initial = super(CloneView, self).get_initial()
-        self._init_data()
-        plan = getattr(self, 'plan')
-        is_original = getattr(self, 'is_original')
-        initial.update({
-            'plan_id': plan.plan_id,
-            'is_original': is_original,
+        plan, is_original = self.get_object()
+        setattr(self, 'plan', plan)
+        setattr(self, 'is_original', is_original)
 
-        })
-        return initial
+        return {
+            'plan_id': plan.plan_id,
+            'is_original': is_original
+        }
 
 
 class MigrateView(forms.ModalFormView):
@@ -217,25 +216,22 @@ class MigrateView(forms.ModalFormView):
     form_id = 'migrate_plan_form'
     modal_header = _("Migrate Plan")
     template_name = 'plans/migrate.html'
-    context_object_name = 'plan'
     success_url = reverse_lazy("horizon:conveyor:plans:index")
 
-    def _init_data(self):
-        plan = getattr(self, 'plan', None)
-        if plan is None:
-            plan, is_original = self.get_object()
-            setattr(self, 'plan', plan)
-            setattr(self, 'is_original', is_original)
-
     def get_context_data(self, **kwargs):
-        self._init_data()
         plan = getattr(self, 'plan')
-        is_original = getattr(self, 'is_original')
 
-        self.modal_header = _('Migrate Plan %s') % plan.plan_id
-        base_url = reverse('horizon:conveyor:plans:migrate')
-        params = urlencode({'plan_id': plan.plan_id})
-        self.submit_url = '?'.join([base_url, params])
+        if 'modal_header' in kwargs:
+            self.modal_header = kwargs['modal_header']
+        else:
+            self.modal_header = _('Migrate Plan %s') % plan.plan_id
+
+        if 'submit_url' in kwargs:
+            self.submit_url = kwargs['submit_url']
+        else:
+            base_url = reverse('horizon:conveyor:plans:migrate')
+            params = urlencode({'plan_id': plan.plan_id})
+            self.submit_url = '?'.join([base_url, params])
 
         context = super(MigrateView, self).get_context_data(**kwargs)
         context['plan_id'] = plan.plan_id
@@ -249,28 +245,19 @@ class MigrateView(forms.ModalFormView):
 
         d3_data = topology.load_plan_d3_data(self.request,
                                              plan,
-                                             constants.MIGRATE,
-                                             is_original)
+                                             constants.MIGRATE,)
         context['d3_data'] = d3_data
         return context
 
     @memoized.memoized_method
     def get_object(self, *args, **kwargs):
         if 'ids' in self.request.GET:
-            resource = []
-            id_list = {}
             try:
                 ids = self.request.GET['ids']
-                for item in ids.split('**'):
-                    id_list[item.split('*')[0]] = item.split('*')[1].split(',')
-                for key, value in id_list.items():
-                    for id in value:
-                        resource.append({'type': key, 'id': id})
+                plan_level = self.request.GET.get('plan_level', 'atomic')
 
-                return (api.plan_create(self.request,
-                                        constants.MIGRATE,
-                                        resource),
-                        True)
+                return create_plan(self.request, constants.MIGRATE, ids,
+                                   plan_level=plan_level), True
             except Exception:
                 msg = _("Query string is not a correct format.")
                 exceptions.handle(self.request, msg)
@@ -291,16 +278,13 @@ class MigrateView(forms.ModalFormView):
                           _("Query string is not a correct format."))
 
     def get_initial(self):
-        initial = super(MigrateView, self).get_initial()
-        self._init_data()
-        plan = getattr(self, 'plan')
-        is_original = getattr(self, 'is_original')
-        initial.update({
-            'plan_id': plan.plan_id,
-            'is_original': is_original,
+        plan, is_original = self.get_object()
+        setattr(self, 'plan', plan)
 
-        })
-        return initial
+        return {
+            'plan_id': plan.plan_id,
+            'is_original': is_original
+        }
 
 
 class SaveView(forms.ModalFormView):
@@ -427,7 +411,7 @@ class ExportView(View):
             return
 
         response = http.HttpResponse(content_type='application/binary')
-        response['Content-Disposition'] = ('attachment; filename=%s.plan'
+        response['Content-Disposition'] = ('attachment; filename=plan-%s'
                                            % plan_id)
         template = yaml.dump(yaml.load(json.dumps(plan[1]['template'])))
         response.write(template)
@@ -533,6 +517,75 @@ class DestinationView(forms.ModalFormView):
         }
         initial.update(show_filter(plan))
         return initial
+
+
+class IncrementalCloneView(CloneView):
+
+    def get_context_data(self, **kwargs):
+        plan = getattr(self, 'plan')
+        kwargs['modal_header'] = _("Increment Plan %s") % plan.plan_id
+        kwargs['submit_url'] = reverse(
+            'horizon:conveyor:plans:incremental_clone',
+            kwargs={'plan_id': plan.plan_id})
+
+        return super(IncrementalCloneView, self)\
+            .get_context_data(**kwargs)
+
+    def create_incremental_plan(self, plan_id):
+        try:
+            plan = api.plan_get_brief(self.request, plan_id)
+            plan_name = 'increment-of-%s' % plan_id
+            return api.create_increment_plan(self.request, plan_id,
+                                             plan.plan_type,
+                                             plan_name=plan_name)
+        except Exception as e:
+            LOG.error('Unable to create incremental plan %s. %s', plan_id, e)
+            exceptions.handle(self.request,
+                              _('Unable to create incremental plan.'))
+
+    def get_initial(self):
+        increment_plan = self.create_incremental_plan(self.kwargs['plan_id'])
+        setattr(self, 'plan', increment_plan)
+        setattr(self, 'is_original', True)
+
+        return {
+            'plan_id': increment_plan.plan_id,
+            'is_original': True,
+        }
+
+
+class IncrementalMigrateView(MigrateView):
+
+    def get_context_data(self, **kwargs):
+        plan = getattr(self, 'plan')
+        kwargs['modal_header'] = _("Increment Plan %s") % plan.plan_id
+        kwargs['submit_url'] = reverse(
+            'horizon:conveyor:plans:incremental_migrate',
+            kwargs={'plan_id': plan.plan_id})
+
+        return super(IncrementalMigrateView, self)\
+            .get_context_data(**kwargs)
+
+    def create_incremental_plan(self, plan_id):
+        try:
+            plan = api.plan_get_brief(self.request, plan_id)
+            plan_name = 'increment-of-%s' % plan_id
+            return api.create_increment_plan(self.request, plan_id,
+                                             plan.plan_type,
+                                             plan_name=plan_name)
+        except Exception as e:
+            LOG.error('Unable to create incremental plan %s. %s', plan_id, e)
+            exceptions.handle(self.request,
+                              _('Unable to create incremental plan.'))
+
+    def get_initial(self):
+        increment_plan = self.create_incremental_plan(self.kwargs['plan_id'])
+        setattr(self, 'plan', increment_plan)
+
+        return {
+            'plan_id': increment_plan.plan_id,
+            'is_original': True,
+        }
 
 
 def filter_deps(request, plan_id, plan_type, deps, res_id=None):

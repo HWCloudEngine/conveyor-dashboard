@@ -47,6 +47,7 @@ class IndexView(views.HorizonTemplateView,
         data.reverse()
 
         context['table'] = overview_tables.ResTable(self.request, data=data)
+        context['project_id'] = self.request.user.tenant_id
         return context
 
     def get_instances_data(self):
