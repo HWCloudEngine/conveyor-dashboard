@@ -51,5 +51,4 @@ class IndexView(tables.DataTableView):
         return pools
 
     def _status_filter(self, pool):
-        return pool.status in resource_state.POOL_CLONE_STATE \
-            or pool.status in resource_state.POOL_MIGRATE_STATE
+        return pool.status in resource_state.POOL_CLONE_STATE

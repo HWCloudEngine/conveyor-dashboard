@@ -29,33 +29,11 @@ def get_res_type(datum, table):
     return ''
 
 
-class CreateClonePlan(tables.LinkAction):
-    name = 'clone_plan'
-    verbose_name = _("Create Clone Plan")
-    url = 'horizon:conveyor:plans:clone'
-    classes = ("ajax-modal", "btn-clone")
-    help_text = _("Execute clone plan")
-
-    def get_link_url(self, datum):
-        base_url = reverse(self.url)
-        if self.table.kwargs.get('next_url', None):
-            next_url = self.table.kwargs['next_url']
-        else:
-            next_url = self.table.get_full_url()
-
-        params = urlencode({'ids': ''.join([get_res_type(datum, self.table),
-                                            '*',
-                                            self.table.get_object_id(datum)]),
-                            'next_url': next_url})
-        return '?'.join([base_url, params])
-
-
-class CreateMigratePlan(tables.LinkAction):
-    name = 'migrate_plan'
-    verbose_name = _("Create Migrate Plan")
-    url = 'horizon:conveyor:plans:migrate'
-    classes = ("ajax-modal", "btn-migrate")
-    help_text = _("Execute migrate plan")
+class CreatePlan(tables.LinkAction):
+    name = 'create_plan'
+    verbose_name = _("Create Plan")
+    url = 'horizon:conveyor:plans:create'
+    classes = ("ajax-modal",)
 
     def get_link_url(self, datum):
         base_url = reverse(self.url)
@@ -66,19 +44,9 @@ class CreateMigratePlan(tables.LinkAction):
         return '?'.join([base_url, params])
 
 
-class CreateClonePlanWithMulRes(tables.LinkAction):
+class CreatePlanWithMultiRes(tables.LinkAction):
     name = 'create_plan_with_mul_res'
-    verbose_name = _("Create Clone Plan")
-    url = 'horizon:conveyor:plans:clone'
-    classes = ("ajax-modal", "create-clone-plan-for-mul-sel", "disabled")
-    help_text = _("Create clone plan with selecting multi-resources")
-    icon = 'plus'
-
-
-class CreateMigratePlanWithMulRes(tables.LinkAction):
-    name = 'create_migrate_plan_with_mul_res'
-    verbose_name = _("Create Migrate Plan")
-    url = 'horizon:conveyor:plans:migrate'
-    classes = ("ajax-modal", "create-migrate-plan-for-mul-sel", "disabled")
-    help_text = _("Create migrate plan with selecting multi-resources")
+    verbose_name = _("Create Plan")
+    url = 'horizon:conveyor:plans:create'
+    classes = ("ajax-modal", "disabled", "create-plan-with-multi-res")
     icon = 'plus'

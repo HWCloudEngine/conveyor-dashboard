@@ -17,47 +17,101 @@
 "use strict";
 
 var conveyorService = {
-  cancelPlan: function (plan_id) {
-    $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
-    $.post(WEBROOT + "api/conveyor/plans/" + plan_id + "/delete/")
-      .error(function () {
-        horizon.alert('error', gettext("Unable to cancel plan Cancel Plan."));
-      });
+  syncAjax: function (url, method, data, errorMsg) {
+    var result = null;
+    $.ajax({
+      url: url,
+      type: method,
+      data: data,
+      async: false,
+      beforeSend: function (xhr, settings) {
+        xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
+      },
+      success: function (data) {
+        result = data;
+      },
+      error: function (xhr) {
+        console.log(xhr);
+        if (xhr.status == '401') {
+          window.location.href = WEBROOT + 'auth/login/?next=' + window.location.href;
+        } else {
+          horizon.alert('error', errorMsg);
+          result = false;
+        }
+      }
+    });
+    return result;
   },
 
-  updatePlanResourceForFrontend: function (plan_id, data) {
+  formatParams: function (params) {
+    var result = '';
+    $.each(params, function (k, v) {
+      if(result != '') {
+        result += '&' + k + '=' + v;
+      } else {
+        result = k + '=' + v;
+      }
+    });
+    return result;
+  },
+
+  getResource: function (resType, resId) {
     var result = null;
+    var url = WEBROOT + 'api/conveyor/resources/' + resType + '/' + resId + '/';
     $.ajaxSetup({async: false});
-    $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
-    $.post(WEBROOT + 'api/conveyor/plans/' + plan_id + '/update_plan_resource_frontend/', angular.toJson(data))
+    $.get(url)
       .success(function (data) {
         result = data;
       })
       .error(function () {
-        horizon.alert('error', gettext("Unable to update plan resource."));
+        horizon.alert('error', gettext('Unable to get detail resource.'));
+        result = false;
+      });
+    return result;
+  },
+  
+  getResources: function (resType, params) {
+    var result = null;
+    var url = WEBROOT + 'api/conveyor/resources/' + resType + '/';
+    var queryString = this.formatParams(params);
+    if (queryString != '') {
+      url += '?' + queryString;
+    }
+    $.ajaxSetup({async: false});
+    $.get(url)
+      .success(function (data) {
+        result = data.items;
+      })
+      .error(function () {
+        horizon.alert('error', gettext('Unable to get detail resource.'));
         result = false;
       });
     return result;
   },
 
-  getResourceDetail: function (data) {
-    var result = null;
-    $.ajaxSetup({async: false});
-    $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
-    $.post(WEBROOT + 'api/conveyor/plans/' + data.plan_id + '/detail_resource/' + data.resource_id + '/', angular.toJson(data))
-      .success(function (data) {
-        result = data;
-      })
-      .error(function () {
-        horizon.alert('error', gettext('Unable to retrieve resource detail.'));
-      });
-    return result;
+  getResourceView: function (planId, data) {
+    return this.syncAjax(
+      WEBROOT + 'api/conveyor/plans/' + planId + '/detail_resource/' + data.resource_id + '/',
+      'POST',
+      angular.toJson(data),
+      gettext('Unable to retrieve resource detail.'));
+    // var result = null;
+    // $.ajaxSetup({async: false});
+    // $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
+    // $.post(WEBROOT + 'api/conveyor/plans/' + planId + '/detail_resource/' + data.resource_id + '/', angular.toJson(data))
+    //   .success(function (data) {
+    //     result = data;
+    //   })
+    //   .error(function () {
+    //     horizon.alert('error', gettext('Unable to retrieve resource detail.'));
+    //   });
+    // return result;
   },
 
   addRuleForFrontend: function (sg_id, data) {
     var result = null;
     $.ajaxSetup({async: false});
-    $.get(WEBROOT + '/conveyor/security_groups/add_rule/?security_group_id=' + sg_id)
+    $.get(WEBROOT + 'conveyor/security_groups/add_rule/?security_group_id=' + sg_id)
       .success(function (data) {
         result = data;
       });

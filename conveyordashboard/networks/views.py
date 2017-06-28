@@ -50,5 +50,4 @@ class IndexView(tables.DataTableView):
 
     def _status_filter(self, net):
         status = net.status
-        return status in resource_state.NET_CLONE_STATE \
-            or status in resource_state.NET_MIGRATE_STATE
+        return status in resource_state.NET_CLONE_STATE

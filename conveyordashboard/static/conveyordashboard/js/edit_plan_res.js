@@ -15,21 +15,20 @@
  */
 "use strict";
 
-function redraw(url){
-  var deps = '{}';
-  if($('input#id_dependencies').length){deps=$('input#id_dependencies').val();}
-  var arr = url.split('?');
-  var loca = arr[0];
-  var param = arr[1];
-  var postdata = {"deps": deps,
-          "param": param};
-  $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
-  $.post(loca, postdata,function(json){
-    conveyorPlanTopology.updateTopo(json);
-    if($('.btn-clone').length){$('g.node').unbind('click').bind('click', function () {
-      conveyorEditPlanRes.nodeClick(this);
-    });}
-  });
+function loadGlobalTopo(planId) {
+  conveyorPlanTopology.updateTopo(conveyorPlan.globalDependencies(planId));
+  if($('#id_plan_type').val() == 'clone'){$('g.node[cloned=false]').unbind('click').bind('click', function () {
+    conveyorEditPlanRes.nodeClick(this);
+  });}
+  return false;
+}
+
+function loadLocalTopo(planId, resType, resId) {
+  conveyorPlanTopology.updateTopo(conveyorPlan.localDependencies(planId, resType, resId));
+  if($('#id_plan_type').val() == 'clone'){$('g.node[cloned=false]').unbind('click').bind('click', function () {
+    conveyorEditPlanRes.nodeClick(this);
+  });}
+  return false;
 }
 
 var conveyorEditPlanRes = {
@@ -39,7 +38,6 @@ var conveyorEditPlanRes = {
   tag_updated_resources: "input#id_updated_resources",
   tag_dependencies: "input#id_dependencies",
   tag_plan_id: "input#id_plan_id",
-  tag_is_original: "div#is_original",
   /* properties */
   isUpdating: false,
   nodeClick: function (node) {
@@ -48,40 +46,34 @@ var conveyorEditPlanRes = {
     var node_id = $(node).attr("node_id");
     var node_type = $(node).attr("node_type");
     var plan_id = $(this.tag_plan_id).val();
-    var is_original = $(this.tag_is_original).attr("data-is_original");
-    var update_data = this.getUpdateResource(node_type, node_id);
-    var updated_res = $.parseJSON($(this.tag_updated_resources).val());
-    var postdata = {
-      "plan_id": plan_id,
-      "resource_type": node_type,
-      "resource_id": node_id,
-      "update_data": update_data,
-      "updated_res": updated_res,
-      "is_original": is_original
-    };
-    var data = conveyorService.getResourceDetail(postdata);
-    if(! data) {
+
+    // Get resource from server
+    var resView = conveyorService.getResourceView(plan_id, conveyorPlan.extractResourceShowInfo(plan_id, node_type, node_id));
+
+    if(! resView) {
       return false;
     }
-    $("image#" + node_id).attr("href", data.image);
-    var click_img = data.image;
+    $("image#" + node_id).attr("href", resView.image);
+    var click_img = resView.image;
     if(click_img != "") {
-      var img_node = $("image[id=image_" + node_id + "]");
+      var img_node = $("image[id=image_" + node_id.replace(/\./g, '__') + "]");
       img_node.attr("ori-href", img_node.attr("href"));
       img_node.attr({"href": click_img, "editing": true});
     }
-    self.popResEditModal(node_type, node_id, data.data);
-    $("select[name='networks'],select[name='routers'],select[name='subnets'],select[name='secgroups'],select[name='volumes'],select[name='volumetypes']").parent().parent().css({
+
+    // Show view
+    self.popResEditModal(node_type, node_id, resView.data);
+    $("select[name='networks'],select[name='routers'],select[name='subnets'],select[name='secgroups'],select[name='volumetypes']").parent().parent().css({
         'display':'none'
     });
 
     $("#id_from_other").parent().click(function(){
         if($("#id_from_other").is(':checked')){
-            $("select[name='networks'],select[name='routers'],select[name='subnets'],select[name='secgroups'],select[name='volumes'],select[name='volumetypes']").parent().parent().css({
+            $("select[name='networks'],select[name='routers'],select[name='subnets'],select[name='secgroups'],select[name='volumetypes']").parent().parent().css({
                 'display':'block'
             });
         }else{
-            $("select[name='networks'],select[name='routers'],select[name='subnets'],select[name='secgroups'],select[name='volumes'],select[name='volumetypes']").parent().parent().css({
+            $("select[name='networks'],select[name='routers'],select[name='subnets'],select[name='secgroups'],select[name='volumetypes']").parent().parent().css({
                 'display':'none'
             });
         }
@@ -92,33 +84,24 @@ var conveyorEditPlanRes = {
       $(this).attr({"href": $(this).attr("ori-href"), "editing": false});
     });
   },
-  getUpdateResource: function (resType, resId) {
-    var resources = $.parseJSON($(this.tag_update_resource).val());
-    for(var index in resources) {
-      var res = resources[index];
-      if(res.resource_type === resType && res.resource_id === resId) {
-        return res;
-      }
-    }
-    return {};
-  },
+
   saveTableInfo: function () {
     var self = this;
     try {
       if(self.isUpdating){return false;}
       self.isUpdating = true;
+      var planId = $(self.tag_plan_id).val();
       var resource_type = $(self.tag_detailinfo_div).attr("resource_type");
       var resource_id = $(self.tag_detailinfo_div).attr("resource_id");
       var result = conveyorResources.process(resource_type, resource_id);
       var data = result.data;
       if(Object.keys(data).length){
-        data['resource_type'] = resource_type;
-        data['resource_id'] = resource_id;
-        if(result.needPosted){
-          self.resChanged(resource_type, resource_id, data);
-        } else {
-          self.updateResourceName(resource_id, data);
-          self.saveChangedInfo(resource_type, resource_id, data);
+        conveyorPlan.updatePlanResource(planId, resource_type, resource_id, result);
+        if(result.needPosted) {
+          conveyorPlanTopology.updateTopo(conveyorPlan.getPlan(planId).updated_deps);
+          $('g.node[cloned=false]').unbind('click').bind('click', function () {
+            conveyorEditPlanRes.nodeClick(this);
+          });
         }
       }
       self.clearEditing();
@@ -133,54 +116,6 @@ var conveyorEditPlanRes = {
     } finally{
       self.isUpdating = false;
     }
-  },
-  /* In dashboard, change resource's some propertity, them submit it to backend to resolve.
-   * params:
-   * resType:	resource type in plan. like OS::Nova::Server.
-   * resId:		resource id in plan. like server_0.
-   * data:		data changed to resource.
-   * */
-  resChanged: function (resType, resId, data) {
-    var self = this;
-    var plan_id = $(self.tag_plan_id).val();
-    var postdata = {
-      "plan_id": plan_id,
-      "resource_type": resType,
-      "resource_id": resId,
-      "updated_resources": $.parseJSON($(self.tag_updated_resources).val()),
-      "dependencies": $.parseJSON($(self.tag_dependencies).val()),
-      "update_res": $.parseJSON($(self.tag_update_resource).val()),
-      "data": data
-    };
-    var result = conveyorService.updatePlanResourceForFrontend(plan_id, postdata);
-    if(result) {
-      conveyorPlanTopology.updateTopo($.parseJSON(result.d3_data));
-      if($('.btn-clone').length){$('g.node').unbind('click').bind('click', function () {
-        conveyorEditPlanRes.nodeClick(this);
-      });}
-      self.updatePlanDeps(result.res_deps);
-      for(var index in result.update_resources) {
-        var item = result.update_resources[index];
-        self.saveChangedInfo(item.resource_type,item.resource_id, item);
-      }
-      $(self.tag_updated_resources).val(JSON.stringify(result.updated_resources));
-      $(self.tag_dependencies).val(JSON.stringify(result.dependencies));
-    }
-  },
-  saveChangedInfo: function (resType, resId, data) {
-    var self = this;
-    var data_from = $(self.tag_update_resource).val();
-    data_from = $.parseJSON(data_from);
-    for(var index in data_from) {
-      var update_res = data_from[index];
-      if(update_res.resource_type === resType && update_res.resource_id === resId) {
-        conveyorUtil.merge(update_res, data);
-        $(self.tag_update_resource).val(JSON.stringify(data_from));
-        return;
-      }
-    }
-    data_from.push(data);
-    $(self.tag_update_resource).val(JSON.stringify(data_from));
   },
   updatePlanDeps: function(planDeps) {
     var self = this;
@@ -202,41 +137,7 @@ var conveyorEditPlanRes = {
       });
     }
     $("#plan_deps").find('tbody').html($(plan_deps_table).find('tbody').html());
-    self.configLocalTopology();
-  },
-  configLocalTopology: function (){
-    var self = this;
-    var plan_deps_table = $('#plan_deps_table');
-    $(plan_deps_table).find('tbody tr').each(function () {
-      $(this).find('td:last a').click(function () {
-        try{
-          redraw($(this).attr('href'));
-          return false
-        } catch(e) {
-          return false;
-        }
-      });
-    });
-    $("#plan_deps").treeTable();
-  },
-  updateResourceName: function (resId, data) {
-    $.each(data, function (k, v) {
-      if(k=='name'){
-        $("#plan_deps").find('#plan_deps__row__'+resId).find('td:eq(1)').text(v);
-        $("#conveyor_plan_topology .node").each(function(){
-          if($(this).attr("node_id") == resId){
-            var node_info = $(this).context.__data__.info_box;
-            var new_info = node_info.replace(/<h3>.*<\/h3>/g,"<h3>Name:"+v+"</h3>");
-            $(this).on("mouseover", function(){
-              $("#info_box").html(new_info);
-            });
-            $(this).on("mouseout",function(){
-              $("#info_box").html("");
-            });
-          }
-        });
-      }
-    });
+    // self.configLocalTopology();
   },
   /* For resource detail. Allow to add some items for property with type of list
    * of detail resource.

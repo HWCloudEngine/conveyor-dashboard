@@ -81,7 +81,7 @@ class IndexView(tables.DataTableView):
                     if flavor_id in full_flavors:
                         instance.full_flavor = full_flavors[flavor_id]
                     else:
-                        instance.full_flavor = api.resource_detail(
+                        instance.full_flavor = api.resource_get(
                             self.request,
                             consts.NOVA_FLAVOR,
                             flavor_id)
@@ -102,5 +102,4 @@ class IndexView(tables.DataTableView):
         return filters
 
     def _status_filter(self, instance):
-        return instance.status in resource_state.INSTANCE_CLONE_STATE \
-            or instance.status in resource_state.INSTANCE_MIGRATE_STATE
+        return instance.status in resource_state.INSTANCE_CLONE_STATE
