@@ -38,15 +38,10 @@ class CreateClonePlan(tables.LinkAction):
 
     def get_link_url(self, datum):
         base_url = reverse(self.url)
-        if self.table.kwargs.get('next_url', None):
-            next_url = self.table.kwargs['next_url']
-        else:
-            next_url = self.table.get_full_url()
 
         params = urlencode({'ids': ''.join([get_res_type(datum, self.table),
                                             '*',
-                                            self.table.get_object_id(datum)]),
-                            'next_url': next_url})
+                                            self.table.get_object_id(datum)])})
         return '?'.join([base_url, params])
 
 

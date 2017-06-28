@@ -1,0 +1,186 @@
+{
+    "plan_status": "finished",
+    "project_id": "d23b65e027f9461ebe900916c0412ade",
+    "sys_clone": false,
+    "original_resources": {
+      "CinderQos_0": {
+        "name": "CinderQos_0",
+        "parameters": {},
+        "extra_properties": {
+          "id": "6d992623-670b-4ddf-b21a-1e5d5eec3b0b"
+        },
+        "id": "6d992623-670b-4ddf-b21a-1e5d5eec3b0b",
+        "type": "OS::Cinder::Qos",
+        "properties": {
+          "specs": {
+            "rate": "100M",
+            "iops": "100"
+          },
+          "name": "qos-01"
+        }
+      },
+      "volume_type_0": {
+        "name": "volume_type_0",
+        "parameters": {},
+        "extra_properties": {
+          "id": "0da855a6-ce98-4389-8e79-822da3beda68"
+        },
+        "id": "0da855a6-ce98-4389-8e79-822da3beda68",
+        "type": "OS::Cinder::VolumeType",
+        "properties": {
+          "name": "vol-type-01",
+          "qos_specs_id": {
+            "get_resource": "CinderQos_0"
+          }
+        }
+      },
+      "volume_0": {
+        "name": "volume_0",
+        "parameters": {},
+        "extra_properties": {
+          "status": "available",
+          "copy_data": true,
+          "id": "0b481ab2-c58b-4609-8f3f-246129b1f1c6"
+        },
+        "id": "0b481ab2-c58b-4609-8f3f-246129b1f1c6",
+        "type": "OS::Cinder::Volume",
+        "properties": {
+          "metadata": {
+            "readonly": "False"
+          },
+          "availability_zone": "az1.dc1",
+          "name": "test3",
+          "volume_type": {
+            "get_resource": "volume_type_0"
+          },
+          "size": 1
+        }
+      }
+    },
+    "deleted": false,
+    "original_dependencies": {
+      "CinderQos_0": {
+        "name_in_template": "CinderQos_0",
+        "dependencies": [],
+        "type": "OS::Cinder::Qos",
+        "id": "6d992623-670b-4ddf-b21a-1e5d5eec3b0b",
+        "name": "qos-01"
+      },
+      "volume_type_0": {
+        "name_in_template": "volume_type_0",
+        "dependencies": [
+          "CinderQos_0"
+        ],
+        "type": "OS::Cinder::VolumeType",
+        "id": "0da855a6-ce98-4389-8e79-822da3beda68",
+        "name": "vol-type-01"
+      },
+      "volume_0": {
+        "name_in_template": "volume_0",
+        "dependencies": [
+          "volume_type_0"
+        ],
+        "type": "OS::Cinder::Volume",
+        "id": "0b481ab2-c58b-4609-8f3f-246129b1f1c6",
+        "name": "test3"
+      }
+    },
+    "copy_data": true,
+    "plan_type": "clone",
+    "updated_at": "2017-06-28 06:53:18.564337",
+    "stack_id": "9b0ad933-3d6b-46cf-8115-9483edb3b132",
+    "updated_resources": {
+      "CinderQos_0": {
+        "name": "CinderQos_0",
+        "parameters": {},
+        "extra_properties": {
+          "id": "6d992623-670b-4ddf-b21a-1e5d5eec3b0b"
+        },
+        "id": "6d992623-670b-4ddf-b21a-1e5d5eec3b0b",
+        "type": "OS::Cinder::Qos",
+        "properties": {
+          "specs": {
+            "rate": "100M",
+            "iops": "100"
+          },
+          "name": "qos-01"
+        }
+      },
+      "volume_type_0": {
+        "name": "volume_type_0",
+        "parameters": {},
+        "extra_properties": {
+          "id": "0da855a6-ce98-4389-8e79-822da3beda68"
+        },
+        "id": "0da855a6-ce98-4389-8e79-822da3beda68",
+        "type": "OS::Cinder::VolumeType",
+        "properties": {
+          "name": "vol-type-01",
+          "qos_specs_id": {
+            "get_resource": "CinderQos_0"
+          }
+        }
+      },
+      "volume_0": {
+        "name": "volume_0",
+        "parameters": {},
+        "extra_properties": {
+          "status": "available",
+          "gw_id": "bd2127a5-9801-487b-890a-fe710f09cc20",
+          "copy_data": false,
+          "is_deacidized": true,
+          "gw_url": "162.3.140.227:9998",
+          "id": "0b481ab2-c58b-4609-8f3f-246129b1f1c6"
+        },
+        "id": "0b481ab2-c58b-4609-8f3f-246129b1f1c6",
+        "type": "OS::Cinder::Volume",
+        "properties": {
+          "metadata": {
+            "readonly": "False"
+          },
+          "availability_zone": "az1.dc1",
+          "name": "test3",
+          "volume_type": {
+            "get_resource": "volume_type_0"
+          },
+          "size": 1
+        }
+      }
+    },
+    "plan_id": "9565a5ee-af00-4273-88ec-7df53dca9293",
+    "updated_dependencies": {
+      "CinderQos_0": {
+        "is_cloned": false,
+        "name_in_template": "CinderQos_0",
+        "dependencies": [],
+        "type": "OS::Cinder::Qos",
+        "id": "6d992623-670b-4ddf-b21a-1e5d5eec3b0b",
+        "name": "qos-01"
+      },
+      "volume_type_0": {
+        "is_cloned": false,
+        "name_in_template": "volume_type_0",
+        "dependencies": [
+          "CinderQos_0"
+        ],
+        "type": "OS::Cinder::VolumeType",
+        "id": "0da855a6-ce98-4389-8e79-822da3beda68",
+        "name": "vol-type-01"
+      },
+      "volume_0": {
+        "is_cloned": true,
+        "name_in_template": "volume_0",
+        "dependencies": [
+          "volume_type_0"
+        ],
+        "type": "OS::Cinder::Volume",
+        "id": "0b481ab2-c58b-4609-8f3f-246129b1f1c6",
+        "name": "test3"
+      }
+    },
+    "user_id": "7e11a86b90a14dfd96d4142c6ea1e539",
+    "deleted_at": null,
+    "plan_name": "9565a5ee-af00-4273-88ec-7df53dca9293",
+    "created_at": "2017-06-28 06:53:06.117648",
+    "task_status": "DATA_TRANS_FINISHED"
+}

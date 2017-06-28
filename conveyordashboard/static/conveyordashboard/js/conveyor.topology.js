@@ -227,6 +227,7 @@ conveyorPlanTopology = {
       .attr('node_name', function(d) { return d.name; })
       .attr('node_id', function(d) { return d.id; })
       .attr('node_type', function(d) { return d.type; })
+      .attr('cloned', function (d) { return d.cloned; })
       .call(self.force.drag);
 
     nodeEnter.append('image')

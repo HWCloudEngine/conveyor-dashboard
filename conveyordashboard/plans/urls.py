@@ -31,6 +31,9 @@ urlpatterns = patterns(
     url(PLAN % 'export', views.ExportView.as_view(), name='export'),
     url(PLAN % 'destination', views.DestinationView.as_view(),
         name='destination'),
+    url(PLAN % 'create_incremental_clone',
+        views.IncrementalCloneView.as_view(),
+        name='incremental_clone'),
 
     url(r'^get_local_topology$',
         views.LocalTopologyView.as_view(), name='local_topology'),

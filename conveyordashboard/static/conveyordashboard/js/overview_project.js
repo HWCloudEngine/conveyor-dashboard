@@ -40,8 +40,8 @@ var conveyorProjectOverview = {
     }
   },
   getQueryString: function () {
-    var self = this;
-    var t_ids = self.id_map;
+    var project_id = $.trim($('#conveyor_project_id').text());
+    var t_ids = this.id_map;
     var id_strs = [];
     $.each(t_ids, function (k, v) {
       if (v.length > 0) {
@@ -49,7 +49,7 @@ var conveyorProjectOverview = {
       }
     });
     var url = id_strs.join("**");
-    return '?ids=' + url;
+    return '?plan_level=project:' + project_id + '&&ids=' + url;
   },
   typeIndex: function () {
     return $('#resource').find('thead th[data-selenium=res_type]').attr('data-column');
