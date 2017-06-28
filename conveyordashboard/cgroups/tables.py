@@ -20,11 +20,7 @@ from conveyordashboard.common import actions as common_actions
 from conveyordashboard.common import constants as consts
 
 
-class CloneCGroup(common_actions.CreateClonePlan):
-    """"""
-
-
-class MigrateCGroup(common_actions.CreateMigratePlan):
+class CreatePlan(common_actions.CreatePlan):
     """"""
 
 
@@ -83,9 +79,5 @@ class VolumeCGroupsTable(tables.DataTable):
         name = "volume_cgroups"
         verbose_name = _("Volume Consistency Groups")
         css_classes = "table-res %s" % consts.CINDER_CONSISGROUP
-        table_actions = (common_actions.CreateClonePlanWithMulRes,
-                         common_actions.CreateMigratePlanWithMulRes)
-        row_actions = (CloneCGroup,
-                       MigrateCGroup,)
-        # row_class = UpdateRow
-        # status_columns = ("status",)
+        table_actions = (common_actions.CreatePlanWithMultiRes,)
+        row_actions = (CreatePlan,)

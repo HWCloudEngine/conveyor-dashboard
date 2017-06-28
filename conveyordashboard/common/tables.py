@@ -57,18 +57,14 @@ class FilterTableMixin(object):
         return tenant_id == self.request.user.tenant_id
 
     def _instance_status_filter(self, instance):
-        return instance.status in resource_state.INSTANCE_CLONE_STATE \
-            or instance.status in resource_state.INSTANCE_MIGRATE_STATE
+        return instance.status in resource_state.INSTANCE_CLONE_STATE
 
     def _volume_status_filter(self, volume):
-        return volume.status in resource_state.VOLUME_CLONE_STATE \
-            or volume.status in resource_state.VOLUME_MIGRATE_STATE
+        return volume.status in resource_state.VOLUME_CLONE_STATE
 
     def _network_status_filter(self, net):
         status = net.status
-        return status in resource_state.NET_CLONE_STATE \
-            or status in resource_state.NET_MIGRATE_STATE
+        return status in resource_state.NET_CLONE_STATE
 
     def _pool_status_filter(self, pool):
-        return pool.status in resource_state.POOL_CLONE_STATE \
-            or pool.status in resource_state.POOL_MIGRATE_STATE
+        return pool.status in resource_state.POOL_CLONE_STATE

@@ -19,6 +19,16 @@ class Resource(base.APIDictWrapper):
     """Resource wrap for dict resources."""
 
 
+class Plan(base.APIResourceWrapper):
+    _attrs = ['plan_id', 'plan_name', 'plan_type', 'plan_status',
+              'task_status', 'user_id', 'project_id', 'clone_obj',
+              'created_at', 'updated_at']
+
+    @property
+    def id(self):
+        return self.plan_id
+
+
 class OverviewResource(base.APIDictWrapper):
     _attrs = ['res_id', 'res_type', 'name', 'tenant_id', 'availability_zone']
 
@@ -33,30 +43,7 @@ class OverviewResource(base.APIDictWrapper):
             return '-'
 
 
-class Server(base.APIDictWrapper):
-    _attrs = ['addresses', 'attrs', 'id', 'image', 'links', 'metadata', 'name',
-              'private_ip', 'public_ip', 'status', 'uuid', 'image_name',
-              'VirtualInterfaces', 'flavor', 'key_name', 'fault', 'tenant_id',
-              'user_id', 'created', 'OS-EXT-STS:power_state',
-              'OS-EXT-STS:task_state', 'OS-EXT-SRV-ATTR:instance_name',
-              'OS-EXT-SRV-ATTR:host', 'OS-EXT-AZ:availability_zone',
-              'OS-DCF:diskConfig']
-
-
-class Flavor(base.APIDictWrapper):
-    _attrs = ['ram', 'vcpus', 'disk', 'swap', 'ephemeral', 'rxtx_factor',
-              'extra_specs', 'is_public']
-
-
-class Metadata(base.APIDictWrapper):
-    _attrs = ['id', 'key', 'value']
-
-    @property
-    def id(self):
-        return self.key
-
-
-class Volume(base.APIDictWrapper):
+class Volume(base.APIResourceWrapper):
 
     _attrs = ['id', 'name', 'description', 'size', 'status', 'created_at',
               'volume_type', 'availability_zone', 'imageRef', 'bootable',
@@ -71,26 +58,18 @@ class Volume(base.APIDictWrapper):
 
     @property
     def name(self):
-        return self.display_name
+        # If a volume doesn't have a name, use its id.
+        return (getattr(self._apiresource, 'name', None) or
+                getattr(self._apiresource, 'display_name', None) or
+                getattr(self._apiresource, 'id', None))
 
     @property
     def description(self):
-        return self.display_description
+        return (getattr(self._apiresource, 'description', None) or
+                getattr(self._apiresource, 'display_description', None))
 
 
-class Stack(base.APIDictWrapper):
-
-    _attrs = ['id', 'stack_name', 'creation_time', 'updated_time',
-              'stack_status']
-
-    @property
-    def status(self):
-        s = self.stack_status
-        # Return everything after the first underscore
-        return s[s.index('_') + 1:]
-
-
-class StackRes(base.APIResourceWrapper):
+class Stack(base.APIResourceWrapper):
     _attrs = ['id', 'stack_name', 'creation_time', 'updated_time',
               'stack_status']
 

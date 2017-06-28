@@ -32,7 +32,6 @@ LOG = logging.getLogger(__name__)
 
 ALLOW_CLONE_STATUS = ('available', 'cloning', 'finished')
 ALLOW_MIGRATE_STATUS = ('available', 'migrating', 'finished')
-ALLOW_MODIFY_STATUS = ('initiating', 'available', 'finished')
 NOT_ALLOW_EXPORT_STATUS = ('creating', 'error', 'initiating')
 
 
@@ -40,14 +39,11 @@ class UpdateRow(tables.Row):
     ajax = True
 
     def get_data(self, request, plan_id):
-        plan = api.plan_get_brief(request, plan_id)
+        plan = api.plan_get(request, plan_id)
         return plan
 
 
 class DeletePlan(tables.DeleteAction):
-    name = 'delete'
-    classes = ("btn-default", "btn-danger",)
-    icon = 'remove'
     help_text = _("Delete plan is not recoverable.")
 
     @staticmethod
@@ -73,48 +69,33 @@ class DeletePlan(tables.DeleteAction):
         api.plan_delete(request, obj_id)
 
 
-class ModifyPlan(tables.LinkAction):
-    name = 'modify'
-    verbose_name = _("Modify")
-    url = 'horizon:conveyor:plans:modify'
-    classes = ("ajax-modal",)
-
-    def allowed(self, request, plan):
-        return (plan.plan_type == 'clone'
-                and plan.plan_status in ALLOW_MODIFY_STATUS)
-
-
 class ClonePlan(tables.LinkAction):
     name = 'clone'
     verbose_name = _("Clone")
-    url = 'horizon:conveyor:plans:clone'
+    url = 'horizon:conveyor:plans:destination'
     classes = ("ajax-modal", "btn-default", "btn-clone")
-    help_text = _("Execute clone plan")
 
     def allowed(self, request, plan):
         return (plan.plan_type == 'clone'
                 and plan.plan_status in ALLOW_CLONE_STATUS)
 
     def get_link_url(self, datum):
-        base_url = reverse(self.url)
-        params = urlencode({'plan_id': self.table.get_object_id(datum),
-                            'type': 'clone',
-                            'next_url': self.table.get_full_url()})
+        base_url = reverse(self.url,
+                           kwargs={'plan_id': self.table.get_object_id(datum)})
+        params = urlencode({'type': 'clone'})
         return '?'.join([base_url, params])
 
 
 class MigratePlan(tables.LinkAction):
     name = 'migrate'
     verbose_name = _("Migrate")
-    url = 'horizon:conveyor:plans:migrate'
+    url = 'horizon:conveyor:plans:destination'
     classes = ("ajax-modal", "btn-default", "btn-migrate")
-    help_text = _("Execute migrate plan")
 
     def get_link_url(self, datum):
-        base_url = reverse(self.url)
-        params = urlencode({'plan_id': self.table.get_object_id(datum),
-                            'type': 'migrate',
-                            'next_url': self.table.get_full_url()})
+        base_url = reverse(self.url,
+                           kwargs={'plan_id': self.table.get_object_id(datum)})
+        params = urlencode({'type': 'migrate'})
         return '?'.join([base_url, params])
 
     def allowed(self, request, plan):
@@ -141,46 +122,12 @@ class ExportPlan(tables.LinkAction):
         return plan.plan_status not in NOT_ALLOW_EXPORT_STATUS
 
 
-class GenerateTemplate(tables.BatchAction):
-    name = 'generate_template'
-
-    @staticmethod
-    def action_present(count):
-        return ungettext_lazy(
-            u"Generate Template",
-            u"Generate Templates",
-            count
-        )
-
-    @staticmethod
-    def action_past(count):
-        return ungettext_lazy(
-            u"Generated Template",
-            u"Generated Templates",
-            count
-        )
-
-    def allowed(self, request, plan):
-        return plan.plan_status in ('initiating',)
-
-    def action(self, request, obj_id):
-        plan = api.plan_get_brief(request, obj_id)
-        if plan.plan_type == 'clone':
-            api.export_clone_template(request, obj_id)
-        elif plan.plan_type == 'migrate':
-            api.export_migrate_template(request, obj_id)
-        else:
-            raise Exception("Unknown plan type %s" % plan.plan_type)
-
-
 class PlanFilterAction(tables.FilterAction):
     def filter(self, table, plans, filter_string):
-        q = filter_string.lower()
-
-        def comp(plan):
-            return q in plan.name.lower()
-
-        return filter(comp, plans)
+        """Naive case-insensitive search."""
+        query = filter_string.lower()
+        return [plan for plan in plans
+                if query in getattr(plan, 'name', '').lower()]
 
 
 PLAN_TYPE_CHOICES = (
@@ -249,17 +196,14 @@ class PlansTable(tables.DataTable):
                                 status_choices=TASK_STATUS_CHOICES,
                                 display_choices=TASK_DISPLAY_CHOICES)
 
-    def get_object_id(self, obj):
-        return obj.plan_id
-
     class Meta(object):
         name = 'plans'
         verbose_name = _("Plans")
         status_columns = ["plan_status", ]
         table_actions = (ImportPlan, DeletePlan, PlanFilterAction)
         row_class = UpdateRow
-        row_actions = (ClonePlan, MigratePlan, GenerateTemplate,
-                       ModifyPlan, ExportPlan, DeletePlan,)
+        row_actions = (ClonePlan, MigratePlan,
+                       ExportPlan, DeletePlan,)
 
 
 def get_src_az_md5(availability_zone):
@@ -285,36 +229,37 @@ class DestinationAZTable(tables.DataTable):
 class LocalTopology(tables.LinkAction):
     name = 'local_topology'
     verbose_name = _("Local Topology")
-    url = 'horizon:conveyor:plans:local_topology'
     classes = ("ajax-modal",)
 
-    def get_link_url(self, datum):
-        base_url = reverse(self.url)
-        params = urlencode({'res_id': self.table.get_object_id(datum),
-                            'plan_id': self.table.kwargs['plan_id'],
-                            'plan_type': self.table.kwargs['plan_type']})
-        return '?'.join([base_url, params])
+    def get_default_attrs(self):
+        self.attrs.update({
+            'plan_id': self.table.kwargs['plan_id'],
+            'res_id': self.table.get_object_id(self.datum),
+            'res_type': self.datum.type
+        })
+        return super(LocalTopology, self).get_default_attrs()
 
-    def allowed(self, request, instance=None):
-        """Allow terminate action if instance not currently being deleted."""
-        return True
+    def get_link_url(self, datum):
+        return "javascript:void(0);"
 
 
 class GlobalTopology(tables.LinkAction):
     name = 'global_topology'
     verbose_name = _("Global Topology")
-    url = 'horizon:conveyor:plans:global_topology'
     classes = ("ajax-modal",)
 
+    def get_default_attrs(self):
+        self.attrs.update({
+            'plan_id': self.table.kwargs['plan_id']
+        })
+        return super(GlobalTopology, self).get_default_attrs()
+
     def get_link_url(self, datum=None):
-        base_url = reverse(self.url)
-        params = urlencode({'plan_type': self.table.kwargs['plan_type'],
-                            'plan_id': self.table.kwargs['plan_id']})
-        return '?'.join([base_url, params])
+        return "javascript:void(0);"
 
 
 def get_dep_name(dep):
-    name = dep.name
+    name = dep.name_in_template
     if not name:
         return '-'
     if len(name) > 36:
@@ -324,23 +269,20 @@ def get_dep_name(dep):
 
 def trans_plan_deps(plan_deps):
     deps = []
-    for dep in plan_deps.values():
+    for dep in plan_deps:
         deps.append(models.Resource(dep))
     return deps
 
 
 class PlanDepsTable(tables.DataTable):
     name = tables.Column(get_dep_name, verbose_name=_("Name"), sortable=False)
-    res_id = tables.Column('name_in_template', verbose_name=_("Resource ID"),
+    res_id = tables.Column('id', verbose_name=_("Resource ID"),
                            sortable=False)
     res_type = tables.Column('type', verbose_name=_("Resource Type"),
                              sortable=False)
 
-    def get_object_id(self, obj):
-        return obj.name_in_template
-
     class Meta(object):
         name = 'plan_deps'
-        verbose_name = _("Plan Deps")
-        row_actions = (LocalTopology,)
+        verbose_name = _("Plan Dependencies")
         table_actions = (GlobalTopology,)
+        row_actions = (LocalTopology,)

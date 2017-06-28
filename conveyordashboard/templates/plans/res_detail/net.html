@@ -9,16 +9,16 @@
   <div class="form-group hide">
     <label class="control-label">{% trans "Router External" %}</label>
     <div clasa>
-      <input class="form-control" id="id_router_external" name="router_external" type="text" value="{{data.value_specs.router_external}}">
+      <input class="form-control" id="id_router_external" name="router_external" type="text" value="{{data.router_external}}">
     </div>
   </div>
 {#  <div class="form-group"><label class="control-label">{% trans "Segmentation ID" %}</label><div class=" "><input class="form-control" id="id_segmentation_id" name="segmentation_id" type="text" data-ori="{{data.value_specs.segmentation_id}}" value="{{data.value_specs.segmentation_id}}"></div></div>#}
 {#  <div class="form-group"><label class="control-label">{% trans "Network Type" %}</label><div class=" "><input class="form-control" id="id_network_type" name="network_type" type="text" data-ori="{{data.value_specs.network_type}}" value="{{data.value_specs.network_type}}"></div></div>#}
-  {% if data.value_specs.physical_network %}
+  {% if data.physical_network %}
     <div class="form-group">
       <label class="control-label">{% trans "Physical Network" %}</label>
       <div class>
-        <input class="form-control" id="id_physical_network" name="physical_network" type="text" data-ori="{{data.value_specs.physical_network}}" value="{{data.value_specs.physical_network}}">
+        <input class="form-control" id="id_physical_network" name="physical_network" type="text" data-ori="{{data.physical_network}}" value="{{data.physical_network}}">
       </div>
     </div>
   {% endif %}

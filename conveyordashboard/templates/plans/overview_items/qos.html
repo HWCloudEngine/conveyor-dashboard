@@ -1,9 +1,0 @@
-{% load i18n %}
-<dt>{% trans "Name" %}</dt>
-<dd>{{ propers.name|default:_("None") }}</dd>
-{% if propers.specs %}
-  <dt>{% trans "Specs" %}</dt>
-  {% for s, v in propers.specs.items %}
-    <dd>{{ s }}={{ v }}</dd>
-  {% endfor %}
-{% endif %}

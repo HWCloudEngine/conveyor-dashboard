@@ -16,16 +16,13 @@ from django import template
 from django.template.defaultfilters import title  # noqa
 from django.utils.translation import ugettext_lazy as _
 
-from horizon import exceptions
 from horizon import tables
 from horizon.templatetags import sizeformat
 from horizon.utils import filters
 
-from openstack_dashboard import api as openstack_api
 from openstack_dashboard.dashboards.project.instances \
     import tables as project_tables
 
-from conveyordashboard.api import api
 from conveyordashboard.common import actions as common_actions
 from conveyordashboard.common import constants as consts
 from conveyordashboard.common import resource_state
@@ -59,38 +56,9 @@ def get_size(instance):
     return _("Not available")
 
 
-class CloneInstance(common_actions.CreateClonePlan):
+class CreatePlan(common_actions.CreatePlan):
     def allowed(self, request, instance=None):
         return instance.status in resource_state.INSTANCE_CLONE_STATE
-
-
-class MigrateInstance(common_actions.CreateMigratePlan):
-    def allowed(self, request, instance=None):
-        return instance.status in resource_state.INSTANCE_MIGRATE_STATE
-
-
-class UpdateRow(tables.Row):
-    ajax = True
-
-    def get_data(self, request, instance_id):
-        instance = api.server_get(request, instance_id)
-        try:
-            instance.full_flavor = api.flavor_get(request,
-                                                  instance.flavor['id'])
-        except Exception:
-            exceptions.handle(request,
-                              _('Unable to retrieve flavor information '
-                                'for instance "%s".') % instance_id,
-                              ignore=True)
-
-        try:
-            openstack_api.network.servers_update_addresses(request, [instance])
-        except Exception:
-            exceptions.handle(request,
-                              _('Unable to retrieve Network information '
-                                'for instance "%s".') % instance_id,
-                              ignore=True)
-        return instance
 
 
 class InstanceFilterAction(tables.FilterAction):
@@ -140,7 +108,6 @@ class InstancesTable(tables.DataTable):
         "status",
         filters=(title, filters.replace_underscores),
         verbose_name=_("Status"),
-        status=True,
         status_choices=STATUS_CHOICES,
         display_choices=project_tables.STATUS_DISPLAY_CHOICES)
     availability_zone = tables.Column("OS-EXT-AZ:availability_zone",
@@ -148,7 +115,6 @@ class InstancesTable(tables.DataTable):
     task = tables.Column("OS-EXT-STS:task_state",
                          verbose_name=_("Task"),
                          empty_value=project_tables.TASK_DISPLAY_NONE,
-                         status=True,
                          status_choices=TASK_STATUS_CHOICES,
                          display_choices=project_tables.TASK_DISPLAY_CHOICES)
     state = tables.Column(project_tables.get_power_state,
@@ -162,10 +128,6 @@ class InstancesTable(tables.DataTable):
         verbose_name = _("Instances")
         status_columns = ['status', 'task']
         res_type = consts.NOVA_SERVER
-        table_actions = (common_actions.CreateClonePlanWithMulRes,
-                         common_actions.CreateMigratePlanWithMulRes,
+        table_actions = (common_actions.CreatePlanWithMultiRes,
                          InstanceFilterAction)
-        row_class = UpdateRow
-        row_actions = (project_tables.ConfirmResize,
-                       CloneInstance,
-                       MigrateInstance,)
+        row_actions = (CreatePlan,)

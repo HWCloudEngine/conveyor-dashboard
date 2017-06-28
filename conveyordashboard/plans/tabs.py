@@ -12,66 +12,11 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import collections
-
-from django.template import loader
 from django.utils.translation import ugettext_lazy as _
 from horizon import tabs
 from oslo_log import log as logging
-from oslo_utils import uuidutils
-
-from conveyordashboard.api import api
-from conveyordashboard.common import constants
-from conveyordashboard.topology import topology
-
-OVERVIEW_ITEMS_DIR = 'plans/overview_items/'
-OVERVIEW_ITEMTEMPL_PATH = 'plans/overview_items/itemtmpl.html'
 
 LOG = logging.getLogger(__name__)
-
-
-def render_overview_html(request, res_dict):
-    try:
-        res_dict = sorted(res_dict.iteritems(), key=lambda i: i[1]['type'])
-    except Exception:
-        pass
-
-    overview_html = collections.OrderedDict()
-    for (template_name, data) in res_dict:
-        res_type = data['type']
-        if res_type == constants.NEUTRON_NET:
-            value_specs = data['properties'].get('value_specs', {})
-            if value_specs:
-                for k, v in value_specs.items():
-                    if ':' in k:
-                        nk = k.replace(':', '__')
-                        value_specs[nk] = v
-        elif res_type == constants.NEUTRON_FLOATINGIP:
-            fid = data['id']
-            fip = api.resource_detail(request,
-                                      constants.NEUTRON_FLOATINGIP, fid)
-            LOG.info('fip: %s', fip)
-            data['properties']['floating_ip_address'] \
-                = fip['floating_ip_address']
-
-        type = data['type']
-        image = api.get_resource_image(type)
-        template_html = ''.join([OVERVIEW_ITEMS_DIR,
-                                 type.split('::')[-1].lower(),
-                                 '.html'])
-        params = data.pop('parameters')
-        propers = data.pop('properties')
-        context = {
-            'template_html': template_html,
-            'image': image,
-            'type': uuidutils.generate_uuid(),
-            'data': data,
-            'params': params,
-            'propers': propers
-        }
-        overview_html[template_name] = \
-            loader.render_to_string(OVERVIEW_ITEMTEMPL_PATH, context)
-    return overview_html
 
 
 class OverviewTab(tabs.Tab):
@@ -81,14 +26,9 @@ class OverviewTab(tabs.Tab):
 
     def get_context_data(self, request):
         plan = self.tab_group.kwargs['plan']
-        original_resources_html = self.get_render_html(plan.original_resources)
-        plan.original_resources = original_resources_html
-        updated_resources_html = self.get_render_html(plan.updated_resources)
-        plan.updated_resources = updated_resources_html
-        return {"plan": plan}
-
-    def get_render_html(self, res_dict):
-        return render_overview_html(self.request, res_dict)
+        return {
+            'plan': plan
+        }
 
 
 class TopologyTab(tabs.Tab):
@@ -99,15 +39,12 @@ class TopologyTab(tabs.Tab):
 
     def get_context_data(self, request):
         context = {}
-        plan_id = self.tab_group.kwargs['plan_id']
-        context['plan_id'] = plan_id
         plan = self.tab_group.kwargs['plan']
-        context['d3_data'] = topology.load_plan_d3_data(self.request,
-                                                        plan,
-                                                        plan.plan_type)
+        context['plan_id'] = plan.plan_id
+        context['d3_data'] = '[]'
         return context
 
 
 class DetailTabs(tabs.TabGroup):
     slug = 'plan_details'
-    tabs = (OverviewTab, TopologyTab)
+    tabs = (OverviewTab,)

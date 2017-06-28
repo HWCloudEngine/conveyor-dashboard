@@ -1,17 +1,4 @@
 /**
- * Adapted for Conveyor js topology generator.
- * Based on:
- * HeatTop JS Framework
- * Dependencies: jQuery 1.7.1 or later, d3 v3 or later
- * Date: June 2013
- * Description: JS Framework that subclasses the D3 Force Directed Graph library to create
- * Heat-specific objects and relationships with the purpose of displaying
- * Stacks, Resources, and related Properties in a Resource Topology Graph.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain
- * a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -21,7 +8,7 @@
  * under the License.
  */
 
-conveyorPlanTopology = {
+var conveyorPlanTopology = {
   svg_container: '#conveyor_plan_topology',
   thumbnail_container: '#thumbnail',
   info_box: '#info_box',
@@ -31,7 +18,7 @@ conveyorPlanTopology = {
   link: [],
   nodes: [],
   links: [],
-  loading: function () {
+  loadingFromJson: function (deps) {
     var self = this;
 
     var width = $(self.svg_container).width();
@@ -39,9 +26,12 @@ conveyorPlanTopology = {
     var height = $(self.svg_container).height();
     if(height == 0) {height = 500;}
 
-    self.graph = $("#d3_data").data("d3_data");
+    angular.element(self.svg_container).html('');
+    angular.element(self.thumbnail_container).find('svg').remove();
+
+    self.graph = deps;
     self.force = d3.layout.force()
-      .nodes(self.graph.nodes)
+      .nodes(self.graph)
       .links([])
       .gravity(0.25)
       .charge(-1200)
@@ -79,11 +69,15 @@ conveyorPlanTopology = {
   .append("svg:path")
     .attr("d", "M0,-3L10,0L0,3");
 
-
     self.buildLinks();
     self.update();
 
     self.loadingThumbnail();
+  },
+  loading: function () {
+    var deps = $("#d3_data").data("d3_data");
+    this.initPlan(deps);
+    this.loadingFromJson(deps);
   },
   loadingThumbnail: function () {
     var self = this;
@@ -150,6 +144,55 @@ conveyorPlanTopology = {
       });
     });
   },
+  clearCavens: function () {
+    angular.element(self.svg_container).html('');
+    angular.element(self.thumbnail_container).find('svg').remove();
+  },
+  setLoadding: function() {
+    var self = this;
+    var width = $(self.svg_container).width();
+    if(width == 0) {width = 700;}
+    var height = $(self.svg_container).height();
+    if(height == 0) {height = 500;}
+    angular.element(self.svg_container).html('');
+    angular.element(self.thumbnail_container).find('svg').remove();
+    self.svg = d3.select(self.svg_container).append("svg")
+      .attr("width", width)
+      .attr("height", height);
+    self.vis = self.svg.append('g');
+    var load_text = self.vis.append('text')
+        .style('fill', 'black')
+        .style('font-size', '40')
+        .attr('x', '50%')
+        .attr('y', '50%')
+        .text('');
+    var counter = 0;
+    var timer = setInterval(function() {
+      var i;
+      var str = '';
+      for (i = 0; i <= counter; i++) {
+        str += '.';
+      }
+      load_text.text(str);
+      if (counter >= 9) {
+        counter = 0;
+      } else {
+        counter++;
+      }
+      if (self.data_loaded) {
+        clearInterval(timer);
+        load_text.remove();
+      }
+    }, 100);
+  },
+  initPlan: function (deps) {
+    var planId = $('#id_plan_id').val();
+    var dependencies = [];
+    for (var index in deps) {
+      dependencies.push($.extend(true, {}, deps[index]))
+    }
+    conveyorPlan.initPlan(planId, dependencies);
+  },
   drawLink: function (d) {
     return "M" + d.source.x + "," + d.source.y + "L" + d.target.x + "," + d.target.y;
   },
@@ -163,13 +206,13 @@ conveyorPlanTopology = {
   },
   buildNodeLinks: function (node){
     var self = this;
-    for (var j = 0; j < node.required_by.length; j++){
+    for (var j = 0; j < node.dependencies.length; j++){
       var push_link = true;
       var target_idx = '';
       var source_idx = self.findNodeIndex(node.id);
       //make sure target node exists
       try {
-        target_idx = self.findNodeIndex(node.required_by[j]);
+        target_idx = self.findNodeIndex(node.dependencies[j].id);
       } catch(err) {
         console.log(err);
         push_link =false;
@@ -183,10 +226,10 @@ conveyorPlanTopology = {
       }
       if (push_link === true && (source_idx && target_idx)){
         self.links.push({
-          'target':target_idx,
-          'source':source_idx,
-          'value':1,
-          'link_type': node.link_type
+          'target': target_idx,
+          'source': source_idx,
+          'value': 1,
+          'is_cloned': node.dependencies[j].is_cloned || false
         });
       }
     }
@@ -195,16 +238,16 @@ conveyorPlanTopology = {
     var self = this;
     var nodes = self.nodes;
     for (var i = 0; i < nodes.length; i++){
-      if(nodes[i].required_by){
-        for (var j = 0; j < nodes[i].required_by.length; j++){
-          var dependency = nodes[i].required_by[j];
+      if(nodes[i].dependencies){
+        for (var j = 0; j < nodes[i].dependencies.length; j++){
+          var dependency = nodes[i].dependencies[j];
           //if new node is required by existing node, push new link
-          if(node.id === dependency){
+          if(node.id === dependency.id){
             self.links.push({
               'target': self.findNodeIndex(node.id),
               'source': self.findNodeIndex(nodes[i].id),
-              'value':1,
-              'link_type': nodes[i].link_type
+              'value': 1,
+              'is_cloned': dependency.is_cloned || false
             });
           }
         }
@@ -217,6 +260,17 @@ conveyorPlanTopology = {
       if (self.nodes[i].id=== id){ return i; }
     }
   },
+  nodeImageUrl: function (d) {
+    var color = d.is_cloned || false ? "gray" : "green";
+    var nodeType = d.type.toLowerCase().split('::').reverse()[0];
+    return WEBROOT + "static/conveyordashboard/img/" + nodeType + '-' + color + ".svg";
+  },
+  nodeInfo: function (d) {
+    return '<img src="' + this.nodeImageUrl(d) + '" width="35px" height="35px" />' +
+      '<p>' + gettext('Name') + ': ' + d.name_in_template + '</p>' +
+      '<p>' + gettext('Type') + ': ' + d.type + '</p>' +
+      '<p>' + gettext('Id') + ': ' + d.id + '</p>'
+  },
   update: function () {
     var self = this;
     self.node = self.node.data(self.nodes, function(d) { return d.id; });
@@ -227,26 +281,27 @@ conveyorPlanTopology = {
       .attr('node_name', function(d) { return d.name; })
       .attr('node_id', function(d) { return d.id; })
       .attr('node_type', function(d) { return d.type; })
+      .attr('cloned', function (d) { return d.is_cloned})
       .call(self.force.drag);
 
     nodeEnter.append('image')
-      .attr("xlink:href", function(d) { return d.image; })
+      .attr("xlink:href", function(d) { return self.nodeImageUrl(d); })
       .attr("id", function(d){ return "image_"+ d.id; })
-      .attr("x", function(d) { return d.image_x; })
-      .attr("y", function(d) { return d.image_y; })
-      .attr("width", function(d) { return d.image_size; })
-      .attr("height", function(d) { return d.image_size; })
+      .attr("x", function(d) { return -25; })
+      .attr("y", function(d) { return -25; })
+      .attr("width", function(d) { return 50; })
+      .attr("height", function(d) { return 50; })
       .attr("clip-path","url(#clipCircle)");
     self.node.exit().remove();
 
     self.link.enter().insert("path", "g.node")
-      .attr("class", function(d) { return "link " + d.link_type; });
+      .attr("class", function(d) { return "link " + (d.is_cloned ? 'cloned' : 'not_clone') });
 
     self.link.exit().remove();
 
     //Setup click action for all nodes
     self.node.on("mouseover", function(d) {
-      $(self.info_box).html(d.info_box);
+      $(self.info_box).html(self.nodeInfo(d));
     });
     self.node.on("mouseout", function(d) {
       $(self.info_box).html('');
@@ -255,6 +310,9 @@ conveyorPlanTopology = {
     self.force.start();
   },
   updateTopo: function (json){
+    if (json.length === 0) {
+      return;
+    }
     var self = this;
     self.needs_update = false;
 
@@ -271,7 +329,7 @@ conveyorPlanTopology = {
       nID.push(id);
     });
 
-    json.nodes.forEach(function(d){
+    json.forEach(function(d){
       if(nID.toString().indexOf(d.id) > -1){
         $(self.thumbnail_container).find('circle').each(function(i, e){
           if($(this).attr("id") == d.id){

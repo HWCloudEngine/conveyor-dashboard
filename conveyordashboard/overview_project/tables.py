@@ -12,11 +12,42 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from django.core.urlresolvers import reverse
+from django.utils.http import urlencode
 from django.utils.translation import ugettext_lazy as _
 
 from horizon import tables
 
 from conveyordashboard.common import actions as common_actions
+
+
+class CreateProjectPlan(tables.LinkAction):
+    name = 'create_project_plan'
+    verbose_name = _("Create Project Plan")
+    url = 'horizon:conveyor:plans:create'
+    classes = ("ajax-modal", "disabled", "create-project-plan")
+    help_text = _("Create plan for all resources of current project")
+    icon = 'plus'
+
+    def get_link_url(self, *args):
+        base_url = reverse(self.url)
+        params = urlencode({
+            'ids': 'project*' + self.table.request.user.tenant_id
+        })
+        return '?'.join([base_url, params])
+
+
+class CreatePlan(common_actions.CreatePlan):
+
+    def get_link_url(self, datum):
+        base_url = reverse(self.url)
+
+        params = urlencode({
+            'ids': ''.join([common_actions.get_res_type(datum, self.table),
+                            '*',
+                            self.table.get_object_id(datum)])
+        })
+        return '?'.join([base_url, params])
 
 
 class ResTable(tables.DataTable):
@@ -36,7 +67,6 @@ class ResTable(tables.DataTable):
     class Meta(object):
         name = 'resource'
         verbose_name = _("Resource")
-        table_actions = (common_actions.CreateClonePlanWithMulRes,
-                         common_actions.CreateMigratePlanWithMulRes)
-        row_actions = (common_actions.CreateClonePlan,
-                       common_actions.CreateMigratePlan)
+        table_actions = (common_actions.CreatePlanWithMultiRes,
+                         CreateProjectPlan)
+        row_actions = (CreatePlan,)
