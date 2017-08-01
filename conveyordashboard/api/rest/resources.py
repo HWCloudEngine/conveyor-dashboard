@@ -48,7 +48,7 @@ class Resources(generic.View):
 
 @urls.register
 class CreateRule(generic.View):
-    url_regex = r'conveyor/resources/create_rule/$'
+    url_regex = r'conveyor/security_groups/create_rule/$'
 
     @rest_utils.ajax()
     def post(self, request):

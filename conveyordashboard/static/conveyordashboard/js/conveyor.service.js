@@ -32,7 +32,7 @@ var conveyorService = {
       },
       error: function (xhr) {
         console.log(xhr);
-        if (xhr.status == '401') {
+        if (xhr.status == 401) {
           window.location.href = WEBROOT + 'auth/login/?next=' + window.location.href;
         } else {
           horizon.alert('error', errorMsg);
@@ -69,7 +69,7 @@ var conveyorService = {
       });
     return result;
   },
-  
+
   getResources: function (resType, params) {
     var result = null;
     var url = WEBROOT + 'api/conveyor/resources/' + resType + '/';
@@ -95,17 +95,6 @@ var conveyorService = {
       'POST',
       angular.toJson(data),
       gettext('Unable to retrieve resource detail.'));
-    // var result = null;
-    // $.ajaxSetup({async: false});
-    // $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
-    // $.post(WEBROOT + 'api/conveyor/plans/' + planId + '/detail_resource/' + data.resource_id + '/', angular.toJson(data))
-    //   .success(function (data) {
-    //     result = data;
-    //   })
-    //   .error(function () {
-    //     horizon.alert('error', gettext('Unable to retrieve resource detail.'));
-    //   });
-    // return result;
   },
 
   addRuleForFrontend: function (sg_id, data) {
@@ -119,16 +108,10 @@ var conveyorService = {
   },
 
   createSGRule: function (sg_id, data) {
-    var result = null;
-    $.ajaxSetup({async: false});
-    $.ajaxSetup({beforeSend: function(xhr, settings){xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));}});
-    $.post(WEBROOT + 'api/conveyor/resources/create_rule/', angular.toJson(data))
-      .success(function (data) {
-        result = data;
-      })
-      .error(function () {
-      horizon.alert('error', gettext('Unable to create security group rule.'));
-    });
-    return result;
+    return this.syncAjax(
+      WEBROOT + 'api/conveyor/security_groups/create_rule/',
+      'POST',
+      angular.toJson(data),
+      gettext('Unable to create security group rule.'));
   }
 };

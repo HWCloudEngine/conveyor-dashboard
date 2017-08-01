@@ -108,9 +108,9 @@ class PlanInfoAction(workflows.Action):
     sys_clone = forms.BooleanField(label=_("Clone System Volume"),
                                    required=False,
                                    initial=False)
-    copy_data = forms.BooleanField(label=_("Copy Volume Data"),
-                                   required=False,
-                                   initial=True)
+    copy_volume_data = forms.BooleanField(label=_("Copy Volume Data"),
+                                          required=False,
+                                          initial=True)
 
     class Meta(object):
         name = _("Plan Information")
@@ -119,7 +119,7 @@ class PlanInfoAction(workflows.Action):
 
 class PlanInfo(workflows.Step):
     action_class = PlanInfoAction
-    contributes = ('sys_clone', 'copy_data')
+    contributes = ('sys_clone', 'copy_volume_data')
 
 
 def preprocess_update_resources(update_resources):
@@ -215,7 +215,7 @@ class ClonePlan(workflows.Workflow):
         replace_resources = json.loads(context['replace_resources'])
         update_resources = json.loads(context['update_resources'])
         sys_clone = context['sys_clone']
-        copy_data = context['copy_data']
+        copy_data = context['copy_volume_data']
         try:
             preprocess_update_resources(update_resources)
             api.clone(request, plan_id, availability_zone_map, clone_resources,
