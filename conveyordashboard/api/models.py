@@ -76,5 +76,5 @@ class Stack(base.APIResourceWrapper):
     @property
     def status(self):
         # If a volume doesn't have a name, use its id.
-        s = getattr(self._apiresource, 'task_status')
+        s = getattr(self._apiresource, 'stack_status')
         return s[s.index('_') + 1:]

@@ -24,8 +24,8 @@ from conveyordashboard.common import resource_state
 
 
 class CreatePlan(common_actions.CreatePlan):
-    def allowed(self, request, instance=None):
-        return instance.status in resource_state.STACK_CLONE_STATE
+    def allowed(self, request, stack=None):
+        return stack.stack_status in resource_state.STACK_CLONE_STATE
 
 
 class StacksFilterAction(tables.FilterAction):

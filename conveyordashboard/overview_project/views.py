@@ -154,7 +154,7 @@ class IndexView(views.HorizonTemplateView,
         try:
             res = []
             stacks = api.stack_list(self.request)
-            for stack in stacks:
+            for stack in filter(self._stack_status_filter, stacks):
                 res.append(models.OverviewResource({
                     'res_id': stack.id,
                     'res_type': consts.HEAT_STACK,

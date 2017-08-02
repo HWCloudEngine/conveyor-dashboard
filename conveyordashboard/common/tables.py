@@ -68,3 +68,6 @@ class FilterTableMixin(object):
 
     def _pool_status_filter(self, pool):
         return pool.status in resource_state.POOL_CLONE_STATE
+
+    def _stack_status_filter(self, stack):
+        return stack.stack_status in resource_state.STACK_CLONE_STATE
