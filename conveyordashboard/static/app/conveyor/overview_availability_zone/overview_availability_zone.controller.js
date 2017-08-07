@@ -48,6 +48,7 @@
 
     ctrl.buildTopology = buildTopology;
     ctrl.prepareTopology = prepareTopology;
+    ctrl.setEnableExecutePlan = setEnableExecutePlan;
     ctrl.clone = clone;
     
     function buildTopology() {
@@ -102,10 +103,25 @@
           })
         }
         ctrl.enableBuildTopo = true;
-        ctrl.enableClone = true;
+        ctrl.setEnableExecutePlan();
       }, function () {
         ctrl.enableBuildTopo = true;
+        ctrl.enableClone = false;
       })
+    }
+
+    function setEnableExecutePlan() {
+      if (!ctrl.plan) {
+        ctrl.enableClone = false;
+        return;
+      }
+
+      var planType = ctrl.plan.plan_type;
+      var planStatus = ctrl.plan.plan_status;
+      if (planType == planTypes.CLONE && $.inArray(planStatus, ['available', 'finished']) > -1) {
+        ctrl.enableClone = true;
+      }
+      return false;
     }
 
     function clone() {

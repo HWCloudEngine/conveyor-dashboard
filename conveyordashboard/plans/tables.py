@@ -30,9 +30,9 @@ from conveyordashboard.common import utils
 
 LOG = logging.getLogger(__name__)
 
-ALLOW_CLONE_STATUS = ('available', 'cloning', 'finished')
-ALLOW_MIGRATE_STATUS = ('available', 'migrating', 'finished')
-NOT_ALLOW_EXPORT_STATUS = ('creating', 'error', 'initiating')
+ALLOW_CLONE_STATUS = ('available', 'finished')
+ALLOW_MIGRATE_STATUS = ('available', 'finished')
+NOT_ALLOW_EXPORT_STATUS = ('available', 'cloning', 'migrating', 'finished')
 
 
 class UpdateRow(tables.Row):
